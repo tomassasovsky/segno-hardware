@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-26T03:22:13.911796+00:00",
+  "generated_at": "2026-09-26T16:57:00.355271+00:00",
   "kicad_version": "10.0.4",
   "cad_ready": true,
   "hardware_qualification": "not performed",
@@ -12,14 +12,15 @@
       "source_sha256": {
         "../console_board.net": "bc07049c367f126779b20d11e765ed4a3d3c2436d94a56eb9b40c926958f1d6b",
         "../netlist.py": "565559b7751337c8930670658026715fa065138c846dd9784bbe4f06549bf1e3",
-        "../out_console/segno_console_board.kicad_pcb": "a57759950c14ab9606613dac89d51b9021e7824b80055f0e3daaa5ce571b377b",
-        "build.sh": "05712e43f352c1e6c315aeab56846ab6eea8e5ab8e8f0829286a39bc72a7e1c5",
-        "check.py": "bf91b700ccac02e07ccf033dcf29bcebcf36b7ac2329d048a4c392f80c0e367d",
+        "../out_console/segno_console_board.kicad_pcb": "1c64edd2e49c9e40830d37f0e9b553fd5c57d28cba674f5d815e043c0f226199",
+        "../round_routes.py": "0de2ded7f6c115f5465c98f6408e9514169ed63ffa6335a147ceea692bfd0a05",
+        "build.sh": "58c506aaf72675b578f0ad8d7f533877cd2e77b72d9adecd32742643637a6424",
+        "check.py": "fd84970aa612c4c92a54384b8e7374c17933cced167163bd6e7258f2e0f68856",
         "circuit.py": "5fb3b82bc4f65d7a3bd8ed4abbdba5ffd497cf17e5acc1ffc4ae6eb00957083f",
         "cleanup.py": "250a4ca530796cded61d5d1b660b5d01d1ceff215e0ff44b1265c5a3e19ad93b",
         "export.py": "533651f48a44ecd498c3993e362eb75aaabda1d3d982343b86d88eb718c9f105",
         "external_bom.csv": "6b8a18cc3c971dedc18d8b9fdff5da7267e48800f9bc5b91f2ed316393093587",
-        "finish.py": "f230664f50047ed983798e4c5d2056457f55775f45311b6daea5dc6aaf7f786e",
+        "finish.py": "33df5afc8f50685a106a8d7b751833163f1604bb66b08c1ee21e465e36891de7",
         "hand/bom.csv": "f526c41466273c6bd22cd753778475238d4949eb94a3b37b53c47955c0b0e664",
         "hand/components.json": "d7314facfc086f053da13be9d093f5889c60a5170ff76e1ba23706386e596e0d",
         "hand/fp-lib-table": "590440cd229828cd8c6d6cc97b03e045898207b4ea07239e3f5616a7af084473",
@@ -28,16 +29,16 @@
         "hand/screen1_touch.kicad_sch": "b74ed1678db3dd780d755441b2538b6ec4e74d465c3cacea5a787a5d4d4d27c9",
         "hand/screen2_power.kicad_sch": "7cbe0839a13febb4d73ef84f1246740c5cf8d53d578a260652552eecd951a82a",
         "hand/screen2_touch.kicad_sch": "5a523d2a51ae35288018b40b846903c4d1a4267c39f3f97f8f0a97203362972e",
-        "hand/screen_power_hand.kicad_pcb": "94ffa2a0ad3d428451798306c24dc087cbdf3e122cecefa7753c840033321a2b",
-        "hand/screen_power_hand.kicad_pro": "93b2c29201f7b2df20a8edacf21436de7d3afae0e817ed38c3c4b19b65844d18",
+        "hand/screen_power_hand.kicad_pcb": "b1e5dbb5c4a9eef5137f5dd339a685fe2ce0eac174362ba4df1bfdb6f668a123",
+        "hand/screen_power_hand.kicad_pro": "7c1d7d080c6be1d59b356208051249e8192af8b31a7946a435ef9cd95a7b2727",
         "hand/screen_power_hand.kicad_sch": "620a12d07661fe1cdd2413112878c3b24136ca4971517fed1e569a1e52378b41",
         "hand/screen_power_hand.net": "09dd14c271635261a5b8b2875c93a834915cb1b4450afd092bcca72012c5d955",
-        "hand/screen_power_hand.placed.kicad_pro": "826d5348ebb42316d5521ed976e997ff3d493d343da4b459e395a760b407d3fc",
+        "hand/screen_power_hand.placed.kicad_pro": "7214e54d688f7c6864a322f4e580ca36dd2a31e81a070c2d03f118c8234b87a4",
         "hand/screen_symbols.kicad_sym": "257573d8b17380f247f506d368b04895a8be1f94f5043312959524b00d25f8c9",
         "hand/shared_power.kicad_sch": "bf355c84f74c61a1b18120ed0cf0e8aa34a0f4497037e7647b96d1f34f1a9a0b",
         "hand/sym-lib-table": "070e6b5e2a9f44bcdeed6f57f9851fca4075a3e343216d6ce3e0ffa6abb317c9",
         "hand_checks.py": "92e6f017791bd62e2accb6adf20ade2c4ad0ea7652942574c6d03fb5ae35e655",
-        "layout.py": "90f48b1cd5cdee6393b62bbcb6edc2a3ca05898c43d5051277d9b73805bcb85f",
+        "layout.py": "338dc53f2c6ea94017fd2f6272f90331f1997015075d2eddc7cfb9d541cac32c",
         "model_geometry.py": "37b7e49ece74315e77e22654cca75c0bf3113b33001c297ee5f2679da280b288",
         "models/DIP-4_W7.62mm.step": "39490b2c17b5f36ae3fdd5fdd2952f6879a060ff6cbc6d0241e3d6262fd0f215",
         "models/DIP-8_W7.62mm.step": "4a377a56a8d9e9c0b86c095ef9ecc1869ac19e7f5069a3247b294250bf4f235d",
@@ -63,14 +64,15 @@
         "models/licenses/Package_TO_SOT_THT-CREDITS.md": "dc452c3f08da79359ec36f715ce5626680f458e0bafd70888ad3dcfa74d4576a",
         "models/licenses/Resistor_THT-CREDITS.md": "0cd03aa057748a76ca727351946973ab950c4f6589cbe197be56bccf4eaeb7b4",
         "models.py": "3a49e950a8323db0a4fb9b73273ba7039b286eb79383243f4d95f9fa8dbf6db6",
-        "pcb.py": "7d50aacdb44947ba1fc7beb3006c4c8eee2b8cc140dfdc713899f5b6a7d46d9a",
-        "route_critical.py": "30b5f8ce2b49e073d40773af9e0791a92cdcf0513d1804e4c46b06d9283d0016",
+        "pcb.py": "d2c42e706a54aed16f6d077c9925de53e6f4e1c0edad13fa62e5515d72937c30",
+        "route_critical.py": "cbcc9e5cafb4c0577889beb1bb5d0c70b2fa7555982ee3701b9ff2e8982ee547",
         "router.py": "37f7cfeac163f80c62a940455b88ea82d4aaec6cb28ea7eea566330795d4cdf7",
         "schematic.py": "b80c9a1337f9c5549e397a56400716b9a5c7284007eaae73ae91bd1e3b907fcf",
-        "screen_power.pretty/Fuse_Littelfuse_251_P12.70mm.kicad_mod": "78dc85457dff9dd66e543e545d7033531b9d0de4fea476e633baea202a66aa3d",
-        "screen_power.pretty/Relay_DPDT_AXICOM_IMSeries_Pitch5.08mm_D0.90mm.kicad_mod": "75b6991cb1ba1a8efdefdadd548c3edc078e441a79532e26a9f71f638beafdf0",
-        "screen_power.pretty/TO-220-3_SUP70101EL.kicad_mod": "0566209e224dbf3c4e85ce20f55fe952db20cb2f4fd765e34b3a8854375b9cd0",
-        "switch_circuit.py": "9869038ee6a4a3c8d7459db4d09ee7e4bdb20d54c6102d3a10e4fd16c95164ec"
+        "screen_power.pretty/Fuse_Littelfuse_251_P12.70mm.kicad_mod": "5cd7846fabf79a82b81e8503f8f203e5e40516b349994e894de65137ee79156f",
+        "screen_power.pretty/Relay_DPDT_AXICOM_IMSeries_Pitch5.08mm_D0.90mm.kicad_mod": "03f2a2db83addf26f1d2de9c093092cd830871df07a22e9de8aa33b5ccecbc0e",
+        "screen_power.pretty/TO-220-3_SUP70101EL.kicad_mod": "9a0eb2bca361f1dfe18d98bbb3e31cea11a32677c154518ec6cf85b90b29fccd",
+        "switch_circuit.py": "9869038ee6a4a3c8d7459db4d09ee7e4bdb20d54c6102d3a10e4fd16c95164ec",
+        "../silkscreen.py": "312eb503bb86f75695ec26589957e48499781108cf5498d7d03c146fee7e2719"
       },
       "relay_contact_behavior": {
         "coil_states_checked": 4,
@@ -146,17 +148,17 @@
         ]
       },
       "usb_track_lengths_mm": {
-        "S1_UP_P": 23.357803,
-        "S1_UP_N": 23.357803,
-        "S1_DN_P": 26.351514,
-        "S1_DN_N": 26.351514,
-        "S2_UP_P": 23.357803,
-        "S2_UP_N": 23.357803,
-        "S2_DN_P": 26.351514,
-        "S2_DN_N": 26.351514
+        "S1_UP_P": 23.526702,
+        "S1_UP_N": 23.526703,
+        "S1_DN_P": 26.178136,
+        "S1_DN_N": 26.178136,
+        "S2_UP_P": 23.526702,
+        "S2_UP_N": 23.526703,
+        "S2_DN_P": 26.178136,
+        "S2_DN_N": 26.178136
       },
       "usb_ground_reference": {
-        "samples": 5452,
+        "samples": 6268,
         "interval_mm": 0.1,
         "terminal_exclusion_mm": 1.35,
         "sample_offsets": "centerline and both copper edges"
@@ -203,7 +205,7 @@
         "report": {
           "$schema": "https://schemas.kicad.org/drc.v1.json",
           "coordinate_units": "mm",
-          "date": "2026-09-26T00:22:06",
+          "date": "2026-09-26T13:56:41",
           "ignored_checks": [
             {
               "description": "Footprint has no courtyard defined",
@@ -249,7 +251,7 @@
         "report": {
           "$schema": "https://schemas.kicad.org/erc.v1.json",
           "coordinate_units": "mm",
-          "date": "2026-09-26T00:22:07",
+          "date": "2026-09-26T13:56:42",
           "ignored_checks": [
             {
               "description": "Global label only appears once in the schematic",
@@ -321,6 +323,11 @@
         "relay_polarity_swap_detected": true,
         "relay_cross_channel_detected": true,
         "relay_no_connects_isolated": true,
+        "small_silk_text_detected": true,
+        "thin_silk_text_detected": true,
+        "thin_silk_outline_detected": true,
+        "weak_silk_clearance_rule_detected": true,
+        "short_silk_mask_gap_detected": true,
         "wrong_xh_pitch_detected": true,
         "model_unassigned_detected": true,
         "model_missing_detected": true,
