@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-26T21:28:32.675716+00:00",
+  "generated_at": "2026-09-26T22:09:49.134647+00:00",
   "kicad_version": "10.0.4",
   "cad_ready": true,
   "hardware_qualification": "not performed",
@@ -10,9 +10,9 @@
       "errors": [],
       "hardware_qualification": "not performed",
       "source_sha256": {
-        "../console_board.net": "bc07049c367f126779b20d11e765ed4a3d3c2436d94a56eb9b40c926958f1d6b",
+        "../console_board.net": "48fdba08807233f8b9ffb78ed82da1c45f5faed4ba9af14758f2802856086089",
         "../netlist.py": "565559b7751337c8930670658026715fa065138c846dd9784bbe4f06549bf1e3",
-        "../out_console/segno_console_board.kicad_pcb": "1c64edd2e49c9e40830d37f0e9b553fd5c57d28cba674f5d815e043c0f226199",
+        "../out_console/segno_console_board.kicad_pcb": "8bf99b025248c1e5fc704610dbdd14410f5089645d7e03e61a2e03418c295082",
         "../round_routes.py": "0de2ded7f6c115f5465c98f6408e9514169ed63ffa6335a147ceea692bfd0a05",
         "build.sh": "58c506aaf72675b578f0ad8d7f533877cd2e77b72d9adecd32742643637a6424",
         "check.py": "b68482bb0bd5350531708bda32114d4c0f38c3f8074dbea83a5087ed01a5539d",
@@ -253,7 +253,7 @@
         "report": {
           "$schema": "https://schemas.kicad.org/drc.v1.json",
           "coordinate_units": "mm",
-          "date": "2026-09-26T18:28:12",
+          "date": "2026-09-26T19:09:16",
           "ignored_checks": [
             {
               "description": "Footprint has no courtyard defined",
@@ -299,7 +299,7 @@
         "report": {
           "$schema": "https://schemas.kicad.org/erc.v1.json",
           "coordinate_units": "mm",
-          "date": "2026-09-26T18:28:14",
+          "date": "2026-09-26T19:09:17",
           "ignored_checks": [
             {
               "description": "Global label only appears once in the schematic",
