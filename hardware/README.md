@@ -121,7 +121,9 @@ placement templates. `test_decals.py` checks them. Outputs are in `out/`.
 ### [`console`](console/README.md)
 
 Notes on the console as a whole: power, thermals and how the enclosure, the
-board and the Pi fit together. `stusb4500_pdo/` is an Arduino sketch, run from
+board and the Pi fit together.
+[`grounding-and-bonding.md`](console/grounding-and-bonding.md) is the
+grounding and chassis-bonding scheme. `stusb4500_pdo/` is an Arduino sketch, run from
 an Arduino UNO, that reprograms the USB-C power-delivery trigger board when
 the console board cannot reach it.
 
