@@ -16,9 +16,9 @@ internals are this project's. Branded **Segno**.
 The deliverable is a **manufacturing package** (STEP + DXF + PDF) produced by the
 parametric generator [`enclosure/segno_enclosure.py`](enclosure/segno_enclosure.py),
 validated by an in-generator **assertion suite** (see §8). Decisions came from
-[brainstorm](../docs/brainstorm/2026-06-27-segno-enclosure-brainstorm-doc.md) →
-[research](../docs/research/2026-06-27-segno-components-research.md) →
-[plan](../docs/plan/2026-06-27-feat-segno-enclosure-rework-plan.md) → technical review.
+[brainstorm](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/brainstorm/2026-06-27-segno-enclosure-brainstorm-doc.md) →
+[research](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/research/2026-06-27-segno-components-research.md) →
+[plan](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/plan/2026-06-27-feat-segno-enclosure-rework-plan.md) → technical review.
 
 > **Integrated pedals.** The foot controls are ten **whole Cherub WTB-006
 > footswitches** (109.87 × 76.35, 29.3 mm tall incl. anti-slip pads, caliper-
@@ -486,7 +486,7 @@ reached them only by bending the 2.0 mm floor: 353 MPa and 23 mm of travel under
 1 kN on one pedal, first yield at about 360 N. Even a rigidly pinned perimeter,
 more than a 12 mm front wall and a screwed-down lid can deliver, tops out at
 914 N, so no amount of shell stiffening fixes it. `_stomp_fea.py` and
-[the rated-load analysis](../docs/research/2026-09-09-enclosure-stomp-load-analysis.md)
+[the rated-load analysis](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/research/2026-09-09-enclosure-stomp-load-analysis.md)
 have the model and its validation.
 
 Forty more feet on the pedestals' own chassis screws did fix the load path

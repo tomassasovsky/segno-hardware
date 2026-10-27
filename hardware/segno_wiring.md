@@ -175,7 +175,7 @@ allowances above totals **12.12 A**. That exceeds the retained 10 A AUX
 supply. The ring PCB upgrade does not authorize that simultaneous system load.
 Normal pill rendering remains within the modeled budget with a full-white ring.
 
-See the [40-pixel power-path verification](../docs/reviews/ring40-full-white-1072/verification.md)
+See the [40-pixel power-path verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/ring40-full-white-1072/verification.md)
 for conductor widths, connector limits and the source-pinned runtime arithmetic.
 
 **The old v2 board and new v3 board have different power paths (#1062).** On
@@ -300,7 +300,7 @@ but halted Pi needs those software hooks; the PCB does not detect missing HDMI.
 The owner confirmed both screens go fully dark when power and touch are
 removed while HDMI stays attached. Actual GPIO-controlled timing, touch
 enumeration and warm operation remain first-assembly checks. See the
-[connector and power acceptance matrix](../docs/reviews/screen-power-rev-k-1072/wiring-and-power.md)
+[connector and power acceptance matrix](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-rev-k-1072/wiring-and-power.md)
 and the [board instructions](kicad/screen_power/README.md).
 
 ---
@@ -394,7 +394,7 @@ aged-contact and hot-copper calculation gives at least **4.632 V at the strip**
 and **4.620 V at the AHCT buffer**, above its 4.5 V minimum. The fixed buck is
 nominally 5 V; its actual regulation floor is not established by a manufacturer
 specification. These are explicit design bounds, not measured assembled
-voltages. See the [final voltage review](../docs/reviews/production-final-1072/ring-voltage-margin.md).
+voltages. See the [final voltage review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/production-final-1072/ring-voltage-margin.md).
 
 The link is full duplex at 115200 baud. The console uses a PIO UART because
 its hardware UART is already assigned to the Pi link on GP16/GP17. This map

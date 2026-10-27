@@ -2,8 +2,8 @@
 
 # Pill housing with a deep platform grip and friction closure
 
-Use the current files in [`out/`](out/) or regenerate
-**`pill_friction_mount_print_pack.zip`** using the commands below. This replaces the printed version
+Use **`pill_friction_mount_print_pack.zip`** from the latest `fab-*` release
+or a PR's `hardware-outputs` artifact, or regenerate it using the commands below. This replaces the printed version
 that rocked on the platform and whose housing hooks would not engage. The owner
 confirmed **PLA** and requested a friction fit instead of bending snaps or screws.
 

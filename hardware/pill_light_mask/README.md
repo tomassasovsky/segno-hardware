@@ -30,10 +30,12 @@ it does not establish filament transmission or predict measured brightness.
 
 | Part | File | Material and print orientation |
 |---|---|---|
-| Carrier with full glue bed | [Base STL](out/tall_pill_base.stl) | Black PLA; flat floor down |
-| Flush lens and mounting flange | [Diffuser STL](out/tall_pill_diffuser.stl) | White PLA; wide flange down, narrow lens up |
-| Temporary bench collar | [Mask STL](out/tall_pill_mask.stl) | Black PLA; bezel face down |
+| Carrier with full glue bed | `out/tall_pill_base.stl` | Black PLA; flat floor down |
+| Flush lens and mounting flange | `out/tall_pill_diffuser.stl` | White PLA; wide flange down, narrow lens up |
+| Temporary bench collar | `out/tall_pill_mask.stl` | Black PLA; bezel face down |
 
+The `out/` files are built, not tracked: run `hardware/build.sh`, or take them
+from a PR's `hardware-outputs` artifact or the latest `fab-*` release.
 The STLs already have the correct orientation and their lowest face at Z=0.
 Start with a 0.4 mm nozzle and 0.2 mm layers. Check the sliced preview:
 
@@ -62,8 +64,8 @@ was suggested but not applied or verified by the agent. Check anchoring to the
 previous layer; direction alone does not establish a printable bridge.
 See [OrcaSlicer's bridge direction settings](https://www.orcaslicer.com/wiki/print_settings/strength/strength_settings_advanced).
 
-[Bench assembly STEP](out/tall_pill_assembly.step) shows the three assembled
-parts. [Sheet-metal reference STEP](out/tall_pill_panel_reference.step) replaces
+The bench assembly STEP (`out/tall_pill_assembly.step`) shows the three assembled
+parts. The sheet-metal reference STEP (`out/tall_pill_panel_reference.step`) replaces
 the collar with a local coupon of the actual panel thickness and opening. These
 assembly files are references, not combined objects to slice. Individual STEP
 files are alongside the STLs.

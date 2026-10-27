@@ -1333,7 +1333,7 @@ saved, reopened and checked. The fully coated revision requires its own checks.
 The actual straight-face minimum distance is **0.050001 mm** on both sides in
 both documents. Native flats match 107 reference holes with zero missing or
 extra area. Rivet axes and all other part geometry/poses are preserved. See
-[the verification record](../../docs/reviews/sheetmetal-release-fixes/rear-closure-review.md).
+[the verification record](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/rear-closure-review.md).
 
 
 ## Seven-inch screen frontward correction — September 6, 2026
@@ -1454,8 +1454,8 @@ All45 enclosure regressions pass. Current shop archive is only
 pieces. The feet are purchased parts and do not enter that archive. Older
 multi-supplier archives are not the current handoff.
 
-Strength remains unqualified. See the [extra-feet verification](../../docs/reviews/extra-feet/verification.json)
-and [temper sensitivity screen](../../docs/reviews/extra-feet/temper-screening.json).
+Strength remains unqualified. See the [extra-feet verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/extra-feet/verification.json)
+and [temper sensitivity screen](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/extra-feet/temper-screening.json).
 The nominal fit review assumes Ø18×5 feet and Ø9×5 top hardware. Verify actual
 retention, access, foot contact and assembled load performance before release.
 
@@ -1481,8 +1481,8 @@ too; a group count alone does not prove replacement. Set final transforms only
 on occurrence proxies obtained through the root, after all geometry/appearance
 changes, and verify the total occurrence count and saved/reopened state.
 
-See [verification](../../docs/reviews/collar-thickness/verification.json) and
-[clearance measurements](../../docs/reviews/collar-thickness/clearances.json).
+See [verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/collar-thickness/verification.json) and
+[clearance measurements](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/collar-thickness/clearances.json).
 The original mini-console and all sheet-metal output files are unchanged.
 
 ## Console cable opening — September 9, 2026
@@ -1504,7 +1504,7 @@ retain geometry and placement. The user hid `pedals:1`, `tile_REC_PLAY:1` and
 warnings. The selected collar/faceplate planes measure 0.179998 mm apart.
 Only the two collar STEP/STL pairs and printing archive change; the sled, mini
 and sheet-metal output files are untouched. All 50 enclosure tests pass.
-See [verification](../../docs/reviews/cable-opening/verification.json).
+See [verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/cable-opening/verification.json).
 
 ## Closed stadium cable opening — September 9, 2026
 
@@ -1521,7 +1521,7 @@ preserved. During inspection the owner showed `pedals:1`, `tile_REC_PLAY:1`
 and `base:1` again; those choices are retained. Feature warning sets are
 unchanged. Only the two collar STEP/STL pairs and printing ZIP change.
 All 50 tests pass; exact native parity and file evidence are in
-[verification](../../docs/reviews/cable-hole/verification.json).
+[verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/cable-hole/verification.json).
 
 ## Short-screw mid-platform mounting — September 9, 2026
 
@@ -1544,7 +1544,7 @@ preserved; 448 other populated and 43 other sheet-metal occurrences match their
 baselines. Counts remain 452/1002 and 45/45 occurrences/bodies. Feature warnings
 remain at eight pre-existing unique-component warnings in populated and zero
 in sheet metal. No metal part, mini-console or sheet-metal archive changed.
-See [the verification](../../docs/reviews/mid-platform-mount/final-verification.json).
+See [the verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/mid-platform-mount/final-verification.json).
 
 ## Screen mounts: closed deck, mirrored stand, shims — #1070
 

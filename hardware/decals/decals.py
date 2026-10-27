@@ -39,7 +39,6 @@ from shapely.ops import unary_union
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "out"
-REPO = HERE.parent.parent
 sys.path.insert(0, str(HERE.parent / "enclosure"))
 import segno_enclosure as se  # noqa: E402
 
@@ -49,7 +48,8 @@ CORNER_LOSS = 0.25     # mm2 a sharp corner may lose to the erosion test without
 FLAT_STEP = 0.05       # mm of curve per segment when flattening for the checks
 
 # --- logo --------------------------------------------------------------------
-GLYPH_SVG = REPO / "tool" / "brand_assets" / "segno-glyph-black.svg"
+# A copy of the Segno app's tool/brand_assets/segno-glyph-black.svg.
+GLYPH_SVG = HERE / "reference" / "segno-glyph-black.svg"
 WORD_FONT = "/System/Library/Fonts/Supplemental/Apple Chancery.ttf"
 LOGO_PLACE = 0.10      # mm: each placed part's ink-box centre vs its Fusion body's
 LOGO_SHAPE = 0.60      # mm: outline distance allowed. The type is the reference: Fusion's

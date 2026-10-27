@@ -16,7 +16,7 @@ chip was not the cause. The test below is what proved it, and it is the test to
 re-run whenever this wiring is touched.
 
 The record of the September 4 session is
-[`docs/research/2026-09-05-din-midi-bench.md`](../../docs/research/2026-09-05-din-midi-bench.md):
+[`docs/research/2026-09-05-din-midi-bench.md`](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/research/2026-09-05-din-midi-bench.md):
 MIDI IN passed 48/48 bytes, MIDI OUT sent 48 bytes from the UART and the Scarlett
 received none. U1 was fitted with an **SN74HC125N** where the design asks for an
 **SN74AHCT125N**, which is a plausible cause and was never confirmed. This script

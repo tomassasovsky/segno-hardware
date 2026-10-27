@@ -33,7 +33,7 @@ and independent host detection remain. The board is still two layers and
 68 × 76 mm. See the [screen design and wiring](screen_power/README.md).
 
 Use the archives identified by the
-[manufacturing record](../../docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json)
+[manufacturing record](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json)
 and its matching review evidence. Console copper is unchanged. The white
 ring board retains its tracks, pads, rear ground and full-white capacity;
 two small dead-end front-ground fingers have been removed. No pre-PCB prototype or additional
@@ -61,10 +61,10 @@ The existing Pi-to-console ribbon remains direct. The dedicated AUX buck
 feeds screen-power J1 separately; no screen load passes through console J3
 or J25. No extra USB or power connector is needed on the console for this
 interface. See the [screen-board wiring](screen_power/README.md) and
-[console connector verification](../../docs/reviews/console-screen-connector-1072/verification.md).
-The latest [placement verification](../../docs/reviews/console-pi-power-placement-1072/verification.md)
+[console connector verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/console-screen-connector-1072/verification.md).
+The latest [placement verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/console-pi-power-placement-1072/verification.md)
 covers the PI PWR move and retained PD alignment. The subsequent
-[top-label verification](../../docs/reviews/console-screen-label-1072/verification.md)
+[top-label verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/console-screen-label-1072/verification.md)
 covers the `SCREEN` text change and current exports.
 
 The screen planning load is **4.25 A shared**, including both main outputs,

@@ -260,7 +260,7 @@ and archives were rebuilt and checked against the retained bytes. No print or
 purchased-hardware references appear in the metal archive.
 
 Detailed evidence: [digital verification](reference/welded_revision_verification.json)
-and [fit calculations](../../docs/reviews/dinacut-fit-calculations.md). A digital
+and [fit calculations](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/dinacut-fit-calculations.md). A digital
 pass does not qualify the physical welded enclosure or the purchased joints.
 
 Before fabrication release, resolve the post-weld fit/drilling provider,
@@ -281,21 +281,21 @@ It supersedes the assumption that the offered 2 mm stock is 1050. Job-stock
 traceability and the separate 1.2 mm rear-panel material remain to be confirmed.
 Existing 1050 generator/drawing callouts have not yet been reissued. This closes
 the certificate's alloy/temper identification, not assembled strength or cutting
-release. See [material review](../../docs/reviews/material-certificate/review.md).
+release. See [material review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/material-certificate/review.md).
 
 Closed stadium cable-hole update, September 9: current native versions are
 sheet-metal 143/populated 358, saved/reopened and checked against source.
 The two collar openings are 8.6 ×13.5 mm with R4.3 ends; thread the cable
 before seating the pedal. All 50 tests pass and print artifacts agree.
 This supersedes the open-top cable-slot revision described below. See
-[verification](../../docs/reviews/cable-hole/verification.json).
+[verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/cable-hole/verification.json).
 
 September 9 cable-opening follow-up: current native saves are sheet-metal 141
 and populated 355, saved/reopened and verified. Both console collars now have
 an 8.6 mm centred rear slot with a raised bottom and open top for cable
 insertion. All 50 enclosure tests pass. Matching collar STEP/STL files and the
 printing archive are current; metal-shop outputs are byte-identical. See
-[cable-opening verification](../../docs/reviews/cable-opening/verification.json).
+[cable-opening verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/cable-opening/verification.json).
 Earlier version/test counts below record their respective revisions.
 
 Current September 8 status: extra floor supports are implemented and digitally
@@ -305,8 +305,8 @@ five-archive counts below describe historical packages and are not the current
 shop handoff. The previous local geometry verdict does not establish stomp
 capacity. The all-temper strip sensitivity screen flags unresolved bending;
 assembled structural assessment and load validation remain open. Do not release
-cutting yet. See [verification](../../docs/reviews/extra-feet/verification.json)
-and [temper comparison](../../docs/reviews/extra-feet/temper-screening.json).
+cutting yet. See [verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/extra-feet/verification.json)
+and [temper comparison](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/extra-feet/temper-screening.json).
 
 
 **Status: local source, export, drawing and native-model checks pass. Physical
@@ -317,10 +317,10 @@ started. Work continues from `fix/drawing-legibility-1001` at `1d14d701`, with
 local corrections on `codex/sheetmetal-release-fixes`.
 
 The September 7 owner-finishing process-note update is recorded in
-[the current process verification](../../docs/reviews/sheetmetal-release-fixes/owner-finishing-verification.json).
+[the current process verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/owner-finishing-verification.json).
 The owner measured the EC11 washer ID7.25/OD11.85. The disc now uses a straight
 Ø8.50 laser bore without chamfer; the revised fit and current file evidence are
-recorded in [the straight-disc verification](../../docs/reviews/sheetmetal-release-fixes/straight-disc-verification.json).
+recorded in [the straight-disc verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/straight-disc-verification.json).
 Current saves are sheet-metal138/populated351; all40 enclosure tests pass.
 
 ### Historical manufacturing contract — pre-weld revision
@@ -390,7 +390,7 @@ corner reliefs, **0.30–0.40 mm bare normal ridge clearance** and
    88 members. All eight changed PDFs (11 pages) were rendered and visually
    reviewed. Saved/reopened Fusion sheet-metal137 and populated350 have no
    empty components or new warnings; mini13 is unchanged. See the exact
-   [verification record](../../docs/reviews/sheetmetal-release-fixes/full-coat-verification.json).
+   [verification record](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/full-coat-verification.json).
 2. Confirm the job uses the certified 2 mm 1100-H14 stock, obtain separate
    1.2 mm rear-panel alloy/temper evidence, and reissue obsolete 1050 callouts.
    Confirm steel grade/gauge, R2/R1.6 tools,
@@ -428,21 +428,21 @@ The following records remain valid only for their recorded source/file hashes.
 They do not release the fully coated changes above, and their masked-seat,
 pre-fitted-shim, old disc/bore and six-archive instructions are superseded.
 
-- [Prepaint process review](../../docs/reviews/sheetmetal-release-fixes/prepaint-process-review.md):
+- [Prepaint process review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/prepaint-process-review.md):
   the previous masked-seat process passed 34 regressions, generator/file checks
   and drawing review. It retained 39 STEP files and its native cache bytes.
-- [Tight rear-joint review](../../docs/reviews/sheetmetal-release-fixes/rear-closure-review.md):
+- [Tight rear-joint review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/rear-closure-review.md):
   saved/reopened sheet-metal 135 and populated 348; rear joints 0.050001 mm,
   native base flats 107 holes with zero missing/extra material, handed brackets
   matched. The lid's0.008358 mm² comparison residue was explicitly bounded.
-- [Seam review](../../docs/reviews/sheetmetal-release-fixes/seam-review.md) and
-  [seam verification](../../docs/reviews/sheetmetal-release-fixes/seam-fix-verification.json):
+- [Seam review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/seam-review.md) and
+  [seam verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/seam-fix-verification.json):
   integrated corner-relief perimeter, handed brackets and purchased support
   references; prior nominal/bare shim dimensions are now superseded.
-- [Repeat review](../../docs/reviews/sheetmetal-release-fixes/round2-review.md):
+- [Repeat review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/round2-review.md):
   repaired the real Ring 24/holder clashes and validated the laser spur-path and
   publication-failure guards. Its archive counts/fit dimensions are historical.
-- [Screen/mini verification](../../docs/reviews/sheetmetal-release-fixes/sled-screen-verification.json):
+- [Screen/mini verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/sheetmetal-release-fixes/sled-screen-verification.json):
   preserved the seven-inch display's0.50 mm forward correction and the separate
   mini's two underside retention screws per sled, corrected toe relief, tabs
   and rear bosses. The current paint allowance adds a console-only screen
@@ -460,7 +460,7 @@ solids match. All 49 enclosure tests pass; two STEP/STL pairs and the 36-member
 printing ZIP were updated. Sleds, mini-console and metal-shop files are unchanged.
 This resolves the two-line wall concern; first-print insert fit and the existing
 assembled structural/material/shop acceptance remain open.
-[Evidence](../../docs/reviews/collar-thickness/verification.json).
+[Evidence](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/collar-thickness/verification.json).
 
 ## Short-screw mid-platform follow-up — September 9
 
@@ -474,7 +474,7 @@ length, insert recess, PETG fit and engagement on the first prints.
 
 Fusion sheet-metal v144 and populated v360 are saved/reopened and match source
 solids exactly. Unchanged-part/pose, native warning, STEP and closed STL checks
-are recorded in [the mounting evidence](../../docs/reviews/mid-platform-mount/).
+are recorded in [the mounting evidence](https://github.com/tomassasovsky/segno/tree/claude/segno-integration/docs/reviews/mid-platform-mount).
 All 56 enclosure tests pass (73.636 s). The first-print ZIP has exactly four
 STL parts, one of each variant; the full
 print archive includes the new STEP/STL pair. The metal-shop archive is unchanged.

@@ -18,7 +18,7 @@ electronics shops / MercadoLibre, except the Pi 5, screens, and USB interface
 
 - [ ] Raspberry Pi **5** (8 GB recommended; 4 GB OK) ×1
       *(Pi 5 only: the appliance image has no Pi 4 build. See
-      [`docs/RUNNING_ON_RPI.md`](../docs/RUNNING_ON_RPI.md).)*
+      [`docs/RUNNING_ON_RPI.md`](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/RUNNING_ON_RPI.md).)*
 - [ ] Pi 5 **active cooler** (official, or a heatsink+fan) ×1 — **required** for a
       closed enclosure under sustained audio + GPU load
 - [ ] NVMe SSD, M.2 2230/2242, 256 GB+, with a Pi 5 M.2 HAT ×1
@@ -190,7 +190,7 @@ a waveform, so pick any 7″ HDMI panel; set its `pixel_ratio` in
 
 - USB interfaces can expose fewer channels at higher sample rates; the
   appliance drives the interface directly through ALSA (see
-  [`docs/RUNNING_ON_RPI.md`](../docs/RUNNING_ON_RPI.md#audio-interface)).
+  [`docs/RUNNING_ON_RPI.md`](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/RUNNING_ON_RPI.md#audio-interface)).
 - Footswitches, CTRL jacks and pill LEDs terminate on console v3; the encoder
   and 35-LED strip terminate on the independent ring carrier. Pi GPIO14/15
   carry MIDI, and the pedal link uses uart3 (GPIO8/9) over the ribbon.
