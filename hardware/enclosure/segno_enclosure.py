@@ -845,7 +845,7 @@ REAR_IO_U      = None   # set to SCREEN_16_U below -- the panel is CENTRED ON TH
 # connectors all fix with nuts or screws, so none of them threads into the base.
 # Their metal shells sit on the painted wall: they reach the chassis through the
 # board ground (H1), not through a bonded panel -- see
-# docs/design/console-grounding-and-bonding.md.
+# hardware/console/grounding-and-bonding.md.
 REAR_IO_BAND_PAD = 21.0   # the vent block is laid out against the I/O band's left
                           # edge: the outermost keep-out plus this, which is where
                           # the panel's edge was, so the vents did not move

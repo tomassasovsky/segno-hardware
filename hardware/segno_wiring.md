@@ -479,6 +479,6 @@ source of truth.
 Single common ground; DIN **IN** opto-isolated; exactly **one** hard chassis
 bond, at the board's H1. The full scheme — what goes on the earth stud, what
 deliberately does not, and the bench audit to run before trusting any of it —
-lives in `docs/design/console-grounding-and-bonding.md` (#751). Vents: intake
+lives in [`console/grounding-and-bonding.md`](console/grounding-and-bonding.md) (#751). Vents: intake
 in the bottom plate, exhaust in the rear wall; air crosses the boards and the
 Pi's active cooler.

@@ -2389,7 +2389,7 @@ def write_mount_json():
         "hole_inset_mm": MOUNT_INSET,
         "hole_drill_mm": 3.2,
         "holes_mm": {ref: [round(x, 3), round(y, 3)] for ref, (x, y) in holes.items()},
-        "chassis_bond_hole": "H1",   # see docs/design/console-grounding-and-bonding.md
+        "chassis_bond_hole": "H1",   # see hardware/console/grounding-and-bonding.md
     }
     os.makedirs(OUT, exist_ok=True)
     with open(path, "w") as fh:
