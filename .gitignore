@@ -1,0 +1,16 @@
+.DS_Store
+.venv/
+__pycache__/
+*.lck
+
+# KiCad scratch and caches. Underscore-prefixed files are scratch
+# experiments; the fab outputs live in hardware/kicad/fab/. Loose Gerbers
+# and caches are regenerated.
+hardware/kicad/_*
+hardware/kicad/fp-info-cache
+hardware/kicad/gerbers/
+hardware/kicad/*.gbr
+hardware/kicad/*.gbrjob
+hardware/kicad/out_console/gerbers/
+hardware/kicad/out_console/*.zip
+hardware/kicad/out_console/*.kicad_prl
