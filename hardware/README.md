@@ -6,12 +6,23 @@ the documents that describe how to buy, build and wire one unit.
 
 Most of this folder is generated. Python scripts produce the KiCad boards
 (SKiDL for netlists, KiCad's own `pcbnew` Python module for layout) and the
-mechanical parts (cadquery). Their outputs, STEP, DXF, PDF, STL and Gerber
-archives, are committed next to them so that the files can be opened without
-running anything. When a generator and its output disagree, the generator is
-the source; regenerate rather than editing the output.
+mechanical parts (cadquery). When a generator and its output disagree, the
+generator is the source; regenerate rather than editing the output.
 
-The firmware for the boards is in [`../firmware`](../firmware/README.md).
+The cadquery outputs (STEP, DXF, PDF, STL and the vendor archives under
+`enclosure/out/`, `strip_ring/out_console/`, `pill_light_mask/out/`,
+`decals/out/` and `ring_diffuser/out/`) are not tracked. `build.sh` builds
+them; CI runs it on every PR and uploads the result as the `hardware-outputs`
+artifact, and a `fab-*` tag attaches the same files to a GitHub release. The
+KiCad boards, their Gerbers and `kicad/fab/` stay tracked: the routed boards
+come from Freerouting, which does not reproduce a layout, and `kicad/fab/`
+holds the archives that were sent to the board house. The Fusion 360
+documents and the parts exported from them (`enclosure/fusion/`,
+`enclosure/formed/`) also stay tracked.
+
+The firmware for the boards, and the pedal link contract it shares with the
+app, are in the Segno repository:
+[`firmware/`](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/firmware/README.md).
 
 ## Current design
 

@@ -1,0 +1,70 @@
+name: outputs
+
+# Builds every generated hardware output from the Python sources
+# (hardware/build.sh), checks it, and publishes it: as the hardware-outputs
+# artifact on PRs and main, and as release assets on fab-* tags.
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['fab-*']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    # macOS: the decals use macOS system fonts (Apple Chancery, Helvetica Neue).
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: hardware/enclosure/requirements.txt
+
+      - name: Install the CAD environment
+        run: pip install -r hardware/enclosure/requirements.txt
+
+      - name: Build the outputs
+        run: bash hardware/build.sh python
+
+      - name: Check the outputs
+        run: |
+          (cd hardware/enclosure && python -m unittest discover -s tests)
+          python -m unittest hardware/strip_ring/test_console_ring.py
+          python -m unittest hardware/decals/test_decals.py
+          (cd hardware/pill_light_mask && python check_geometry.py && python check_top_mount.py)
+
+      - name: Collect the outputs
+        run: |
+          mkdir -p dist
+          for d in enclosure/out strip_ring/out_console pill_light_mask/out decals/out ring_diffuser/out; do
+            name=$(echo "$d" | tr '/' '-')
+            (cd "hardware/$d" && zip -qr "$GITHUB_WORKSPACE/dist/$name.zip" .)
+          done
+          cp hardware/enclosure/segno_panel_layout.svg dist/
+          # The vendor archives, as sent to each shop.
+          cp hardware/enclosure/out/segno_*.zip dist/
+          (cd dist && shasum -a 256 * > SHA256SUMS)
+          ls -la dist
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: hardware-outputs
+          path: dist/
+          retention-days: 30
+
+      - name: Attach the outputs to a release
+        if: startsWith(github.ref, 'refs/tags/fab-')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "$GITHUB_REF_NAME" \
+            --notes "Fabrication outputs built from $GITHUB_SHA by hardware/build.sh. SHA256SUMS lists every file."

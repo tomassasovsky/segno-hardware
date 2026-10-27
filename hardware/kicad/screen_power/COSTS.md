@@ -14,9 +14,9 @@ matches all 55 quote lines and totals **$88.24 before sales tax**:
 The US site is selected for the intended Miami delivery; no final street
 address or tax was entered, so checkout may adjust those charges. This is
 not a complete build cost and no purchase was made.
-The [recorded quote](../../../docs/reviews/screen-power-ground-cleanup-1072/mouser-live-quote.json)
+The [recorded quote](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-ground-cleanup-1072/mouser-live-quote.json)
 contains each requested quantity, available quantity and line price; the
-[cart verification](../../../docs/reviews/screen-power-ground-cleanup-1072/mouser-cart-verification.json)
+[cart verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-ground-cleanup-1072/mouser-cart-verification.json)
 records the matching cart and shipping selection. Combine these parts in
 one shipment. All requested quantities are available now, but Mouser's high
 order-volume notice means stock availability does not guarantee a dispatch date.

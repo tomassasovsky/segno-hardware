@@ -23,14 +23,14 @@ retaining the two-layer, 1 oz construction and all component positions.
 The console feed was upgraded with it. This carrier copper supports the
 module alternatives; the selected 40-pixel strip now uses the direct AUX
 harness below, so passing carrier power checks does not verify that harness. See the
-[40-pixel verification](../../docs/reviews/ring40-full-white-1072/verification.md).
+[40-pixel verification](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/ring40-full-white-1072/verification.md).
 
 The September 26 copper-finish export supersedes those earlier ZIPs.
 It rounds the main feed and signal bends while retaining the two straight
 C5/U2 power taps with rounded bases. The 1.5 mm feed, three ground-return
 vias and component positions remain. Use the archive in the
-[current manufacturing record](../../docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json),
-verified by the [three-board audit](../../docs/reviews/pcb-finish-all-three-1072/audit.md).
+[current manufacturing record](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json),
+verified by the [three-board audit](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/pcb-finish-all-three-1072/audit.md).
 The retained hole allowances include 1.10 mm
 holes for J1's JST XH pins and 1.25 mm holes at J3/J4 for the loose module
 support pins. Keep these allowances when updating footprints.

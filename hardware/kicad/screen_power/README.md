@@ -31,10 +31,10 @@ The USB host-presence circuit and AUX-powered data relays are retained.
 Each USB shield joins board ground through XH pin 5. Host VBUS only senses connection;
 it supplies neither relay coils nor screens. The selected power and fuse
 changes are described in the
-[implementation plan](../../../docs/plan/2026-09-27-screen-power-stock-cost-1072-plan.md)
-and [fuse/coil assessment](../../../docs/reviews/screen-power-stock-cost-1072/holder-coil-budget.md).
+[implementation plan](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/plan/2026-09-27-screen-power-stock-cost-1072-plan.md)
+and [fuse/coil assessment](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-stock-cost-1072/holder-coil-budget.md).
 
-The [manufacturing record](../../../docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json)
+The [manufacturing record](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json)
 identifies the verified manufacturing archives and their board hashes. Use
 those archives rather than exporting an unreviewed working copy. Revision I
 remains withdrawn because of incorrect
@@ -160,7 +160,7 @@ local fanout fit must be checked with the actual donor; the old side-solder-pad
 fit assessment does not establish it. Keep pin 4 as the dedicated power return;
 do not use foil or loose braid for load current. No shield wire is separately
 soldered to the PCB: unplugging the XH housing disconnects all five conductors.
-See the [current harness notes](../../../docs/reviews/screen-power-ground-cleanup-1072/harness.md)
+See the [current harness notes](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-ground-cleanup-1072/harness.md)
 for quantities, procurement and inspection details.
 
 **Both USB-C leads to the 15.6in screen need a real ground wire.** On the first
@@ -260,7 +260,7 @@ normally open 4/5 and unused normally closed 2/7.
   10 kΩ series resistor alone bounds sensing current below 0.556 mA for a
   nonnegative gate node. This is not whole-screen suspend certification.
 
-The [fuse/coil budget](../../../docs/reviews/screen-power-stock-cost-1072/holder-coil-budget.md)
+The [fuse/coil budget](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-stock-cost-1072/holder-coil-budget.md)
 uses 100 mV for F1, at most 10 mΩ for the complete holder path, a 20 mV
 copper target and a 5 mV Q5 allowance. K1 picks up before the screen load is
 connected: at less than 150 mA pre-contact current, the 100 °C winding
@@ -269,7 +269,7 @@ sensitivity leaves **45.5 mV** pickup margin. The deliberately simultaneous
 this is not substantial margin or a guaranteed holding threshold. The
 100 °C winding ceiling at 60 °C local air is an engineering envelope, not a
 manufacturer guarantee of self-heating. The
-[filled-copper assessment](../../../docs/reviews/screen-power-stock-cost-1072/ground-return-assessment.md)
+[filled-copper assessment](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-stock-cost-1072/ground-return-assessment.md)
 records the calculated positive and ground-return losses for the final native
 board, including a thinner-copper sensitivity. It is not a measured guarantee.
 
@@ -291,7 +291,7 @@ minimum voltage.
 USB inputs sit on the left edge and touch outputs on the right. Both rows
 of vertical XH plugs remain accessible from above. F1 and K1 occupy the
 shared power section; the four compact branch fuses sit near their outputs.
-The [revision review](../../../docs/reviews/screen-power-stock-cost-1072/review.md)
+The [revision review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-stock-cost-1072/review.md)
 records native clearance, body, copper and fabrication checks. Leave access
 above F1 to remove its cartridge with power disconnected; mated housings
 and upright parts also require enclosure headroom.
@@ -302,7 +302,7 @@ FR-4 core, with nominal relative permittivity **4.5**. The revised target is
 1.01 mm center pitch. A converged quasi-static field calculation including
 nominal solder mask estimates **90.8 Ω differential**. This corrects the
 preceding uncoated calculator estimate, which did not capture the coating's
-effect. See the [reproducible impedance assessment](../../../docs/reviews/screen-power-usb-revision-1072/impedance-assessment.md)
+effect. See the [reproducible impedance assessment](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-usb-revision-1072/impedance-assessment.md)
 for material assumptions, independent checks and sensitivity bounds.
 
 JLCPCB's [controlled-impedance service](https://jlcpcb.com/capabilities/pcb-capabilities)

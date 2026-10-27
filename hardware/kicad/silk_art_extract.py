@@ -14,9 +14,10 @@ from fontTools.pens.recordingPen import RecordingPen
 import pathops
 
 import os
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+HERE = os.path.dirname(os.path.abspath(__file__))
 BRAVURA = "/Users/Tomas/Library/Fonts/Bravura.otf"
-MONO = os.path.join(REPO, "assets/fonts/JetBrainsMono-Regular.ttf")
+# The same file as the Segno app's assets/fonts/JetBrainsMono-Regular.ttf.
+MONO = os.path.join(HERE, "fonts/JetBrainsMono-Regular.ttf")
 
 
 def glyph_path(font_path, char=None, uni=None):
