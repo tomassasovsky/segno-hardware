@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-or-later
 """DIN MIDI bench test for the console board (#1007).
 
 Runs the acceptance test the bench handoff describes

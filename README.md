@@ -62,9 +62,39 @@ contract between the firmware and the app, stay in
 board's pin map or the pedal link needs a PR in each repository, linked to
 each other.
 
-## License
+## Licence
 
-GPL-3.0-or-later, the same as Segno. See [`LICENSE`](LICENSE). Some files
-under `hardware/kicad/screen_power/` carry third-party terms for material
-from the KiCad libraries, and `hardware/kicad/fonts/` holds JetBrains Mono
-under the SIL Open Font License.
+The hardware design is licensed under the CERN Open Hardware Licence
+Version 2, Strongly Reciprocal (`CERN-OHL-S-2.0`). The full text is in
+[`LICENSE`](LICENSE). It covers the design sources: the KiCad boards,
+schematics, footprints and 3D models we made, the SKiDL and `pcbnew` scripts
+that build the boards, the cadquery generators for the enclosure, printed parts
+and decals, the Fusion 360 documents and their exports, the build and check
+scripts, the documentation, and the fabrication files built from all of these.
+The generator scripts are hardware source: they are the preferred form for
+changing the parts they produce, which is what CERN-OHL-S-2.0 calls Source.
+
+These are not covered, and keep their own terms:
+
+- `hardware/console/stusb4500_pdo/` (an Arduino sketch) and
+  `hardware/bench/midi_din_test.py` are software, not design source. They stay
+  GPL-3.0-or-later, the same as Segno. The text is in
+  [`LICENSES/GPL-3.0.txt`](LICENSES/GPL-3.0.txt).
+- Material from the KiCad libraries, from Seeed Studio and from Adafruit:
+  some STEP models, footprints derived from library footprints, and module
+  models. [`THIRD_PARTY.md`](THIRD_PARTY.md) lists each file with its source
+  and licence.
+- `hardware/kicad/fonts/` holds JetBrains Mono under the SIL Open Font
+  License 1.1 (`OFL-JetBrainsMono.txt`).
+- `hardware/enclosure/reference/buck_dimensions.png` and `usb3_dimensions.png`
+  are dimension drawings from the sellers' product listings, kept for
+  reference. They are not ours, and no licence is granted for them.
+
+The decal generator reads macOS system fonts (Apple Chancery, Helvetica Neue)
+at build time. The fonts are not in this repository.
+
+Until this licence was added on 2026-10-28, these files were published under
+GPL-3.0-or-later, first as part of
+[`tomassasovsky/segno`](https://github.com/tomassasovsky/segno) and then in
+this repository. Copies taken from that history remain available under those
+terms.

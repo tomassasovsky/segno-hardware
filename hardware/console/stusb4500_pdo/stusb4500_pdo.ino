@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
 /*
   Segno console: program the SparkFun Power Delivery Board (STUSB4500, DEV-15801)
   to take 20 V at the most current the source offers there (5 A at most, 3 A at

@@ -151,11 +151,9 @@ A single-LED WS2812B indicator board, generated with `pcbnew`. It is not used
 by the console, which uses segments cut from a bare LED strip instead; the
 design is kept because it is complete.
 
-## License
+## Licence
 
-The hardware designs are covered by the repository's
-[GPL-3.0-or-later license](../LICENSE). Two files under
-`kicad/screen_power/` carry third-party terms for material copied from the
-KiCad libraries: [`LIBRARY_LICENSE.txt`](kicad/screen_power/LIBRARY_LICENSE.txt)
-(CC-BY-SA 4.0 with KiCad's exception for designs that use the libraries) and
-the 3D-model credits in [`models/licenses/`](kicad/screen_power/models/licenses/).
+The hardware design is licensed under
+[CERN-OHL-S-2.0](../LICENSE). The repository [README](../README.md#licence)
+lists the files that keep their own terms: GPL-3.0-or-later software, KiCad,
+Seeed and Adafruit library material, a font, and two seller drawings.
