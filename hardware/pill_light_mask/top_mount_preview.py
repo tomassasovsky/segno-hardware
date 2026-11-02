@@ -86,7 +86,7 @@ def render():
     exploded=[(models['base'],'#30363c'),
               (pill['diffuser'].translate((0,0,8)),'#eee8d8'),
               (models['cover'].translate((0,0,23)),'#22262b')]
-    views=[(objects,'CURRENT CRADLE · DEEPER GRIP',(235,200,190),(8,0,25),85),
+    views=[(objects,'CURRENT CRADLE · FULL-WIDTH GRIPS',(235,200,190),(8,0,25),85),
            (detail,'SECTION · SOLID FLOOR AND LENS LEDGE',(155,-150,90),(m.PILL_X,0,3),44),
            (exploded,'TWO BLACK PARTS + REUSED WHITE LENS',(160,140,120),(m.PILL_X,0,15),45)]
     for i, (items, title, camera, focal, scale) in enumerate(views):
@@ -94,7 +94,7 @@ def render():
         ax.imshow(draw(items,camera,focal,scale))
         ax.set_axis_off()
         ax.set_title(title, fontsize=12, color="#525b65", pad=0)
-    fig.text(0.04, 0.18, "18 mm jaws on both sides of the rim\n2.4 mm outside brace · 14 mm wide grips", fontsize=12,
+    fig.text(0.04, 0.18, "18 mm jaws on both sides of the rim\nGrips span the inner width · no sliding", fontsize=12,
              color="#36414a", linespacing=1.6)
     fig.text(0.37, 0.18, "Pill face follows the 12.5° platform slope\n2.4 mm floor · Open-top cable slots", fontsize=12,
              color="#36414a", linespacing=1.6)

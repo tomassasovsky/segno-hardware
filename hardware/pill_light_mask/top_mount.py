@@ -30,7 +30,18 @@ OUT_L, OUT_W = 75.7, 32.43
 CAVITY_L, CAVITY_W = pill.LENGTH + 0.5, pill.WIDTH + 0.5
 TRAY_X = PILL_X
 TRAY_L, TRAY_W = 72.0, 19.2
-CLIP_Y, CLIP_W = 20.0, 14.0
+# Fit revision 3: each grip runs from its old inner end out to the collar's
+# side wall, so the two grips span the collar's inner width and their outer
+# ends stop the housing sliding along the rear wall. The contact pads keep
+# their tuned position and width, so the grip force on the wall is unchanged.
+SIDE_IN = CRADLE['inner_width_mm'] / 2   # side-wall inner face, 39.575
+SIDE_GAP = .05                            # grip end off the side wall
+GRIP_IN, GRIP_OUT = 13.0, SIDE_IN - SIDE_GAP
+CLIP_Y, CLIP_W = (GRIP_IN + GRIP_OUT) / 2, GRIP_OUT - GRIP_IN
+PAD_Y, PAD_W = 20.0, 14.0
+BODY_R = 1.0   # plan corner break of the full-length bottom
+END_DRAFT = 44  # degrees: pill face down to the grip-length bottom, printable face down
+FRONT_STRIP = 2.5    # full-length strip along the front edge, under the grip roots
 CLIP_BOTTOM = -18.0
 CHANNEL_BACK = REAR + 0.15
 THROAT = REAR - REAR_IN - 0.45
@@ -64,13 +75,40 @@ def rim(x):
     return (x - REAR) * math.tan(math.radians(CRADLE['slope_degrees']))
 
 
+def end_taper(bottom, height):
+    """The pill face flared down at END_DRAFT, unbounded along the sides."""
+    grow = height * math.tan(math.radians(END_DRAFT))
+    return (cq.Workplane('XY').workplane(offset=bottom)
+            .slot2D(OUT_L + 2 * grow, OUT_W + 2 * grow, angle=90)
+            .extrude(height, taper=END_DRAFT).translate((PILL_X, 0, 0)).val())
+
+
+def body_outline(bottom, height):
+    """Housing outline. The face keeps the 75.7 mm pill; below it the ends
+    flare at END_DRAFT out to the full grip length, so the outer jaws at the
+    bottom stand on the housing when it prints face down. The housing tips
+    forward, so the grip necks rise into its front edge higher up, where the
+    pill ends are still narrow: a FRONT_STRIP-wide strip along that edge runs
+    the full grip length at every height, and the necks come out of a flat
+    face. The long sides stay vertical at the pill width."""
+    flared = end_taper(bottom, height)
+    bound = (cq.Workplane('XY').box(OUT_W, 2 * GRIP_OUT, height)
+             .edges('|Z').fillet(BODY_R)
+             .translate((PILL_X, 0, bottom + height / 2)).val())
+    strip = (cq.Workplane('XY').box(FRONT_STRIP, 2 * GRIP_OUT, height)
+             .edges('|Z').fillet(BODY_R / 2)
+             .translate((PILL_X - OUT_W / 2 + FRONT_STRIP / 2, 0,
+                         bottom + height / 2)).val())
+    return flared.intersect(bound).fuse(strip)
+
+
 def grip_rib(y):
     # Deep contact pads preload the wall against a full-height outer jaw.
     # The long inside leaf accommodates insertion with small bending strain.
     return cq.Workplane('XZ').polyline([
         (FRONT + CLIP_T, -17.7), (RIB_TIP, -16.5),
         (RIB_TIP, -14.0), (FRONT + CLIP_T, -12.8),
-    ]).close().extrude(CLIP_W).val().translate((0, y + CLIP_W / 2, 0))
+    ]).close().extrude(PAD_W).val().translate((0, y + PAD_W / 2, 0))
 
 
 def outer_jaw(y):
@@ -89,7 +127,7 @@ def outer_jaw(y):
 def cover():
     # Make the optical housing in its own flat frame, then tip the complete
     # interface to match the cradle. The grip jaws stay vertical on the wall.
-    body = capsule(OUT_L, OUT_W, BOTTOM, FACE - BOTTOM)
+    body = body_outline(BOTTOM, FACE - BOTTOM)
     body = body.cut(capsule(TRAY_L + .5, TRAY_W + .5,
                             BOTTOM-.1, BEZEL_UNDER-BOTTOM+.1))
     body = body.cut(capsule(E.LED_SLOT_W,E.LED_SLOT_H,BEZEL_UNDER-.1,2.2))
@@ -100,15 +138,15 @@ def cover():
                             (PILL_X,side*36,(top+BOTTOM-.1)/2)))
     body = tilt(body)
     for y in (-CLIP_Y, CLIP_Y):
-        body = body.fuse(box(CLIP_T,CLIP_W,-.5-CLIP_BOTTOM,
-                             (FRONT+CLIP_T/2,y,(CLIP_BOTTOM-.5)/2)))
+        grip = box(CLIP_T,CLIP_W,-.5-CLIP_BOTTOM,
+                   (FRONT+CLIP_T/2,y,(CLIP_BOTTOM-.5)/2))
         # This sloping neck reaches the angled shell at the widest jaw corners
         # and provides a printable transition into the vertical inside leaf.
         root = cq.Workplane('XZ').polyline([
             (FRONT+2,3), (FRONT+2.5,3),
             (FRONT+CLIP_T+.2,-.5), (FRONT,-.5),
         ]).close().extrude(CLIP_W).val().translate((0,y+CLIP_W/2,0))
-        body = body.fuse(root).fuse(outer_jaw(y))
+        body = body.fuse(grip).fuse(root).fuse(outer_jaw(y))
     channel = cq.Workplane('XZ').polyline([
         (FRONT+CLIP_T,-24), (CHANNEL_BACK,-24),
         (CHANNEL_BACK,rim(CHANNEL_BACK)),
@@ -121,7 +159,7 @@ def cover():
             root = cq.Workplane('YZ').center(edge,-.5).circle(.4).extrude(2.4).val().translate((FRONT-.5,0,0))
             body = body.cut(slot.fuse(root))
         body = body.cut(box(2.4,CLIP_W+1.6,6,(FRONT+.6,y,CLIP_BOTTOM-3)))
-        body = body.fuse(grip_rib(y))
+        body = body.fuse(grip_rib(math.copysign(PAD_Y, y)))
         # Retain the 2.70 mm mouth with a short lead-in on the shifted leaf.
         edge = FRONT + CLIP_T
         entry = cq.Workplane('XZ').polyline([
@@ -214,7 +252,9 @@ def export():
     for name, solid in {**models, **{f'fit_sample_{n}':s for n,s in fit_samples(models).items()}}.items():
         stem = OUT / f'pill_top_mount_{name}'
         oriented = print_orientation('cover' if name.endswith('cover') else 'base', solid)
-        cq.exporters.export(oriented, str(stem.with_suffix('.step')))
+        # Greatest precision: the conical pill ends meet the flat sides in
+        # curves STEP stores approximately, enough to move the volume otherwise.
+        oriented.exportStep(str(stem.with_suffix('.step')), precision_mode=1)
         cq.exporters.export(oriented, str(stem.with_suffix('.stl')), tolerance=0.03, angularTolerance=0.1)
     for row in ('front', 'mid'):
         cradle = platform(row)
@@ -226,7 +266,7 @@ def export():
         for name, solid in placed_pill().items():
             color = (0.94, 0.93, 0.89) if name == 'diffuser' else (0.09, 0.10, 0.11)
             assembly.add(solid.translate((0, 0, z)), name=f'existing_{name}', color=cq.Color(*color))
-        assembly.export(str(OUT / f'pill_top_mount_assembly_{row}.step'))
+        assembly.export(str(OUT / f'pill_top_mount_assembly_{row}.step'), precision_mode=1)
     for path in OUT.glob('pill_top_mount_*.step'):
         path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines()) + '\n')
 
