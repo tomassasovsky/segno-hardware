@@ -1,4 +1,4 @@
-"""Deep rear-rim pill grip and a walled, friction-fit LED carrier (mm)."""
+"""Deep rear-rim pill grip, side stops and a walled, friction-fit LED carrier (mm)."""
 
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -37,10 +37,31 @@ THROAT = REAR - REAR_IN - 0.45
 RIB_TIP = CHANNEL_BACK - THROAT
 FIT_Y = 20.0
 RIB_PROJECTION = .55
+# Side stops (fit revision 3). The rear-wall jaws alone let the housing slide
+# along the wall, so the cover spans the collar's full width and drops a fin
+# down each outer side face. Each fin carries one vertical contact rib.
+SIDE_W = CRADLE['outer_width_mm'] / 2       # collar outer side face
+SIDE_IN = CRADLE['inner_width_mm'] / 2      # ...and its inner face
+SIDE_GAP = .2      # fin inner face off the side face
+SIDE_FIT = .15     # rib interference per side; the fin bends to take it
+SIDE_T = 1.6       # fin thickness
+BODY_W = SIDE_W + SIDE_GAP + SIDE_T         # cover half-width, Y
+BODY_R = 1.5       # plan corner radius: the fin roots sit inside the corner
+FIN_LEAN = 40      # front edge, degrees from the face normal in the print pose
+FIN_REAR = 64.0    # fin rear edge in the flat housing frame, behind the wall
+RIB_X = (57.2, 59.0)  # inside the leaning fin, ahead of the collar corner
+RIB_Z = (-17.6, -16.2, -8.0, -6.8)  # lead-in foot, full contact, tapered top
 
 
 def box(x, y, z, center):
     return cq.Workplane('XY').box(x, y, z).translate(center).val()
+
+
+def body_outline(bottom, height):
+    """Full-width housing: the collar width plus both fins, in the flat frame."""
+    return (cq.Workplane('XY').box(OUT_W, 2 * BODY_W, height)
+            .edges('|Z').fillet(BODY_R)
+            .translate((PILL_X, 0, bottom + height / 2)).val())
 
 
 def capsule(length, width, bottom, height):
@@ -89,15 +110,16 @@ def outer_jaw(y):
 def cover():
     # Make the optical housing in its own flat frame, then tip the complete
     # interface to match the cradle. The grip jaws stay vertical on the wall.
-    body = capsule(OUT_L, OUT_W, BOTTOM, FACE - BOTTOM)
+    body = body_outline(BOTTOM, FACE - BOTTOM)
     body = body.cut(capsule(TRAY_L + .5, TRAY_W + .5,
                             BOTTOM-.1, BEZEL_UNDER-BOTTOM+.1))
     body = body.cut(capsule(E.LED_SLOT_W,E.LED_SLOT_H,BEZEL_UNDER-.1,2.2))
     body = body.cut(box(10,8,1.2,(PILL_X+14,0,BOTTOM+.5)))
     for side in (-1,1):
-        top = BED_TOP+3
-        body = body.cut(box(pill.WIRE_WIDTH,12,top-BOTTOM+.1,
-                            (PILL_X,side*36,(top+BOTTOM-.1)/2)))
+        # The LED leads leave through the widened ends, so the slots run out.
+        top, y0, y1 = BED_TOP+3, 30.0, BODY_W+1
+        body = body.cut(box(pill.WIRE_WIDTH,y1-y0,top-BOTTOM+.1,
+                            (PILL_X,side*(y0+y1)/2,(top+BOTTOM-.1)/2)))
     body = tilt(body)
     for y in (-CLIP_Y, CLIP_Y):
         body = body.fuse(box(CLIP_T,CLIP_W,-.5-CLIP_BOTTOM,
@@ -115,6 +137,7 @@ def cover():
         (FRONT+CLIP_T,rim(FRONT+CLIP_T)),
     ]).close().extrude(90).val().translate((0,45,0))
     body = body.cut(channel)
+    body = body.cut(side_wall_clearance())
     for y in (-CLIP_Y,CLIP_Y):
         for edge in (y-CLIP_W/2-.4,y+CLIP_W/2+.4):
             slot = box(2.4,.8,21.5,(FRONT+.6,edge,-11.25))
@@ -130,7 +153,49 @@ def cover():
             (edge+.1,CLIP_BOTTOM-.1),
         ]).close().extrude(CLIP_W+.2).val().translate((0,y+(CLIP_W+.2)/2,0))
         body = body.cut(entry)
+    for side in (-1, 1):
+        body = body.fuse(side_fin(side)).fuse(side_rib(side))
     return body.cut(cable_clearance()).clean()
+
+
+def side_wall_clearance():
+    """The widened body over both side walls: the same sloped plane as the
+    rear-wall channel, so the cover bears on the side-wall tops like the rim."""
+    cut = None
+    for side in (-1, 1):
+        y0, y1 = SIDE_IN - .15, SIDE_W + SIDE_GAP
+        prism = cq.Workplane('XZ').polyline([
+            (40, -24), (CHANNEL_BACK, -24),
+            (CHANNEL_BACK, rim(CHANNEL_BACK)), (40, rim(40)),
+        ]).close().extrude(y1 - y0).val().translate(
+            (0, y1 if side > 0 else -y0, 0))
+        cut = prism if cut is None else cut.fuse(prism)
+    return cut
+
+
+def side_fin(side):
+    """A plate outside one collar side face, from the housing down to the jaw
+    depth. Built in the flat housing frame so its front edge leans FIN_LEAN
+    from the print direction, then tilted with the housing and cut level."""
+    y0 = SIDE_W + SIDE_GAP
+    front = PILL_X - OUT_W / 2 + BODY_R
+    drop = 40.0
+    fin = cq.Workplane('XZ').polyline([
+        (front, BOTTOM + 1), (FIN_REAR, BOTTOM + 1), (FIN_REAR, BOTTOM - drop),
+        (front - drop * math.tan(math.radians(FIN_LEAN)), BOTTOM - drop),
+    ]).close().extrude(SIDE_T).val().translate((0, y0 + SIDE_T, 0))
+    fin = tilt(fin).cut(box(200, 200, 100, (PILL_X, 0, CLIP_BOTTOM - 50)))
+    return fin if side > 0 else fin.mirror('XZ')
+
+
+def side_rib(side):
+    """Vertical contact rib on a fin's inner face, with a lead-in at its foot."""
+    face, tip = SIDE_W + SIDE_GAP, SIDE_W - SIDE_FIT
+    z0, z1, z2, z3 = RIB_Z
+    rib = cq.Workplane('YZ').polyline([
+        (face + .1, z0), (face, z0), (tip, z1), (tip, z2), (face, z3), (face + .1, z3),
+    ]).close().extrude(RIB_X[1] - RIB_X[0]).val().translate((RIB_X[0], 0, 0))
+    return rib if side > 0 else rib.mirror('XZ')
 
 
 def fit_rib(side, y):

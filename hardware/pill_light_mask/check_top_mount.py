@@ -99,6 +99,24 @@ def check_deep_grip(cover):
     assert m.CLIP_BOTTOM == -18
 
 
+def check_side_stops(cover, local):
+    """Each fin rib presses on its collar side face by SIDE_FIT, and a 0.3 mm
+    slide along the rear wall drives a fin into the collar."""
+    ribs = [m.side_rib(side) for side in (-1, 1)]
+    for rib in ribs:
+        contact = cover.intersect(local).intersect(rib)
+        assert contact.Volume() > .3, 'missing side contact rib'
+        assert abs(contact.BoundingBox().ylen - m.SIDE_FIT) < .01, 'side rib fit'
+    for dy in (-.3, .3):
+        moved = cover.translate((0, dy, 0))
+        hit = moved.intersect(local).cut(
+            cq.Compound.makeCompound([r.translate((0, dy, 0)) for r in ribs]))
+        # Sliding towards -Y drives the +Y fin into its side face, and back.
+        side = -1 if dy > 0 else 1
+        zone = m.box(10, 1.4, 30, (55, side*(m.SIDE_W+.3), -10))
+        assert hit.intersect(zone).Volume() > .05, ('housing slides along the wall', dy)
+
+
 def check_prewired_loading(base, cover, lens):
     # Sweep the complete strip vertically into the open carrier, then the
     # attached leads through each end. Connector bodies stay outside the case.
@@ -204,7 +222,10 @@ def check():
         wire=m.box(m.pill.WIRE_WIDTH,12,2.6,(m.PILL_X,side*36,m.BED_TOP-.3))
         for solid in parts.values():
             clear(m.tilt(wire),solid,'LED wire outlet')
-    ribs=m.grip_rib(-m.CLIP_Y).fuse(m.grip_rib(m.CLIP_Y))
+    ribs=m.grip_rib(-m.CLIP_Y).fuse(m.grip_rib(m.CLIP_Y)).fuse(
+        m.side_rib(-1)).fuse(m.side_rib(1))
+    finless=cover.cut(m.box(40,10,40,(55,-(m.SIDE_W+5),-8))).cut(
+        m.box(40,10,40,(55,m.SIDE_W+5,-8)))
     for row,info in m.CRADLE['rows'].items():
         path=m.REFERENCE/f'platform_{row}.step'
         assert hashlib.sha256(path.read_bytes()).hexdigest()==info['reference_sha256']
@@ -223,6 +244,13 @@ def check():
             assert overlap.Volume()>0
             assert overlap.cut(ribs.translate((settle,0,0))).Volume()<1e-6
             clear(base.translate((settle,0,0)),local,'carrier/cradle throughout settling')
+        check_side_stops(cover,local)
+        try:
+            check_side_stops(finless,local)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError('housing without side stops accepted')
         for y in (-m.CLIP_Y,m.CLIP_Y):
             zone=m.box(6,14,5,(58,y,-15))
             assert cover.translate((-.15,0,0)).intersect(local).intersect(zone).Volume()>.1
@@ -264,7 +292,9 @@ def check():
                     'entry_gap_mm':2.70,
                     'straight_channel_gap_mm':round(m.CHANNEL_BACK-(m.FRONT+m.CLIP_T),2),
                     'spring_throat_mm':round(m.THROAT,2),'floor_thickness_mm':2.4,
-                    'housing_rib_interference_per_side_mm':.30,'platform_grip_depth_mm':18,
+                    'housing_rib_interference_per_side_mm':.30,
+                    'side_stop_rib_interference_per_side_mm':m.SIDE_FIT,
+                    'cover_width_mm':round(2*m.BODY_W,2),'platform_grip_depth_mm':18,
                     'outer_jaw_thickness_mm':2.4,'inner_leaf_thickness_mm':1.2,
                     'face_centre_above_rear_rim_mm':m.FACE,'face_slope_degrees':m.SLOPE,
                     'minimum_base_clearance_above_cable_mm':round(base.BoundingBox().zmin-max(r['cable_top_local_z_mm'] for r in m.CRADLE['rows'].values()),3),
