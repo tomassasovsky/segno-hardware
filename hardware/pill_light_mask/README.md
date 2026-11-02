@@ -13,8 +13,8 @@ The owner printed the revised pill and reported much better light on
 2026-09-23. For mounting it behind the existing printed pedal cradles before
 the metal enclosure arrives, use the [angled friction-fit cradle housing](PLATFORM_MOUNT.md).
 Its two black parts reuse the white lens; the bottom is an integral LED
-carrier with retaining walls. Use fit revision 3: deeper platform grips, side
-stops at the collar width and a friction closure. It replaces the rejected snap housings and fits the
+carrier with retaining walls. Use fit revision 3: deep platform grips that span
+the collar's inner width, and a friction closure. It replaces the rejected snap housings and fits the
 pinned 2.4 mm rear-wall reference. The revised housing still needs a physical
 fit trial. The three-part bench/panel set below is a separate mounting option.
 

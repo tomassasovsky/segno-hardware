@@ -99,22 +99,16 @@ def check_deep_grip(cover):
     assert m.CLIP_BOTTOM == -18
 
 
-def check_side_stops(cover, local):
-    """Each fin rib presses on its collar side face by SIDE_FIT, and a 0.3 mm
-    slide along the rear wall drives a fin into the collar."""
-    ribs = [m.side_rib(side) for side in (-1, 1)]
-    for rib in ribs:
-        contact = cover.intersect(local).intersect(rib)
-        assert contact.Volume() > .3, 'missing side contact rib'
-        assert abs(contact.BoundingBox().ylen - m.SIDE_FIT) < .01, 'side rib fit'
-    for dy in (-.3, .3):
-        moved = cover.translate((0, dy, 0))
-        hit = moved.intersect(local).cut(
-            cq.Compound.makeCompound([r.translate((0, dy, 0)) for r in ribs]))
-        # Sliding towards -Y drives the +Y fin into its side face, and back.
-        side = -1 if dy > 0 else 1
-        zone = m.box(10, 1.4, 30, (55, side*(m.SIDE_W+.3), -10))
-        assert hit.intersect(zone).Volume() > .05, ('housing slides along the wall', dy)
+def check_side_stops(cover, local, ribs):
+    """The grips span the collar's inner width: at rest only the contact pads
+    touch, and a slide of SIDE_GAP + 0.1 mm along the rear wall drives a grip
+    end into the side wall it is heading for."""
+    for dy in (-.15, .15):
+        hit = cover.translate((0, dy, 0)).intersect(local).cut(ribs.translate((0, dy, 0)))
+        side = 1 if dy > 0 else -1
+        zone = m.box(10, 1, 40, (56, side*(m.SIDE_IN+.1), -8))
+        stop = hit.intersect(zone).Volume() if hit.Volume() > 1e-9 else 0
+        assert stop > .05, ('housing slides along the wall', dy)
 
 
 def check_prewired_loading(base, cover, lens):
@@ -222,10 +216,10 @@ def check():
         wire=m.box(m.pill.WIRE_WIDTH,12,2.6,(m.PILL_X,side*36,m.BED_TOP-.3))
         for solid in parts.values():
             clear(m.tilt(wire),solid,'LED wire outlet')
-    ribs=m.grip_rib(-m.CLIP_Y).fuse(m.grip_rib(m.CLIP_Y)).fuse(
-        m.side_rib(-1)).fuse(m.side_rib(1))
-    finless=cover.cut(m.box(40,10,40,(55,-(m.SIDE_W+5),-8))).cut(
-        m.box(40,10,40,(55,m.SIDE_W+5,-8)))
+    ribs=m.grip_rib(-m.PAD_Y).fuse(m.grip_rib(m.PAD_Y))
+    # Negative control: grips ending 2 mm short of the side walls.
+    short=cover.cut(m.box(40,10,60,(60,-(m.GRIP_OUT+3),-5))).cut(
+        m.box(40,10,60,(60,m.GRIP_OUT+3,-5)))
     for row,info in m.CRADLE['rows'].items():
         path=m.REFERENCE/f'platform_{row}.step'
         assert hashlib.sha256(path.read_bytes()).hexdigest()==info['reference_sha256']
@@ -244,14 +238,14 @@ def check():
             assert overlap.Volume()>0
             assert overlap.cut(ribs.translate((settle,0,0))).Volume()<1e-6
             clear(base.translate((settle,0,0)),local,'carrier/cradle throughout settling')
-        check_side_stops(cover,local)
+        check_side_stops(cover,local,ribs)
         try:
-            check_side_stops(finless,local)
+            check_side_stops(short,local,ribs)
         except AssertionError:
             pass
         else:
-            raise AssertionError('housing without side stops accepted')
-        for y in (-m.CLIP_Y,m.CLIP_Y):
+            raise AssertionError('grips short of the side walls accepted')
+        for y in (-m.PAD_Y,m.PAD_Y):
             zone=m.box(6,14,5,(58,y,-15))
             assert cover.translate((-.15,0,0)).intersect(local).intersect(zone).Volume()>.1
         body=m.box(m.CRADLE['pedal_depth_mm'],m.CRADLE['pedal_width_mm'],m.CRADLE['pedal_height_mm'],
@@ -259,7 +253,7 @@ def check():
         for solid in parts.values():
             clear(solid,body,'pedal at rest')
         for y in (-m.CLIP_Y,m.CLIP_Y):
-            tongue=cover.intersect(m.box(2.4,14,18,(m.FRONT+.6,y,-9)))
+            tongue=cover.intersect(m.box(2.4,m.CLIP_W,18,(m.FRONT+.6,y,-9)))
             clear(tongue.translate((m.REAR_IN-m.RIB_TIP,0,0)),body,'fitted tongue/pedal')
         assert base.BoundingBox().zmin-info['cable_top_local_z_mm']>.5, 'floor blocks updated cable exit'
         # Compare the real planar face normals, not just the angle parameter.
@@ -293,8 +287,8 @@ def check():
                     'straight_channel_gap_mm':round(m.CHANNEL_BACK-(m.FRONT+m.CLIP_T),2),
                     'spring_throat_mm':round(m.THROAT,2),'floor_thickness_mm':2.4,
                     'housing_rib_interference_per_side_mm':.30,
-                    'side_stop_rib_interference_per_side_mm':m.SIDE_FIT,
-                    'cover_width_mm':round(2*m.BODY_W,2),'platform_grip_depth_mm':18,
+                    'grip_span_mm':round(2*m.GRIP_OUT,2),
+                    'grip_end_gap_to_side_wall_mm':m.SIDE_GAP,'platform_grip_depth_mm':18,
                     'outer_jaw_thickness_mm':2.4,'inner_leaf_thickness_mm':1.2,
                     'face_centre_above_rear_rim_mm':m.FACE,'face_slope_degrees':m.SLOPE,
                     'minimum_base_clearance_above_cable_mm':round(base.BoundingBox().zmin-max(r['cable_top_local_z_mm'] for r in m.CRADLE['rows'].values()),3),

@@ -7,17 +7,18 @@ or a PR's `hardware-outputs` artifact, or regenerate it using the commands below
 that rocked on the platform and whose housing hooks would not engage. The owner
 confirmed **PLA** and requested a friction fit instead of bending snaps or screws.
 
-**Fit revision 3 — side stops at the collar width.** Revision 2 gripped only
-the rear wall, so the housing slid left and right along it. The cover now spans
-the collar's full **88.75 mm** width (**92.35 mm** overall) and drops a fin down
-each outer side face, as deep as the rear-wall jaws (18 mm). Each fin has
-`SIDE_GAP` **0.2 mm** clearance to the side face and one vertical contact rib
-with `SIDE_FIT` **0.15 mm** interference and a tapered lead-in at its foot; the
-fin bends to take it. Under the widened ends the cover rests on the side-wall
-tops on the same sloped plane as the rear rim. The LED wire slots now run out
-through the widened ends. Reprint the **black cover** only; the black base, the
-white diffuser and the fit samples are unchanged. If the cover is loose or hard
-to push down over the collar, change `SIDE_FIT` in `top_mount.py` and regenerate.
+**Fit revision 3 — grips span the collar's inner width.** Revision 2's two
+14 mm grips held only part of the rear wall, so the housing slid left and right
+along it. Each grip now runs from its old inner end (13 mm off centre) out to
+the side wall, so the pair spans the collar's **79.15 mm** inner width less
+`SIDE_GAP` **0.05 mm** at each end. The grip ends stop the housing against the
+side walls' inner faces. The housing grows to match: **79.05 × 32.43 mm**, a
+rectangle with 1 mm corners instead of the 75.7 mm capsule, still inside the
+side walls. The contact pads that squeeze the rear wall keep their revision 2
+position and 14 mm width, so the grip force on the wall is unchanged. Reprint
+the **black cover** only; the black base, the white diffuser and the fit
+samples are unchanged. If the cover will not go in between the side walls,
+raise `SIDE_GAP` in `top_mount.py` and regenerate.
 
 **Fit revision 2 — tighter at both connections.** The first friction-fit sample
 was printed and reported slightly loose both inside the cover and on the
@@ -69,8 +70,8 @@ when seated against the outside jaw. This is a friction grip on a plain wall;
 it does not latch into the platform.
 
 The case centre moves 1.2 mm outward to clear the thicker jaw during housing
-assembly. The black cover is **92.35 × 32.43 mm in its face plane** (revision 3;
-the revision 2 capsule was 75.7 mm long). The housing,
+assembly. The black cover is **79.05 × 32.43 mm in its face plane** (revision 3;
+the revision 2 capsule was 75.7 mm). The housing,
 LED bed and diffuser now follow the platform's **12.498° slope**; the mounting
 jaws stay vertical against the wall. The face centre is **10.2 mm above the rear
 rim**, leaving the tilted floor clear of the existing pedal cable opening.
@@ -84,9 +85,9 @@ the same housing. `reference/provenance.json` records the pinned source hashes.
 
 ## Print the fit sample first
 
-The fit samples cover the rear-wall jaws and the housing ribs only, not the
-revision 3 side fins. Check the side fit on the full cover: it should press
-down over the collar with light thumb pressure and not move left or right.
+The fit samples cover one grip section and one pair of housing ribs, not the
+revision 3 grip ends. Check the side fit on the full cover: it should drop in
+between the collar's side walls and not move left or right.
 
 The two `pill_top_mount_fit_sample_*.stl` files reproduce one pair of housing
 contact ribs and one complete pair of platform jaws in a 16 mm long section.
