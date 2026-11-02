@@ -12,9 +12,12 @@ confirmed **PLA** and requested a friction fit instead of bending snaps or screw
 along it. Each grip now runs from its old inner end (13 mm off centre) out to
 the side wall, so the pair spans the collar's **79.15 mm** inner width less
 `SIDE_GAP` **0.05 mm** at each end. The grip ends stop the housing against the
-side walls' inner faces. The housing grows to match: **79.05 × 32.43 mm**, a
-rectangle with 1 mm corners instead of the 75.7 mm capsule, still inside the
-side walls. The contact pads that squeeze the rear wall keep their revision 2
+side walls' inner faces. The face keeps the **75.7 × 32.43 mm** pill. Below it
+the ends slope down at 44° to the full **79.05 mm** grip length at the
+housing's bottom, still inside the side walls, so the grip ends print on the
+housing face down without supports. Because the housing tips forward, the grip
+necks join its front edge higher up, so a 2.5 mm strip along that edge runs the
+full grip length at every height. The contact pads that squeeze the rear wall keep their revision 2
 position and 14 mm width, so the grip force on the wall is unchanged. Reprint
 the **black cover** only; the black base, the white diffuser and the fit
 samples are unchanged. If the cover will not go in between the side walls,
@@ -70,8 +73,8 @@ when seated against the outside jaw. This is a friction grip on a plain wall;
 it does not latch into the platform.
 
 The case centre moves 1.2 mm outward to clear the thicker jaw during housing
-assembly. The black cover is **79.05 × 32.43 mm in its face plane** (revision 3;
-the revision 2 capsule was 75.7 mm). The housing,
+assembly. The black cover's face is the **75.7 × 32.43 mm** capsule; in
+revision 3 its ends slope out to 79.05 mm at the bottom, where the grips are. The housing,
 LED bed and diffuser now follow the platform's **12.498° slope**; the mounting
 jaws stay vertical against the wall. The face centre is **10.2 mm above the rear
 rim**, leaving the tilted floor clear of the existing pedal cable opening.
