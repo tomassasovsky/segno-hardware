@@ -774,7 +774,41 @@ cd hardware/enclosure
 .venv/bin/python segno_enclosure.py --no-step   # intermediate flats/handoff; no metal/paint release
 .venv/bin/python _pedal_base_fit_test.py       # base-hole fit-test jig -> out/
 .venv/bin/python _print_check.py out/segno_pedal_base_fit_test.stl   # FDM check
+.venv/bin/python _platform_layout_base.py      # printed pedal layout base -> out/ (--png renders it)
 ```
+
+**Printed pedal layout base** (`_platform_layout_base.py`, issue #1544) — holds
+the ten assembled platforms at their console positions before the metal base
+exists, so the pedals can be played at the real pitch and row spacing. It
+bolts to each collar's four underside screw holes (`platform_foot_xy()`), and
+its 40 holes are asserted equal to `platform_foot_holes()`, the pattern cut in
+the metal base. Parts, all printed flat with the top face up and no supports:
+
+| Part | Qty | Notes |
+| --- | --- | --- |
+| `segno_layout_base_front` | 4 | 202.29 × 124.47 × 8 mm. Two front pedals each; identical, so the unused key sockets on the outer and rear edges are expected. |
+| `segno_layout_base_mid` | 1 | 202.29 × 163.77 × 8 mm. CLEAR and BANK; its front edge butts against the UNDO/MODE piece. |
+| `segno_layout_base_key` | 12 (+2 spare) | Dog-bone keys, pressed down into the blind sockets across each seam until they stop. |
+| `segno_layout_base_coupon` | 2 | Test joint. Print first, with one key. |
+
+The pieces are exactly two pitches wide and butt against each other, so the
+butt faces set the spacing; the keys only hold them shut. Each socket's
+shoulders sit `KEY_DRAW` (0.05 mm) further from the seam than the key's head
+faces, so a seated key pulls the seam closed. Try that on the coupon pair
+first: the key should go in under a light mallet and leave no visible gap.
+If it will not go in, set `KEY_DRAW = 0` (or raise `KEY_CLR`) and regenerate.
+
+Screws go in from underneath, heads sunk in the counterbores, so the base
+stands on its own flat face:
+
+- Front row: **32 M3×10** socket heads, through 3 mm of base and the collar's
+  2.04 mm floor into the sled's lower inserts (4.96 mm engagement). Seat the
+  pedal and sled in the collar first, as in the console.
+- CLEAR/BANK: **8 M3×8** into the collar's bottom inserts (5.0 mm into the
+  6 mm pocket). Fit the sled on its four deck screws first, as in the console.
+
+The windows under each sled save filament; the four screws carry the stomp
+into the frame round them. On a smooth floor, stand the base on a non-slip mat.
 
 **Base-hole fit-test jig** (`_pedal_base_fit_test.py`, issue #716) — a
 throwaway print that carries *only* four locating pins on the `PEDAL_BASE_*`
