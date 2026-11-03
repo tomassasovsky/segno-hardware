@@ -774,7 +774,49 @@ cd hardware/enclosure
 .venv/bin/python segno_enclosure.py --no-step   # intermediate flats/handoff; no metal/paint release
 .venv/bin/python _pedal_base_fit_test.py       # base-hole fit-test jig -> out/
 .venv/bin/python _print_check.py out/segno_pedal_base_fit_test.stl   # FDM check
+.venv/bin/python _platform_layout_base.py      # printed pedal layout base -> out/ (--png renders it)
 ```
+
+**Printed pedal layout base** (`_platform_layout_base.py`, issue #1544) — holds
+the ten assembled platforms at their console positions before the metal base
+exists, so the pedals can be played at the real pitch and row spacing. The
+platform screws are its only fasteners: each part takes some of the collars'
+underside screw holes (`platform_foot_xy()`), so the platforms themselves join
+one part to the next. The base's 40 holes are asserted equal to
+`platform_foot_holes()`, the pattern cut in the metal base. Parts, all printed
+upside down (the face the collar sits on, on the bed; the STLs are exported
+that way) with no supports:
+
+| Part | Qty | Notes |
+| --- | --- | --- |
+| `segno_layout_base_bridge` | 6 | 81.14 × 124.47 × 8 mm. Under each gap between two front pedals: the two inner holes of each. |
+| `segno_layout_base_centre` | 2 | The same bridge with a pocket under one end. One goes under UNDO/MODE (pocket to the rear), one under CLEAR/BANK (pocket to the front). |
+| `segno_layout_base_link` | 1 | 71.77 × 82.40 × 4 mm. Lies in both pockets and ties the two rows together; the pocket walls stop it racking. |
+| `segno_layout_base_pad` | 4 | 37.38 × 124.47 × 8 mm. The outer hole pair of REC/PLAY, TRACK4, CLEAR and BANK, so those platforms stand level. |
+
+The link exists because every UNDO/MODE hole is already taken by a bridge,
+and one piece from the front holes to the CLEAR/BANK holes would be about
+273 mm, longer than the bed. Put it in the two centre-bridge pockets before
+fitting UNDO, MODE, CLEAR and BANK: their four inner screws on that side pass
+through the link and the bridge together.
+
+Screws go in from underneath, heads flush in their counterbores, so the base
+stands on its own flat face. The lengths are the console's nominal ones:
+
+- Front row: **32 M3×12** socket heads, through 5 mm of base and the collar's
+  2.04 mm floor into the sled's lower inserts (4.96 mm engagement, 5.06 mm
+  through the link). Seat the pedal and sled in the collar first.
+- CLEAR/BANK: **8 M3×10** into the collar's bottom inserts (5.0 mm into the
+  6 mm pocket, 5.1 mm through the link). Fit the sled on its four deck screws
+  first, as in the console.
+
+The base holes are Ø3.3, a close fit on M3, and that fit is the pitch
+tolerance: up to 0.15 mm per screw. Before tightening a row, set REC/PLAY and
+TRACK4 708.0 mm apart, centre to centre. The holes are not Ø3.2: a screw that
+threads into the base cannot draw the collar down onto it. The windows in the
+bridges save filament; the screws carry the stomp into the frame round them.
+Lift the assembly from underneath rather than by one end, and on a smooth
+floor stand it on a non-slip mat.
 
 **Base-hole fit-test jig** (`_pedal_base_fit_test.py`, issue #716) — a
 throwaway print that carries *only* four locating pins on the `PEDAL_BASE_*`
