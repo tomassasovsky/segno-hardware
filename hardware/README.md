@@ -96,7 +96,7 @@ patterns against. `fusion/Segno_console_populated.f3d` is the populated Fusion
 The underscore-prefixed scripts are one-off checks and fit-test jigs, such as
 the stomp finite-element runs and the print checks.
 
-The ambient light sensor (#1564) is a Vishay TEPT5600 glued in a Ø5.55 window
+The ambient light sensor (#1564) is a Vishay TEPT5600 glued in a Ø5.75 window
 in the lid, held from below by the printed `segno_als_sleeve`. Its dome is
 sanded off flat so the flat face sits flush with the lid. Sand only the dome:
 stop when the face reaches the full Ø5.0 cylinder, about 2.45 mm down, and

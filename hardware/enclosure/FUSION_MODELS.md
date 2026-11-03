@@ -1,34 +1,41 @@
 # The Fusion 360 models — how to change anything without wrecking them
 
-## Ambient light sensor window and sleeve - 2026-11-03, clone v31 (tomassasovsky/segno#1564)
+## Ambient light sensor window and sleeve - 2026-11-03, clone v32 (tomassasovsky/segno#1564)
 
-Clone "VAMP console (populated) - 1067 tabs + seat flanges", saved as version
-31 ("#1564 ambient light sensor ...").
+Clone "VAMP console (populated) - 1067 tabs + seat flanges". Version 31 added
+a Ø5.55 window and the first sleeve. Version 32 ("#1564 review fixes ...") is
+current: Ø5.75 window, seat for the shortest sensor, tie slot along the lead.
 
-- `faceplate`: one Ø5.55 circle added to `CUT` at sketch (32.575714285714287,
-  39.80766898687187) cm, read from the DXF with `repr()`, with the marker
-  rolled back to just before `Extrude1`. `Extrude1.profile` was set again to
-  the largest profile (now 43 loops), since an added curve does not enrol on
-  its own. Volume 406,307.215 -> 406,258.830 mm3: -48.384 mm3, exactly
-  pi x 2.775² x 2.0. All faceplate features are healthy. The hole's top point is
-  world (321.857, 373.344, 97.228) mm; `als_axis_world()` agrees to 0.007 mm.
+- `faceplate`: one circle in `CUT` at sketch (32.575714285714287,
+  39.80766898687187) cm, radius 0.28750000000000004 cm (Ø5.75), read from the
+  DXF with `repr()`. It was added with the marker rolled back to just before
+  `Extrude1`, and `Extrude1.profile` was set again to the largest profile (43
+  loops), since an added curve does not enrol on its own. The v32 resize set
+  the circle's `radius` in place under the same rollback. Volume 406,307.215
+  -> 406,255.280 mm3, exactly pi x 2.875² x 2.0 less. All faceplate features
+  are healthy. The hole's UNDERSIDE point is world (321.857, 373.777, 95.276)
+  mm; `als_axis_world()`, which also returns the underside point, agrees to
+  0.007 mm. The top point is 2.0 mm out along the normal, (321.857, 373.344,
+  97.228).
 - `lid_stack/als_sensor_1564`: one base feature holding three bodies:
   `als_sleeve_PETG` (`out/segno_als_sleeve.step`, brought in as SMT through a
-  temporary document, 1,785.446 mm3), `TEPT5600_sanded` (Ø5.0 body cut to
-  5.15 mm above a Ø5.75 x 1.0 flange) and `TEPT5600_leads` (cut to 8 mm). The
-  transform puts the sleeve's bond face 0.1 mm under the lid underside, local
-  +z into the console and the cable-tie tongue toward +x (J22):
-  `[1,0,0,32.18571 | 0,-c,s,37.37981 | 0,-s,-c,9.51779]` (cm). The sensor's
-  flat face is flush with the bare lid top. Because the model has no paint,
-  the flange sits 0.16 mm off its seat; on the painted lid that is the two
-  films.
+  temporary document, 1,756.222 mm3), `TEPT5600_sanded` (Ø5.0 body cut to
+  5.15 mm above a Ø5.75 x 1.0 flange) and `TEPT5600_leads` (cut to 8 mm). For
+  v32 the v31 occurrence was deleted and the component rebuilt. The sensor's
+  flat face is flush with the bare lid top and its flange sits on the 2.70 mm
+  seat, so the sleeve's bond face stands 0.45 mm off the bare lid (0.29 mm on a
+  painted one: the epoxy line). Local +z points into the console and the
+  cable-tie tongue toward +x (J22): `[1,0,0,32.18571 | 0,-c,s,37.38738 |
+  0,-s,-c,9.48362]` (cm).
 - Interference among the three new bodies and every visible body in the region
   (logo, lid, base, rear-lap screw and washer, BUCK_AUX, the screen-power
-  board, the rear rail): none. Body to window 0.275 mm radial; nearest
+  board, the rear rail): none. Body to window 0.375 mm radial; nearest
   non-lid body is the base, 13.8 mm from the sleeve. The pre-existing contacts
   (lid/base films, screw threads, washers) are unchanged.
-- Formed faceplate re-exported with `fusion_export_formed.py`; the base
-  re-export was only churn and was reverted, with its manifest entry.
+- Formed faceplate re-exported with `fusion_export_formed.py` after each
+  version; the base re-export was only churn and was reverted, with its
+  manifest entry. `test_ambient_light_sensor.py` checks that the generated lid
+  DXF and the formed flat both carry the window at `ALS_HOLE_D`.
 
 ## Stronger cup snap arms and the ACZ11 encoder stack - 2026-10-16, pending in Fusion (#1075)
 

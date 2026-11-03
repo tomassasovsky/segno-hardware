@@ -1381,13 +1381,16 @@ TEPT_BODY_TOL = 0.15
 TEPT_FLANGE_D = 5.75      # +/- 0.15
 TEPT_FLANGE_T = 8.6 - 7.6 # apex to flange bottom minus apex to flange top
 TEPT_TOP_H = 7.6          # dome apex to the flange's top face, +/- 0.15
+TEPT_TOP_TOL = 0.15
 TEPT_DOME_R = 2.45        # spherical dome
 TEPT_CHIP_DEPTH = 4.3     # chip below the apex
 TEPT_SANDED_H = TEPT_TOP_H - TEPT_DOME_R      # 5.15: flat face to the flange top
 TEPT_SAND_MAX = 2.5       # never sand further than this from the apex
-# Bare hole: the largest body (5.15) passes the smallest finished hole, the same
-# rule as every other functional opening (SHOP_TOL + COAT_MAX per wall).
-ALS_HOLE_D = TEPT_BODY_D + TEPT_BODY_TOL + SHOP_TOL + 2 * COAT_MAX   # 5.55
+# Bare hole, the rule every functional opening follows (MIDI, PD/CTRL): the
+# smallest painted hole (-SHOP_TOL, COAT_MAX per wall) still clears the largest
+# body by a 0.20 fit, which is also the room the epoxy ring needs.
+ALS_FIT = 0.20
+ALS_HOLE_D = TEPT_BODY_D + TEPT_BODY_TOL + ALS_FIT + SHOP_TOL + 2 * COAT_MAX   # 5.75
 
 # Legends. Two transport controls read as SYMBOLS rather than words (owner call
 # 2026-08-21): "REC/PLAY" was a two-line block eating the tallest label slot on
@@ -6179,11 +6182,19 @@ def build_prop_step():
 # --- ambient light sensor sleeve (#1564) -------------------------------------
 # A short black PETG sleeve bonded to the lid underside around the ALS hole. The
 # TEPT5600's flange rests on its seat, the bore hides the body from the light
-# inside the console, and a cable tie through the tongue holds the 3-wire lead.
+# inside the console, and a cable tie through the tongue holds the lead.
 # Print frame: z = 0 is the bond face (on the bed), +z points into the console.
+# The flat face is set flush by assembling the lid face down on a flat sheet, and
+# the flange rests on the seat. The seat is sized for the shortest sanded sensor
+# in the thickest painted lid, so the sleeve can never bottom on the lid before
+# the face reaches the sheet; the epoxy line under the sleeve takes up the rest.
 ALS_LID_T = T + COAT_MIN + COAT_MAX     # coated lid at the hole, nominal 2.16
-ALS_GLUE = 0.10                          # epoxy line, sleeve to lid underside
-ALS_SEAT = TEPT_SANDED_H - ALS_LID_T - ALS_GLUE   # 2.89: bond face to flange seat
+ALS_LID_T_MAX = T + 2 * COAT_MAX        # 2.20
+ALS_GLUE_MIN = 0.05                      # epoxy line under the sleeve, thinnest
+TEPT_SANDED_H_MIN = TEPT_TOP_H - TEPT_TOP_TOL - TEPT_SAND_MAX     # 4.95
+TEPT_SANDED_H_MAX = TEPT_TOP_H + TEPT_TOP_TOL - TEPT_DOME_R       # 5.30
+ALS_SEAT = TEPT_SANDED_H_MIN - ALS_LID_T_MAX - ALS_GLUE_MIN       # 2.70: bond face to seat
+ALS_GLUE = TEPT_SANDED_H - ALS_LID_T - ALS_SEAT                   # 0.29 nominal
 ALS_SLEEVE_OD = 15.0
 ALS_BODY_BORE = 5.40          # body 4.85-5.15
 ALS_FLANGE_BORE = 6.10        # flange 5.60-5.90
@@ -6195,16 +6206,14 @@ ALS_SLEEVE_H = ALS_SEAT + ALS_FLANGE_POCKET + ALS_CAVITY_L   # 14.19
 ALS_TONGUE_W = 8.0
 ALS_TONGUE_T = (ALS_SLEEVE_OD - ALS_CAVITY_D) / 2.0          # the wall, carried on
 ALS_TONGUE_L = 9.0
-ALS_TIE_W, ALS_TIE_H = 3.0, 1.6   # for a 2.5 mm cable tie
+ALS_TIE_W, ALS_TIE_H = 1.6, 3.0   # around (y) x along the axis (z): a 2.5 mm tie's
+                                  # width lies along the lead it wraps
 
 
 def als_axis_world():
     """The sensor axis in world mm: (point on the faceplate UNDERSIDE, unit
     direction outward), the same convention as encoder_axis_world()."""
-    c = math.cos(math.radians(SLOPE_ANGLE))
-    sn = math.sin(math.radians(SLOPE_ANGLE))
-    return ((ALS_U, c * ALS_V - 2.093, LID_UNDER_Z0 + sn * (ALS_V - 2.093 / c)),
-            (0.0, -sn, c))
+    return _lid_axis_world(ALS_U, ALS_V)
 
 
 def _als_sleeve_solid():
@@ -6271,14 +6280,20 @@ def _gable_cutter(cq, plane, x0, x1, y0, y1, top, bottom):
             .close().extrude(y1 - y0))
 
 
+def _lid_axis_world(u, v):
+    """A lid normal through plate point (u, v), in world mm: (point on the
+    faceplate UNDERSIDE, unit direction outward)."""
+    c = math.cos(math.radians(SLOPE_ANGLE))
+    sn = math.sin(math.radians(SLOPE_ANGLE))
+    return ((u, c * v - 2.093, LID_UNDER_Z0 + sn * (v - 2.093 / c)),
+            (0.0, -sn, c))
+
+
 def encoder_axis_world():
     """The encoder axis in world mm: (point on the faceplate UNDERSIDE, unit
     direction outward). segno_ring_disc, the strip ring and the 7in tower's
     carrier notch all hang off this one line."""
-    c = math.cos(math.radians(SLOPE_ANGLE))
-    sn = math.sin(math.radians(SLOPE_ANGLE))
-    return ((COL_U, c * ENC_V - 2.093, LID_UNDER_Z0 + sn * (ENC_V - 2.093 / c)),
-            (0.0, -sn, c))
+    return _lid_axis_world(COL_U, ENC_V)
 
 
 def screen7_tower_front_anchor():
