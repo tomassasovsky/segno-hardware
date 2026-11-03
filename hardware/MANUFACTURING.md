@@ -196,6 +196,7 @@ Keep connector centres and purchased fixing pitches fixed. Retained functional c
 | Same USB concentric circle | Ø24.80 | 24.40–24.88 | 24.1 thread circle |
 | Disc outside diameter | Ø51.00 | 50.92–51.40 | lens bore Ø51.70 |
 | Disc straight bore | Ø8.70 | 8.30–8.78 | shaft/bushing |
+| Ambient light sensor window (#1564) | Ø5.75 | 5.35–5.83 | TEPT5600 body 5.15 max |
 
 The USB contour is the intersection of the four flats and concentric circle.
 PD/CTRL/MIDI local ligaments must measure at least **1.20 mm bare**, including
@@ -273,6 +274,7 @@ unchanged by these console paint allowances.
 | `segno_floor_rail_rear_1` / `_4` | 2 | as above | Rear floor rails, 201.79 mm, two screws at 64.75 and 110.75 mm from the low-u end, so both go on the same way round. The rail sits at v 343.25; at 21 mm wide it clears the screen-stand pilots by 3.5 mm each side. |
 | `segno_floor_rail_rear_2` / `_3` | 1 each | as above | **Their own prints** (#1088): the power group stands on the rail between them. Segment 2 has its screws at 21.75 and 64.75 mm from the low-u end, ahead of BUCK_AUX, and three blind Ø8.4 × 2.6 mm pockets in its floor face at 91.24, 145.14 and 162.94 mm; segment 3 keeps the standard screws and has one pocket at 14.55 mm. The pockets take the buck bolts' M4 button heads. **Bolt the bucks before fitting these two segments**, heads from below. Print floor face down, like the others; the pockets need no support. |
 | `segno_lid_prop` | 1 | **BLACK PETG**, ≥40% infill | Mid-field lid prop (issue #1019). A pure compression column, which is why it is printed rather than another shop part number. It stands in the one clear lane between BANK's pedestal and the 16in module body — 31.5 mm wide, so the 24 mm column has 3.7 mm each side and there is no room to improvise on the bench. Two M4 into the floor through the tongue; the top face is already cut to the 12.5° slope, so print it **tongue-down, flat on the bed** and let the sloped face be the top surface. Fit felt on that face to the measured gap after coating, the same rule as the steel beam. Its load qualification remains part of the independent #1019 hold. |
+| `segno_als_sleeve` | 1 | **BLACK PETG**, ≥40% infill | Ambient light sensor sleeve (#1564): a Ø15 body, 17 mm across its cable-tie tongue, 23.0 mm long. It is bonded to the lid underside around the sensor window and the TEPT5600's flange beds in epoxy on a seat 2.70 mm below its bond face (bores Ø5.45 and Ø6.3; ream to these if the sensor does not slide in). Its bore hides the sensor body from the LED strips and screen backlights inside the console, and a 2.5 mm cable tie through its tongue holds the lead. **Print it bond face down** with no supports: every bore steps outward going up, and the tie hole is a 1.6 mm bridge. The print check passes on every count (98% bed contact). |
 | `segno_ring_diffuser` | 1 | **WHITE translucent** (exception to the all-black rule: it is a lens) | Ø67-window lens and disc holder for the selected PR #990 Ring 24 on its 2.54 mm pin strip. The open-bottom cavity has eight 1.2 mm ribs in verified component gaps, a 0.25 mm shelf and a 1.05 mm lens roof. Nominal minimum PCB clearance is **0.135 mm**, LED clearance 0.332 mm; qualify one actual print and its light diffusion before ordering a set. Orient and dry-fit it as described below before gluing. |
 | `console_ring_{diffuser,cup,encoder_retainer,encoder_spacer,centre_cap}` (#1075, `hardware/strip_ring/out_console/`) | 1 each | diffuser and cup **WHITE PLA**, the rest **BLACK** | **The selected ring** (owner, 2026-10-13; final count 35 LEDs, 2026-10-19, #1075), replacing `segno_ring_diffuser`. A 35-LED strip on the cup wall, LEDs facing in; the cup's roof is glued to the faceplate underside and the lens sits flush in the unchanged Ø67 window. Three snap arms on the cup click under the Ø80 carrier's edge (0.6 mm overlap, 0.3 mm play; the encoder nut still sets its height), so the carrier needs no screws (#1090). The cup prints roof-down, so the arms stand up with their layers across the way they bend; the first print's thin arms snapped coming off the bed. The arms are now 8 mm wide and taper from 1.8 mm at the root to 1.0 mm at the catch, with a chamfered root, and a full flex strains the root about 0.45 %. Release the part by flexing the bed, not by levering against the arms. A 0.48 mm-deep relief pocket behind each arm keeps it from printing fused to the wall; fully flexed, the arms stay 17 mm clear of the printed 7-inch tower. The v3 carrier hangs 7 mm deeper than with the Ring 24 (J3 unfitted, strip on J2); since the ring moved to v 215.0 (#1090) it clears the printed 7-inch tower with 1.5 mm of air. The aluminium `segno_ring_disc` is glued on its printed centre cap (the cap sits 2 mm lower for it), so the centre matches the lid's coating; order the disc. The carrier hangs from its Same Sky ACZ11 encoder, whose shoulder measured 6.39 mm above the board, so the encoder spacer is 1.695 mm thick (the 3.5 mm one assumed an EC11). Push the knob on until its underside is 1.0 mm above the face, so a full press of the switch (0.8 mm) never bottoms it; the shaft then enters 9.4 mm of the knob's bore. The cup is drawn for 34 LEDs (`COUNT` in `console_ring.py`), and a 35-LED strip fits it as printed: the first and last LEDs overlap slightly at the seam (owner, bench fit, 2026-10-23), so the cup stays as drawn. |
 | `segno_screen7_tower` | 1 | **BLACK PETG**, ≥40% infill | 7-inch screen support tower (#762, closed deck #1070). One piece, closed wedge box, six M3 to the floor through Ø5.5 float holes. The deck is closed: four internal front-to-back ribs carry it, and each cell's ceiling is a 45° gable, so **print it flange-down with no support** (there is no way to get support out of a closed box). The openings are the connector notch on the edge facing the console centre, where the module's HDMI, micro-USB and backlight switch are. The strip-ring notch of #1075 is gone again: the ring moved 14.16 mm down the slope (#1090), so **the tower already printed is the current part**; a generator gate keeps the carrier clear of it. |
@@ -281,6 +283,60 @@ unchanged by these console paint allowances.
 | `segno_screen16_splice` | 1 | **BLACK PETG**, ≥40% infill | Flat plate between the deck ribs at the 15.6-inch screen centre. Four M3×12 up into heat-set inserts, two in each half. |
 | `segno_screen7_shim_{0p2,0p4,0p8,1p6}` | 1 each | **BLACK PETG**, 100% infill | Height shims under the 7-inch tower: the tower's whole underside (flange ring and rib feet) with the same float holes. The kit is binary, so any stack from 0 to 3.0 mm in 0.2 mm steps is available. **Nominal is 0.2 + 0.8 = 1.0 mm**: the tower is built 1.0 mm short of the lid, so the stack trims it -1.0 to +2.0 mm. Print the 0.2 as a single first layer and check it with calipers; a first layer squashed to 0.15 is a 0.05 mm height error. |
 | `segno_screen16_shim_{0p2,0p4,0p8,1p6}` | 2 each | **BLACK PETG**, 100% infill | The same kit for the 15.6-inch stands, one set per stand. The flange outline is not symmetric; for the right stand **turn each shim over**. |
+
+**Ambient light sensor (#1564).** A Vishay TEPT5600 sits in the Ø5.75
+window at lid (u 321.86, v 385.0), on the logo's centre line 25 mm above it.
+Its dome is sanded off flat and the flat face is the window: there is no light
+pipe. The sensor goes in after painting.
+
+1. **Sand only the dome.** The dome is an R2.45 sphere on the Ø5.0 body, and
+   the chip sits 4.3 mm below its apex. Measure the apex to the flange's top
+   face with calipers first (7.45–7.75 mm). Sand on a flat sheet with the body
+   held square, check the face for flatness as you go, and stop as soon as the
+   face reaches the cylinder's full Ø5.0, about 2.45 mm down. **Accept the
+   part only if the flat face to the flange's top face measures 4.95 mm or
+   more**. Below that the sleeve no longer lets the face reach flush, and the
+   epoxy over the chip (about the face height minus 3.3 mm, 1.85 mm when the
+   face is 5.15) gets thin. Finish with fine grit so the face stays lightly
+   frosted, not polished.
+2. **Check the sleeve and wire the sensor.** The sensor must slide into the
+   printed sleeve freely, flat face first, until the flange meets the seat; if
+   it does not, ream the bore to Ø5.45 and the flange pocket to Ø6.3. Cut the
+   sensor's leads to about 6 mm below the flange so the joints sit inside the
+   lead cavity, solder the lead and sleeve the joints. The load resistor goes
+   where the wiring puts it: at the board end of the lead, or here at the
+   sensor, where the cavity (Ø10 × 10 mm) also takes a sleeved 0207 resistor
+   beside the joints.
+3. **Bond it face down.** Lay the painted lid face down on a flat sheet
+   covered with release film (packing tape on glass works), weighted near the
+   window so it lies flat there. Put black epoxy on the sleeve's seat and on
+   the outer half of its bond face only, keeping it away from the bore so none
+   reaches the window. Seat the sensor in the sleeve, lower the sleeve onto the
+   lid with the sensor through the window, and drop an M5 nut over the leads
+   onto the back of the flange so the face stays pressed on the film while the
+   epoxy cures. The face lands on the sheet, which sets it flush, and the
+   sleeve lands on the lid. The seat is sized for the shortest accepted sensor
+   in the thickest painted lid, so the flange never holds the face off the
+   sheet: it stands 0–0.45 mm above the seat (0.24 nominal), bedded in the
+   epoxy there.
+4. Once cured, take the nut off, pull a 2.5 mm cable tie through the tongue
+   around the lead, and fill the lead cavity with black neutral-cure RTV (not
+   acetoxy, which corrodes the joints). The RTV backs the flange and stops
+   light reaching the sensor from behind. Then turn the lid face up, put a
+   5 mm tape dot on the sensor face, and fill the 0.1–0.5 mm ring between the
+   body and the window with black epoxy from a fine needle; pull the tape
+   before the epoxy cures.
+5. **Lead route, about 520 mm to J22 on console board v3.** The lead has two
+   or three wires, depending on where the load resistor sits. J22's pin map is
+   pin 1 +3V3, pin 5 GP28, pin 6 GND (#1564); keep the sensor off pin 2, which
+   is +5 V. The resistor value comes with the board-side change for #1564 in
+   [`segno_wiring.md`](segno_wiring.md). J22 is unpopulated by default and its
+   header is not keyed: fit the 2×3 header first, and mark pin 1 on both the
+   header and the plug. Leave about 150 mm of free lead between the tongue and
+   the first tie point so the lid can be lifted and set down before J22 is
+   unplugged. Then drop the lead behind the rear edge of the BUCK_AUX
+   converter (it sits under the sensor, ahead of the PD board) and run it
+   along the floor beside the BUCK_AUX feed to the console board.
 
 **Setting the screen height.** Fit each stand on the nominal 0.2 + 0.8 stack,
 close the lid and check the glass against the lid underside around the aperture.
@@ -559,6 +615,13 @@ parts are `kicad/fab/segno_console_board_bom.csv`. Headlines:
 - 1× **Panasonic EEUFR1A102**, 1000 µF / 10 V, fitted across the strip's
   own power entry with insulated lead joints; allow its 10 × 16 mm body
   beside the harness. See [polarity and assembly](kicad/RING_ASSEMBLY.md).
+- Ambient light sensor (#1564): 1× **Vishay TEPT5600** (genuine; Amazon
+  B06X3VS2HS, pack of 10); the J22 2×3 header (Würth 61300621121, optional
+  in the shopping list, required here) and a matching 2×3 2.54 mm socket
+  housing with crimp contacts; about 520 mm of two- or three-core lead; one
+  2.5 mm cable tie; one M5 nut as a curing weight; black two-part epoxy; and
+  black **neutral-cure** RTV silicone (acetoxy corrodes the joints). The load
+  resistor comes with the board-side change in `segno_wiring.md`.
 - Cabling per **`segno_wiring.md`** (HDMI ×2, USB, the 20 V PD feed + 5 V buck
   runs, the 2×20 keyed ribbon, JST looms)
 

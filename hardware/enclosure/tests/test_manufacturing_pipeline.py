@@ -284,14 +284,16 @@ class ManufacturingPipelineTest(unittest.TestCase):
                 # height kits: nine parts, STEP + STL each.
                 # 80 since the console's pills became the tall #1074 set: the old
                 # segno_led_diffuser is the mini console's part only.
-                'segno_3dprint.zip':80,
+                # 82 since the ambient light sensor sleeve (#1564).
+                'segno_3dprint.zip':82,
             })
             for members in packages.values():
                 self.assertFalse([name for name in members if 'corner_bracket' in name])
             for part in ('segno_platform_sled', 'segno_platform_mid_sled',
                          'segno_lid_prop', 'segno_floor_rail_front_a_1',
                          'segno_floor_rail_rear_4', 'segno_screen16_splice',
-                         'segno_screen7_shim_0p2', 'segno_screen16_shim_1p6'):
+                         'segno_screen7_shim_0p2', 'segno_screen16_shim_1p6',
+                         'segno_als_sleeve'):
                 for extension in ('.step', '.stl'):
                     self.assertIn(part+extension, packages['segno_3dprint.zip'])
             # and nothing printed is left out again
