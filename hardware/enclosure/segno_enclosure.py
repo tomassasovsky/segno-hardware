@@ -1368,6 +1368,27 @@ def _has_led(label):
 # clipped 49 mm3 of the deck's front edge); S7T_RING_CLEAR_* gates that.
 ENC_V = 215.0
 
+# Ambient light sensor (#1564). Owner's spot A (2026-11-03): on the rear strip,
+# midway between CLEAR and BANK, which is also the centre line of the lid logo,
+# 25 mm above the logo's top edge (v 360). Everything that lights up is downslope
+# of it. The part is a genuine Vishay TEPT5600 (5 mm T-1 3/4 phototransistor,
+# datasheet 84768, page 4) with its dome sanded off flat: the flat face sits
+# flush in the lid and IS the window. No light pipe.
+ALS_U = (_row1_u(2) + _row1_u(3)) / 2.0   # 321.857
+ALS_V = 385.0
+TEPT_BODY_D = 5.0         # +/- 0.15
+TEPT_BODY_TOL = 0.15
+TEPT_FLANGE_D = 5.75      # +/- 0.15
+TEPT_FLANGE_T = 8.6 - 7.6 # apex to flange bottom minus apex to flange top
+TEPT_TOP_H = 7.6          # dome apex to the flange's top face, +/- 0.15
+TEPT_DOME_R = 2.45        # spherical dome
+TEPT_CHIP_DEPTH = 4.3     # chip below the apex
+TEPT_SANDED_H = TEPT_TOP_H - TEPT_DOME_R      # 5.15: flat face to the flange top
+TEPT_SAND_MAX = 2.5       # never sand further than this from the apex
+# Bare hole: the largest body (5.15) passes the smallest finished hole, the same
+# rule as every other functional opening (SHOP_TOL + COAT_MAX per wall).
+ALS_HOLE_D = TEPT_BODY_D + TEPT_BODY_TOL + SHOP_TOL + 2 * COAT_MAX   # 5.55
+
 # Legends. Two transport controls read as SYMBOLS rather than words (owner call
 # 2026-08-21): "REC/PLAY" was a two-line block eating the tallest label slot on
 # the plate for what is one button, and a record dot beside a play triangle says
@@ -1762,6 +1783,8 @@ def faceplate_holes():
     enc_u = COL_U                        # shared left-column centre-line (7" screen + ring)
     cuts.append({"kind": "ring",   "u": enc_u, "v": enc_v, "od": RING_OD, "id": RING_ID, "ref": "RING"})
     cuts.append({"kind": "circle", "u": enc_u, "v": enc_v, "d": D_ENC, "ref": "ENCODER"})
+    # --- ambient light sensor window (#1564): the sanded TEPT5600 is glued in it
+    cuts.append({"kind": "circle", "u": ALS_U, "v": ALS_V, "d": ALS_HOLE_D, "ref": "ALS"})
     # NOTE: no LEDs flank the encoder -- like the reference, the ring stands alone.
     # There is NO power indicator anywhere on this machine (#743): the rear
     # button is deliberately unlit, and two lit screens say "on" from the side
@@ -3423,7 +3446,8 @@ def dxf_faceplate(path):
           "La arandela trasera aporta apoyo, no tapa necesariamente toda la ranura. "
           "Calces frontales metálicos Ø7/paso4.0-4.2: ajustar cada espesor entre caras pintadas; "
           "verificar paralelismo y apoyo, sin cerrar la luz a fuerza de tornillo. "
-          "Aberturas de lentes LED 60.4 x6.4 R3.2 y aro Ø67.4 SIN PINTAR, tolerancia general ±0.20.")
+          "Aberturas de lentes LED 60.4 x6.4 R3.2 y aro Ø67.4 SIN PINTAR, tolerancia general ±0.20. "
+          f"Agujero del sensor de luz Ø{ALS_HOLE_D:.2f} ±0.20, pintado.")
     _save(doc, path)
     return {"blank": (LW, yr1)}
 
@@ -6152,6 +6176,72 @@ def build_prop_step():
     return step
 
 
+# --- ambient light sensor sleeve (#1564) -------------------------------------
+# A short black PETG sleeve bonded to the lid underside around the ALS hole. The
+# TEPT5600's flange rests on its seat, the bore hides the body from the light
+# inside the console, and a cable tie through the tongue holds the 3-wire lead.
+# Print frame: z = 0 is the bond face (on the bed), +z points into the console.
+ALS_LID_T = T + COAT_MIN + COAT_MAX     # coated lid at the hole, nominal 2.16
+ALS_GLUE = 0.10                          # epoxy line, sleeve to lid underside
+ALS_SEAT = TEPT_SANDED_H - ALS_LID_T - ALS_GLUE   # 2.89: bond face to flange seat
+ALS_SLEEVE_OD = 15.0
+ALS_BODY_BORE = 5.40          # body 4.85-5.15
+ALS_FLANGE_BORE = 6.10        # flange 5.60-5.90
+ALS_FLANGE_POCKET = TEPT_FLANGE_T + 0.30
+ALS_CAVITY_D = 10.0           # two lead joints and the 0207 load resistor, sleeved
+ALS_CAVITY_L = 10.0
+ALS_SLEEVE_H = ALS_SEAT + ALS_FLANGE_POCKET + ALS_CAVITY_L   # 14.19
+ALS_TONGUE_W = 8.0
+ALS_TONGUE_T = (ALS_SLEEVE_OD - ALS_CAVITY_D) / 2.0          # the wall, carried on
+ALS_TONGUE_L = 9.0
+ALS_TIE_W, ALS_TIE_H = 3.0, 1.6   # for a 2.5 mm cable tie
+
+
+def als_axis_world():
+    """The sensor axis in world mm: (point on the faceplate UNDERSIDE, unit
+    direction outward), the same convention as encoder_axis_world()."""
+    c = math.cos(math.radians(SLOPE_ANGLE))
+    sn = math.sin(math.radians(SLOPE_ANGLE))
+    return ((ALS_U, c * ALS_V - 2.093, LID_UNDER_Z0 + sn * (ALS_V - 2.093 / c)),
+            (0.0, -sn, c))
+
+
+def _als_sleeve_solid():
+    """The sleeve in print orientation: bond face on the bed, no supports. Every
+    bore steps OUTWARD going up, and the tie hole through the tongue is a 3 mm
+    bridge."""
+    import cadquery as cq
+    r_out = ALS_SLEEVE_OD / 2.0
+    body = cq.Workplane("XY").circle(r_out).extrude(ALS_SLEEVE_H)
+    tongue = (cq.Workplane("XY")
+              .center(r_out - ALS_TONGUE_T / 2.0, 0)
+              .rect(ALS_TONGUE_T, ALS_TONGUE_W).extrude(ALS_TONGUE_L)
+              .translate((0, 0, ALS_SLEEVE_H)))
+    body = body.union(tongue)
+    z = 0.0
+    for d, h in ((ALS_BODY_BORE, ALS_SEAT), (ALS_FLANGE_BORE, ALS_FLANGE_POCKET),
+                 (ALS_CAVITY_D, ALS_CAVITY_L + ALS_TONGUE_L + 1.0)):
+        body = body.cut(cq.Workplane("XY").circle(d / 2.0).extrude(h + 0.02)
+                        .translate((0, 0, z - 0.01)))
+        z += h
+    # the tongue's inner face is the cavity wall, so the cavity cut also trims it
+    tie = (cq.Workplane("YZ").center(0, ALS_SLEEVE_H + ALS_TONGUE_L / 2.0)
+           .rect(ALS_TIE_W, ALS_TIE_H).extrude(r_out + 1.0))
+    body = body.cut(tie)
+    solid = body.val()
+    assert solid.isValid() and len(body.solids().vals()) == 1, "ALS sleeve is not one valid solid"
+    return solid
+
+
+def build_als_sleeve_step():
+    import cadquery as cq
+    step = os.path.join(OUT, "segno_als_sleeve.step")
+    solid = _als_sleeve_solid()
+    cq.exporters.export(solid, step)
+    cq.exporters.export(solid, os.path.join(OUT, "segno_als_sleeve.stl"))
+    return step
+
+
 def build_beam_step():
     import cadquery as cq
     step = os.path.join(OUT, "segno_beam.step")
@@ -8187,6 +8277,7 @@ def build_quote_packages(with_step=True, with_pdf=True, tiles_only=False):
         # printed part from doing the same.
         printed += [f"segno_floor_rail_{r}_{i}" for r, i, *_ in floor_rail_segments()]
         printed += ["segno_lid_prop"]
+        printed += ["segno_als_sleeve"]       # ambient light sensor sleeve (#1564)
         # Calibration jigs and the purchased encoder knob are not manufactured parts.
         _not_a_console_part = {"segno_encoder_knob",            # purchased
                                "segno_pedal_base_fit_test",     # jig
@@ -8821,6 +8912,9 @@ def main(argv):
             pr = build_prop_step()
             print("Mid-field lid prop (3D print, x1, issue #1019): out/"
                   + os.path.basename(pr) + " (+ .stl)")
+            als = build_als_sleeve_step()
+            print("Ambient light sensor sleeve (3D print, x1, issue #1564): out/"
+                  + os.path.basename(als) + " (+ .stl)")
             rails = build_floor_rail_steps()
             print(f"Floor rails (3D print PETG, {len(rails)} segments, issue #1019): "
                   f"out/segno_floor_rail_*.step (+ .stl)")
