@@ -296,10 +296,12 @@ pipe. The sensor goes in after painting.
    2.5 mm off the apex: that leaves 1.8 mm of epoxy over the chip and its bond
    wire. Finish with fine grit so the face stays lightly frosted, not polished.
 2. **Assemble face down.** Lay the painted lid face down on a flat sheet
-   covered with release film (packing tape on glass works). Solder the 3-wire
-   lead (and the load resistor, if the wiring doc puts it at the sensor) to the
-   leads, sleeve the joints, and feed the
-   sensor into the sleeve flat face first until its flange sits on the seat.
+   covered with release film (packing tape on glass works). Solder the lead to
+   the sensor's two leads and sleeve the joints. The load resistor goes where
+   the wiring doc puts it: at the board end of the lead, or here at the sensor,
+   where the lead cavity (Ø10 × 10 mm) also takes a sleeved 0207 resistor
+   beside the joints. Feed the sensor into the sleeve flat face first until its
+   flange sits on the seat.
 3. Put a thin ring of black epoxy around the body at the hole and on the
    sleeve's bond face, keeping it off the flat face. Lower the sleeve onto the
    lid with the sensor through the window until the flat face touches the

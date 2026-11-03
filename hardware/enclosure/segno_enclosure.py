@@ -6188,7 +6188,8 @@ ALS_SLEEVE_OD = 15.0
 ALS_BODY_BORE = 5.40          # body 4.85-5.15
 ALS_FLANGE_BORE = 6.10        # flange 5.60-5.90
 ALS_FLANGE_POCKET = TEPT_FLANGE_T + 0.30
-ALS_CAVITY_D = 10.0           # two lead joints and the 0207 load resistor, sleeved
+ALS_CAVITY_D = 10.0           # the sleeved lead joints, plus the 0207 load resistor
+                              # when the wiring puts it at the sensor, not the board
 ALS_CAVITY_L = 10.0
 ALS_SLEEVE_H = ALS_SEAT + ALS_FLANGE_POCKET + ALS_CAVITY_L   # 14.19
 ALS_TONGUE_W = 8.0
