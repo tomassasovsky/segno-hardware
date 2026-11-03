@@ -435,6 +435,124 @@ Notes that are load-bearing:
   alternatives together or chain an additional ring from DOUT. Extra LEDs
   require a new connector, copper and whole-system power assessment.
 
+### Console board J22 ↔ the light sensor (#1564)
+
+An optional ambient light sensor lets the app set the pills' and the ring's
+brightness from the room. It sits at spot A on the faceplate (plate u 321.9,
+v 385.0 mm: on the logo's centreline, 25 mm above it, 21.6 mm in front of the
+rear fold), and its lead runs to the board's spare header **J22**. Without it,
+or with J22 empty, the console behaves exactly as before: the firmware sees
+nothing on the pin and the app offers no automatic brightness.
+
+**Circuit.** A Vishay **TEPT5600** NPN phototransistor, wired as an emitter
+follower into a load resistor:
+
+```
+J22 pin 1 (+3V3) ──── collector ─┐
+                                 │ TEPT5600   (in the faceplate)
+J22 pin 5 (GP28) ──┬── emitter ──┘
+                   │   ~520 mm of lead
+                  ┌┴┐                         (at the J22 end)
+             R_L  │ │ 2.2 kΩ    ═╤═ C_F 100 nF
+                  └┬┘            │
+J22 pin 6 (GND) ───┴─────────────┘
+```
+
+The photocurrent through **R_L** is the voltage GP28 (ADC2) reads. **C_F**
+sits across R_L, so the RC (0.22 ms with 2.2 kΩ) takes out RF and the 800 kHz
+LED data the lead picks up on its way past the strips, and the ADC's sampling
+capacitor charges from a stiff node. Mains flicker and LED dimmer PWM are left
+to the firmware, which averages a second of readings at a time.
+
+**Why R_L and C_F are at the board end, not at the sensor.** The
+phototransistor is a current source, so the lead's noise behaves the same with
+the resistor at either end; what differs is access. At the board end:
+
+- the faceplate end is only the glued sensor, with nothing to fit or protect
+  behind the plate;
+- the resistor can be swapped after measuring (below) without touching the
+  plate;
+- a lead unplugged from J22 takes the resistor with it, so J22 is open and the
+  firmware reports no sensor. A pin with the resistor on it and no sensor would
+  read as a sensor in a dark room.
+
+**The load resistor and where it saturates.** The sensor's gain after its
+lens is sanded flat is not known. With its lens the TEPT5600 gives
+630 µA at 100 lx (typical) and Vishay's bins span 25-227 µA at 20 lx, about
+9x; flattening the dome widens the angle and loses an unmeasured share. The
+reading tops out at **3700 counts (2.98 V)**, where the transistor runs out of
+collector-emitter headroom, so with **R_L = 2.2 kΩ** it saturates at 1.35 mA:
+
+| Sensitivity after sanding | Saturates at | Dark stage, 2 lx |
+|---|---|---|
+| 6.3 µA/lx (the lensed typical, no loss) | 215 lx | 34 counts |
+| 2.1 µA/lx (a third of it) | 650 lx | 11 counts |
+| 1.0 µA/lx (a sixth) | 1350 lx | 5 counts |
+| 0.4 µA/lx (bin A, half lost) | 3400 lx | 2 counts |
+
+A bright room is 300-500 lx. 2.2 kΩ is the middle of the plausible range: a
+sensor that kept a third of its lensed gain still reaches a bright room, and
+one that lost five sixths still resolves a dark stage after the firmware's
+averaging. The firmware and the app work in raw counts, so any value from
+**1 kΩ to 22 kΩ** works without a code change. Below 1 kΩ the board's
+"no sensor" probe can mistake a fitted sensor in the dark for a pin shorted to
+ground.
+
+**Measure, then keep or swap R_L.** Read the raw value on the console, in
+Settings > Displays > Console LEDs (the Light sensor panel's Reading row, out
+of 4095):
+
+1. In the brightest room you play in, with the lights on: aim for
+   **1500-2500**. Over **3000**, or a page that says the sensor is at the top
+   of its range: fit a smaller R_L. Under **500**: fit a larger one.
+2. The new value is `R_L × 2000 / reading`, rounded to the nearest E12 value
+   (1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2, 10 kΩ...).
+   Example: 3600 with 2.2 kΩ → 1.2 kΩ.
+3. In a dark room with the lights as on stage, the reading should be clearly
+   above zero (5 or more). If the bright room is right and the dark one still
+   reads 0-2, the sensor cannot see a stage that dark; the curve then holds
+   the LEDs at their dark level there, which is what it would do anyway.
+
+**Calibrate in the app.** On the same page: in the dark room, wait 10 s for
+the reading to settle and tap **Dark room**; in the bright room, wait and tap
+**Bright room**. The app maps brightness between those two readings (the
+LEDs at about a third in the dark, full in the bright room) and the
+Brighter or darker slider shifts the whole curve. Calibrate again after
+swapping R_L.
+
+**Lead.** About 520 mm from spot A to J22 (the enclosure's route plus 150 mm
+of lid slack). Three conductors, 26-28 AWG stranded, twisted together:
++3V3 (J22 pin 1) to the collector, signal (pin 5) to the emitter, and GND
+(pin 6), which carries no current: connect it at J22 only, and cut it back and
+insulate it at the sensor. Keep the lead away from the pill data line (J24)
+and the ring harness where it can, and do not bundle it with the buck outputs.
+
+**At J22.** Solder the 2×3 header (J22, pin 1 top-left; see the
+[solder order](v3_soldering/README.md)). The lead ends in a **2×3 Dupont
+housing** with contacts in cavities 1, 5 and 6. Key it: pull **pin 3** out of
+the header (it is NC on v3.2) and block **cavity 3** of the housing (a cut-off
+header pin pushed in, or a drop of glue), so the housing only goes on one way.
+Turned round, it would put the collector wire on ground and the signal wire
+on +5V (pin 2), driving the sensor backwards from 5 V with nothing to limit
+the current.
+R_L and C_F go in line just behind the housing: both between the pin 5 and
+pin 6 wires, soldered and sleeved with heat shrink, then one larger sleeve
+over the three wires and the parts. On a reworked v3 board whose MODE jumper
+lands on the J22 pin 3 pad, pulling pin 3 also leaves that wire alone.
+
+**At the sensor.** The enclosure part (#1564) glues it in a Ø5.2 mm hole with
+its sanded dome flush and lightly frosted. Solder the lead to its legs,
+trimmed short, with heat shrink on each joint so the two cannot touch. Mark
+the collector before trimming, from the package drawing in the
+[datasheet](https://www.vishay.com/docs/84768/tept5600.pdf), which labels C
+and E. Wired backwards it takes no harm (2.2 kΩ limits the current to about
+1 mA), but the reading barely moves with light: swap the two wires.
+
+**Check.** With the lead plugged in, the page's Sensor row reads Fitted within
+a few seconds of boot; a hand over the sensor drops the Reading within about
+5-10 s, and a phone torch pushes it up. Unplugged, it reads Not fitted within
+a few seconds.
+
 ---
 
 ## 4. Raspberry Pi connections
