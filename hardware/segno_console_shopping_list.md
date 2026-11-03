@@ -175,9 +175,11 @@ Wiring, the resistor choice and the calibration are in
       ([datasheet](https://www.vishay.com/docs/84768/tept5600.pdf)), ×1 plus a
       spare. Its lens dome is sanded flat to sit flush in the faceplate.
 - [ ] **2.2 kΩ** ¼ W metal film, 1 %, ×1: the load resistor, R_L.
-- [ ] Swap values for R_L after measuring: **1.0, 1.2, 1.5, 3.3, 4.7 and
-      10 kΩ**, ¼ W metal film, one each. Any 1-22 kΩ works; which one
-      depends on the sanded sensor's gain, measured on the console.
+- [ ] **100 Ω** ¼ W metal film, ×1: R_S, in the lead's +3V3 wire.
+- [ ] Swap values for R_L after measuring, ¼ W metal film, one each: the
+      E12 set **1.0, 1.2, 1.5, 1.8, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2 and
+      10 kΩ**. Any 1-22 kΩ works; which one depends on the sanded sensor's
+      gain, measured on the console.
 - [ ] **100 nF** 50 V ceramic, X7R, through-hole (2.54 or 5.08 mm), ×1: C_F.
 - [ ] **2×3 pin header**, 2.54 mm, for J22 (the board BOM's Würth
       61300621121), if J22 is not fitted yet.

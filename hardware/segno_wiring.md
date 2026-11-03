@@ -448,11 +448,11 @@ nothing on the pin and the app offers no automatic brightness.
 follower into a load resistor:
 
 ```
-J22 pin 1 (+3V3) ──── collector ─┐
-                                 │ TEPT5600   (in the faceplate)
-J22 pin 5 (GP28) ──┬── emitter ──┘
+J22 pin 1 (+3V3) ── R_S 100 Ω ── collector ─┐
+                                            │ TEPT5600   (in the faceplate)
+J22 pin 5 (GP28) ──┬─────────── emitter ────┘
                    │   ~520 mm of lead
-                  ┌┴┐                         (at the J22 end)
+                  ┌┴┐                         (R_S, R_L, C_F at the J22 end)
              R_L  │ │ 2.2 kΩ    ═╤═ C_F 100 nF
                   └┬┘            │
 J22 pin 6 (GND) ───┴─────────────┘
@@ -462,9 +462,14 @@ The photocurrent through **R_L** is the voltage GP28 (ADC2) reads. **C_F**
 sits across R_L, so the RC (0.22 ms with 2.2 kΩ) takes out RF and the 800 kHz
 LED data the lead picks up on its way past the strips, and the ADC's sampling
 capacitor charges from a stiff node. Mains flicker and LED dimmer PWM are left
-to the firmware, which averages a second of readings at a time.
+to the firmware: it reads at random 7-13 ms intervals, so 100 Hz lamp flicker
+(50 Hz mains) is caught at every phase, and averages a second of readings at
+a time. **R_S** limits the current if the lead's +3V3 wire or the collector
+joint ever touches the chassis-bonded faceplate: J22 pin 1 is the Pi's 3V3
+rail, which also feeds the MIDI front end, and 100 Ω holds a short to 33 mA.
+It costs the reading nothing: at most about 1.3 mA flows, a 0.13 V drop.
 
-**Why R_L and C_F are at the board end, not at the sensor.** The
+**Why R_S, R_L and C_F are at the board end, not at the sensor.** The
 phototransistor is a current source, so the lead's noise behaves the same with
 the resistor at either end; what differs is access. At the board end:
 
@@ -480,64 +485,74 @@ the resistor at either end; what differs is access. At the board end:
 lens is sanded flat is not known. With its lens the TEPT5600 gives
 630 µA at 100 lx (typical) and Vishay's bins span 25-227 µA at 20 lx, about
 9x; flattening the dome widens the angle and loses an unmeasured share. The
-reading tops out at **3700 counts (2.98 V)**, where the transistor runs out of
-collector-emitter headroom, so with **R_L = 2.2 kΩ** it saturates at 1.35 mA:
+firmware calls **3500 counts (2.82 V)** the top of the range. The collector
+runs from the Pi's 3V3 through R_S while the ADC reads against the Pico's own
+3V3, and the transistor needs a few tenths of a volt across it, so a
+saturated sensor reads from about 2.9 V up; 2.82 V leaves room for the Pi's
+rail to sit 0.1 V low. With **R_L = 2.2 kΩ** that top is 1.28 mA:
 
-| Sensitivity after sanding | Saturates at | Dark stage, 2 lx |
+| Sensitivity after sanding | Top of the range at | Dark stage, 2 lx |
 |---|---|---|
-| 6.3 µA/lx (the lensed typical, no loss) | 215 lx | 34 counts |
-| 2.1 µA/lx (a third of it) | 650 lx | 11 counts |
-| 1.0 µA/lx (a sixth) | 1350 lx | 5 counts |
-| 0.4 µA/lx (bin A, half lost) | 3400 lx | 2 counts |
+| 6.3 µA/lx (the lensed typical, no loss) | 200 lx | 34 counts |
+| 2.1 µA/lx (a third of it) | 610 lx | 11 counts |
+| 1.0 µA/lx (a sixth) | 1300 lx | 5 counts |
+| 0.63 µA/lx (bin A's minimum, half lost) | 2000 lx | 3 counts |
 
 A bright room is 300-500 lx. 2.2 kΩ is the middle of the plausible range: a
 sensor that kept a third of its lensed gain still reaches a bright room, and
 one that lost five sixths still resolves a dark stage after the firmware's
-averaging. The firmware and the app work in raw counts, so any value from
-**1 kΩ to 22 kΩ** works without a code change. Below 1 kΩ the board's
-"no sensor" probe can mistake a fitted sensor in the dark for a pin shorted to
-ground.
+averaging. The firmware reports the raw ADC reading (on a log scale, in steps
+of about 4 %) and the app calibrates it, so any value from **1 kΩ to 22 kΩ**
+works without a code change. Below 1 kΩ the board's "no sensor" probe can
+mistake a fitted sensor in the dark for a pin shorted to ground.
 
-**Measure, then keep or swap R_L.** Read the raw value on the console, in
-Settings > Displays > Console LEDs (the Light sensor panel's Reading row, out
-of 4095):
+**Measure, then keep or swap R_L.** This needs controller firmware 2.7 or
+later, which the image carries with the app that has the page. Read the value
+on the console, in Settings > Displays > Console LEDs (the Light sensor
+panel's Reading row, out of 4095). After the light changes, give it 10 s to
+settle; the board moves the reading only after a change of about 19 %.
 
 1. In the brightest room you play in, with the lights on: aim for
-   **1500-2500**. Over **3000**, or a page that says the sensor is at the top
-   of its range: fit a smaller R_L. Under **500**: fit a larger one.
-2. The new value is `R_L × 2000 / reading`, rounded to the nearest E12 value
-   (1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2, 10 kΩ...).
-   Example: 3600 with 2.2 kΩ → 1.2 kΩ.
+   **1500-2500**. Under **500**: fit a larger R_L. Over **3000**: fit a smaller
+   one. If the page says the sensor is at the top of its range, the reading
+   says nothing about how far over it is: halve R_L and measure again.
+2. Otherwise the new value is `R_L × 2000 / reading`, rounded to the nearest
+   E12 value (1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2,
+   10 kΩ...). Example: 3000 with 2.2 kΩ → 1.5 kΩ; 400 → 10 kΩ.
 3. In a dark room with the lights as on stage, the reading should be clearly
    above zero (5 or more). If the bright room is right and the dark one still
    reads 0-2, the sensor cannot see a stage that dark; the curve then holds
    the LEDs at their dark level there, which is what it would do anyway.
 
-**Calibrate in the app.** On the same page: in the dark room, wait 10 s for
-the reading to settle and tap **Dark room**; in the bright room, wait and tap
-**Bright room**. The app maps brightness between those two readings (the
-LEDs at about a third in the dark, full in the bright room) and the
-Brighter or darker slider shifts the whole curve. Calibrate again after
-swapping R_L.
+**Calibrate in the app.** On the same page: in the dark room, wait 10 s and
+tap **Dark room**; in the bright room, wait and tap **Bright room**. Dark room
+is available only at half the Bright room reading or less, and Bright room
+only at twice the Dark room reading or more; with a sensor whose dark room
+reads above the default bright point, set Bright room first. Then choose
+**Automatic**. The app maps brightness between the two readings: about a
+third as bright to the eye in the dark (about a tenth of the LEDs' drive),
+full in the bright room. The Brighter or darker slider shifts the whole
+curve. Calibrate again after swapping R_L.
 
 **Lead.** About 520 mm from spot A to J22 (the enclosure's route plus 150 mm
 of lid slack). Three conductors, 26-28 AWG stranded, twisted together:
-+3V3 (J22 pin 1) to the collector, signal (pin 5) to the emitter, and GND
-(pin 6), which carries no current: connect it at J22 only, and cut it back and
++3V3 (J22 pin 1, through R_S) to the collector, signal (pin 5) to the
+emitter, and GND (pin 6), which carries no current: connect it at J22 only, and cut it back and
 insulate it at the sensor. Keep the lead away from the pill data line (J24)
 and the ring harness where it can, and do not bundle it with the buck outputs.
 
 **At J22.** Solder the 2×3 header (J22, pin 1 top-left; see the
 [solder order](v3_soldering/README.md)). The lead ends in a **2×3 Dupont
 housing** with contacts in cavities 1, 5 and 6. Key it: pull **pin 3** out of
-the header (it is NC on v3.2) and block **cavity 3** of the housing (a cut-off
-header pin pushed in, or a drop of glue), so the housing only goes on one way.
-Turned round, it would put the collector wire on ground and the signal wire
-on +5V (pin 2), driving the sensor backwards from 5 V with nothing to limit
-the current.
-R_L and C_F go in line just behind the housing: both between the pin 5 and
-pin 6 wires, soldered and sleeved with heat shrink, then one larger sleeve
-over the three wires and the parts. On a reworked v3 board whose MODE jumper
+the header (it is NC on v3.2) and block **cavity 3** of the housing for good
+(a cut-off header pin glued in, or the cavity filled with glue; a loose pin
+falls out), so the housing only goes on one way. Turned round, it would put
+the collector wire on ground and the signal wire on +5V (pin 2), driving the
+sensor backwards from 5 V. Seat it fully over all five pins, with no overhang
+past the header's edge. R_S goes in line in the pin 1 wire, and R_L and C_F
+both between the pin 5 and pin 6 wires, just behind the housing, soldered and
+sleeved with heat shrink, then one larger sleeve over the three wires and the
+parts. On a reworked v3 board whose MODE jumper
 lands on the J22 pin 3 pad, pulling pin 3 also leaves that wire alone.
 
 **At the sensor.** The enclosure part (#1564) glues it in a Ø5.2 mm hole with
@@ -545,11 +560,15 @@ its sanded dome flush and lightly frosted. Solder the lead to its legs,
 trimmed short, with heat shrink on each joint so the two cannot touch. Mark
 the collector before trimming, from the package drawing in the
 [datasheet](https://www.vishay.com/docs/84768/tept5600.pdf), which labels C
-and E. Wired backwards it takes no harm (2.2 kΩ limits the current to about
-1 mA), but the reading barely moves with light: swap the two wires.
+and E. Check it before the first power-up. Wired backwards, the reading barely
+moves with light, and the sensor sits reverse-biased past its 1.5 V
+emitter-collector rating; R_S and R_L hold the current to about 1.4 mA, which
+it is likely to survive for a moment, but power it down and swap the two
+wires.
 
-**Check.** With the lead plugged in, the page's Sensor row reads Fitted within
-a few seconds of boot; a hand over the sensor drops the Reading within about
+**Check.** With controller firmware 2.7 or later and the lead plugged in, the
+page's Sensor row reads Fitted within a few seconds of boot (Not reported
+means the board's firmware predates the sensor); a hand over the sensor drops the Reading within about
 5-10 s, and a phone torch pushes it up. Unplugged, it reads Not fitted within
 a few seconds.
 
