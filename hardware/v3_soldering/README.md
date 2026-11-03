@@ -142,7 +142,12 @@ J3 pin 1 to pin 2 (+5V to GND) open. J2 pin 1 to J2 pin 6 (+3V3 to GND) open.
    hole** on both (silk `+`). C30 backwards will vent on first power-up.
 12. **J22 `EXP`** (optional). 2×3, pin 1 top-left. Worth fitting on the first
     unit: pin 1 is +3V3, pin 2 is +5V and pin 6 is GND, which makes it the
-    easiest test point on the board.
+    easiest test point on the board. It is also where the light sensor
+    plugs in (#1564): for that, pull **pin 3** out of the header before
+    soldering it (pin 3 is NC; on a reworked v3 board its pad may carry the
+    MODE jumper) so the sensor lead's keyed housing only fits one way. The
+    sensor's resistors and capacitor live in its lead, not on the board; see
+    [the wiring plan](../segno_wiring.md#console-board-j22--the-light-sensor-1564).
 
 H1-H4 need no soldering. H1 is the single chassis-ground bond; keep screw heads
 and standoffs at or under 6 mm diameter on H2-H4, or use insulating washers.

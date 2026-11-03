@@ -165,6 +165,31 @@ workaround for A2 Pico silicon. The hardware branch's old firmware snapshot
 is not that runtime. Board order settings and the separate enclosure-release
 limits are in [MANUFACTURING.md](MANUFACTURING.md#3-pcbs).
 
+## Light sensor (optional, #1564)
+
+Automatic LED brightness. Without these the console works exactly as before.
+Wiring, the resistor choice and the calibration are in
+[the wiring plan](segno_wiring.md#console-board-j22--the-light-sensor-1564).
+
+- [ ] **Vishay TEPT5600** ambient light phototransistor, T-1¾ (5 mm), genuine
+      ([datasheet](https://www.vishay.com/docs/84768/tept5600.pdf)), ×1 plus a
+      spare. Its lens dome is sanded flat to sit flush in the faceplate.
+- [ ] **2.2 kΩ** ¼ W metal film, 1 %, ×1: the load resistor, R_L.
+- [ ] **100 Ω** ¼ W metal film, ×1: R_S, in the lead's +3V3 wire.
+- [ ] Swap values for R_L after measuring, ¼ W metal film, one each: the
+      E12 set **1.0, 1.2, 1.5, 1.8, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2 and
+      10 kΩ**. Any 1-22 kΩ works; which one depends on the sanded sensor's
+      gain, measured on the console.
+- [ ] **100 nF** 50 V ceramic, X7R, through-hole (2.54 or 5.08 mm), ×1: C_F.
+- [ ] **2×3 pin header**, 2.54 mm, for J22 (the board BOM's Würth
+      61300621121), if J22 is not fitted yet.
+- [ ] **2×3 Dupont female housing** and **3 female crimp contacts**, 2.54 mm.
+      Without a crimp tool, take the contacts from three pre-crimped
+      female-female jumper wires and push them into the 2×3 housing.
+- [ ] **3-core cable**, 26-28 AWG stranded, **0.6 m** (or three wires twisted
+      together).
+- [ ] Heat shrink, 2-3 mm and 6 mm, a few cm each.
+
 ## Mechanical / enclosure
 
 - [ ] Enclosure material (plywood / aluminium / 3D-printed panels) — tilted body
