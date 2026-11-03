@@ -6180,29 +6180,34 @@ def build_prop_step():
 
 
 # --- ambient light sensor sleeve (#1564) -------------------------------------
-# A short black PETG sleeve bonded to the lid underside around the ALS hole. The
-# TEPT5600's flange rests on its seat, the bore hides the body from the light
-# inside the console, and a cable tie through the tongue holds the lead.
+# A short black PETG sleeve bonded to the lid underside around the ALS hole. Its
+# bore hides the TEPT5600's body from the light inside the console, the flange
+# beds in epoxy on its seat, and a cable tie through the tongue holds the lead.
 # Print frame: z = 0 is the bond face (on the bed), +z points into the console.
-# The flat face is set flush by assembling the lid face down on a flat sheet, and
-# the flange rests on the seat. The seat is sized for the shortest sanded sensor
-# in the thickest painted lid, so the sleeve can never bottom on the lid before
-# the face reaches the sheet; the epoxy line under the sleeve takes up the rest.
+# The flat face is set flush by assembling the lid face down on a flat sheet:
+# the face lands on the sheet and the sleeve on the lid (a thin epoxy line).
+# The seat is sized for the shortest sanded sensor in the thickest painted lid,
+# so the flange can never hold the face off the sheet; it stands up to ~0.45
+# above the seat instead, and the epoxy on the seat fills that.
 ALS_LID_T = T + COAT_MIN + COAT_MAX     # coated lid at the hole, nominal 2.16
 ALS_LID_T_MAX = T + 2 * COAT_MAX        # 2.20
-ALS_GLUE_MIN = 0.05                      # epoxy line under the sleeve, thinnest
+ALS_LID_T_MIN = T + 2 * COAT_MIN        # 2.12
+ALS_GLUE = 0.05                          # epoxy line, sleeve bond face to lid
 TEPT_SANDED_H_MIN = TEPT_TOP_H - TEPT_TOP_TOL - TEPT_SAND_MAX     # 4.95
 TEPT_SANDED_H_MAX = TEPT_TOP_H + TEPT_TOP_TOL - TEPT_DOME_R       # 5.30
-ALS_SEAT = TEPT_SANDED_H_MIN - ALS_LID_T_MAX - ALS_GLUE_MIN       # 2.70: bond face to seat
-ALS_GLUE = TEPT_SANDED_H - ALS_LID_T - ALS_SEAT                   # 0.29 nominal
+ALS_SEAT = TEPT_SANDED_H_MIN - ALS_LID_T_MAX - ALS_GLUE           # 2.70: bond face to seat
+ALS_FLANGE_GAP = TEPT_SANDED_H - ALS_LID_T - ALS_GLUE - ALS_SEAT  # 0.24 nominal, epoxy
 ALS_SLEEVE_OD = 15.0
-ALS_BODY_BORE = 5.40          # body 4.85-5.15
-ALS_FLANGE_BORE = 6.10        # flange 5.60-5.90
+# Bores: FDM holes print up to ~0.2 under size, so both clear their part by
+# more than that; ream to these sizes if the sensor does not slide in freely.
+# The 5.45/5.60 step is only a backstop: the epoxy holds the flange.
+ALS_BODY_BORE = 5.45          # body 4.85-5.15
+ALS_FLANGE_BORE = 6.30        # flange 5.60-5.90
 ALS_FLANGE_POCKET = TEPT_FLANGE_T + 0.30
 ALS_CAVITY_D = 10.0           # the sleeved lead joints, plus the 0207 load resistor
                               # when the wiring puts it at the sensor, not the board
 ALS_CAVITY_L = 10.0
-ALS_SLEEVE_H = ALS_SEAT + ALS_FLANGE_POCKET + ALS_CAVITY_L   # 14.19
+ALS_SLEEVE_H = ALS_SEAT + ALS_FLANGE_POCKET + ALS_CAVITY_L   # 14.00
 ALS_TONGUE_W = 8.0
 ALS_TONGUE_T = (ALS_SLEEVE_OD - ALS_CAVITY_D) / 2.0          # the wall, carried on
 ALS_TONGUE_L = 9.0
@@ -6218,7 +6223,7 @@ def als_axis_world():
 
 def _als_sleeve_solid():
     """The sleeve in print orientation: bond face on the bed, no supports. Every
-    bore steps OUTWARD going up, and the tie hole through the tongue is a 3 mm
+    bore steps OUTWARD going up, and the tie hole through the tongue is a 1.6 mm
     bridge."""
     import cadquery as cq
     r_out = ALS_SLEEVE_OD / 2.0

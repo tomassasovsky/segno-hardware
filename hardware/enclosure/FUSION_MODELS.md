@@ -1,10 +1,13 @@
 # The Fusion 360 models — how to change anything without wrecking them
 
-## Ambient light sensor window and sleeve - 2026-11-03, clone v32 (tomassasovsky/segno#1564)
+## Ambient light sensor window and sleeve - 2026-11-03, clone v33 (tomassasovsky/segno#1564)
 
 Clone "VAMP console (populated) - 1067 tabs + seat flanges". Version 31 added
-a Ø5.55 window and the first sleeve. Version 32 ("#1564 review fixes ...") is
-current: Ø5.75 window, seat for the shortest sensor, tie slot along the lead.
+a Ø5.55 window and the first sleeve. Version 32 ("#1564 review fixes ...")
+made it Ø5.75 with a seat sized for the shortest sensor. Version 33 ("#1564
+review round 2 ...") is current: sleeve bores Ø5.45/Ø6.3, and the sleeve sits
+on the lid with the flange bedded above the seat, as the face-down assembly
+leaves it.
 
 - `faceplate`: one circle in `CUT` at sketch (32.575714285714287,
   39.80766898687187) cm, radius 0.28750000000000004 cm (Ø5.75), read from the
@@ -19,17 +22,17 @@ current: Ø5.75 window, seat for the shortest sensor, tie slot along the lead.
   97.228).
 - `lid_stack/als_sensor_1564`: one base feature holding three bodies:
   `als_sleeve_PETG` (`out/segno_als_sleeve.step`, brought in as SMT through a
-  temporary document, 1,756.222 mm3), `TEPT5600_sanded` (Ø5.0 body cut to
-  5.15 mm above a Ø5.75 x 1.0 flange) and `TEPT5600_leads` (cut to 8 mm). For
-  v32 the v31 occurrence was deleted and the component rebuilt. The sensor's
-  flat face is flush with the bare lid top and its flange sits on the 2.70 mm
-  seat, so the sleeve's bond face stands 0.45 mm off the bare lid (0.29 mm on a
-  painted one: the epoxy line). Local +z points into the console and the
-  cable-tie tongue toward +x (J22): `[1,0,0,32.18571 | 0,-c,s,37.38738 |
-  0,-s,-c,9.48362]` (cm).
+  temporary document, 1,752.543 mm3), `TEPT5600_sanded` (Ø5.0 body cut to
+  5.15 mm above a Ø5.75 x 1.0 flange) and `TEPT5600_leads` (cut to 8 mm). Each
+  version deleted the previous occurrence and rebuilt the component. The
+  sensor's flat face is flush with the bare lid top, the sleeve's bond face is
+  0.05 mm under the lid (the epoxy line), and the flange stands 0.40 mm above
+  the 2.70 mm seat (0.24 on a painted lid; epoxy fills it). Local +z points
+  into the console and the cable-tie tongue toward +x (J22):
+  `[1,0,0,32.18571 | 0,-c,s,37.37873 | 0,-s,-c,9.52267]` (cm).
 - Interference among the three new bodies and every visible body in the region
   (logo, lid, base, rear-lap screw and washer, BUCK_AUX, the screen-power
-  board, the rear rail): none. Body to window 0.375 mm radial; nearest
+  board, the rear rail): none. Body to window 0.375 mm radial, sleeve to lid 0.05 mm; nearest
   non-lid body is the base, 13.8 mm from the sleeve. The pre-existing contacts
   (lid/base films, screw threads, washers) are unchanged.
 - Formed faceplate re-exported with `fusion_export_formed.py` after each

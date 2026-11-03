@@ -91,15 +91,15 @@ class SandedSensor(unittest.TestCase):
         self.assertAlmostEqual(enclosure.TEPT_SANDED_H, 5.15, places=9)
         self.assertGreater(enclosure.TEPT_CHIP_DEPTH - enclosure.TEPT_SAND_MAX, 1.5)
 
-    def test_the_face_always_reaches_the_sheet_before_the_sleeve_reaches_the_lid(self):
-        """Face-down assembly sets the face flush only if the sleeve never
-        bottoms on the lid first: shortest sensor, thickest painted lid."""
+    def test_the_flange_never_holds_the_face_off_the_sheet(self):
+        """Face down, the face lands on the sheet and the sleeve on the lid. The
+        flange must clear its seat for the shortest sensor in the thickest lid,
+        and the gap it leaves for the tallest one must be an epoxy line."""
         e = enclosure
-        thinnest = e.TEPT_SANDED_H_MIN - e.ALS_LID_T_MAX - e.ALS_SEAT
-        thickest = e.TEPT_SANDED_H_MAX - (e.T + 2 * e.COAT_MIN) - e.ALS_SEAT
-        self.assertGreaterEqual(thinnest, e.ALS_GLUE_MIN - 1e-9)
-        self.assertLess(thickest, 0.6)          # an epoxy line, not a gap
-        self.assertAlmostEqual(e.ALS_SEAT + e.ALS_GLUE + e.ALS_LID_T, e.TEPT_SANDED_H, places=9)
+        gap = lambda h, lid: h - lid - e.ALS_GLUE - e.ALS_SEAT
+        self.assertGreaterEqual(gap(e.TEPT_SANDED_H_MIN, e.ALS_LID_T_MAX), -1e-9)
+        self.assertLess(gap(e.TEPT_SANDED_H_MAX, e.ALS_LID_T_MIN), 0.5)
+        self.assertAlmostEqual(gap(e.TEPT_SANDED_H, e.ALS_LID_T), e.ALS_FLANGE_GAP, places=9)
 
 
 class Sleeve(unittest.TestCase):
@@ -109,8 +109,9 @@ class Sleeve(unittest.TestCase):
         cls.solid = enclosure._als_sleeve_solid()
 
     def test_bores_clear_the_largest_body_and_flange(self):
-        self.assertGreater(enclosure.ALS_BODY_BORE, enclosure.TEPT_BODY_D + enclosure.TEPT_BODY_TOL)
-        self.assertGreater(enclosure.ALS_FLANGE_BORE, enclosure.TEPT_FLANGE_D + 0.15)
+        # with room for an FDM hole printing 0.2 under size
+        self.assertGreater(enclosure.ALS_BODY_BORE - 0.2, enclosure.TEPT_BODY_D + enclosure.TEPT_BODY_TOL)
+        self.assertGreater(enclosure.ALS_FLANGE_BORE - 0.2, enclosure.TEPT_FLANGE_D + 0.15)
         self.assertLess(enclosure.ALS_BODY_BORE, enclosure.TEPT_FLANGE_D - 0.15)
 
     def test_it_is_one_small_part_with_a_flat_bond_face(self):
