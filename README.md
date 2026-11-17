@@ -98,3 +98,15 @@ GPL-3.0-or-later, first as part of
 [`tomassasovsky/segno`](https://github.com/tomassasovsky/segno) and then in
 this repository. Copies taken from that history remain available under those
 terms.
+
+### The name, commercial licences and contributions
+
+The Segno name and logo aren't covered by this licence.
+[TRADEMARKS.md](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/TRADEMARKS.md) in the main repository says how you can
+use them. Companies that want to use the hardware under other terms can ask for a
+commercial licence at tomas@aquiles.dev.
+
+Contributions are covered by the
+[Segno Contributor License Agreement](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/CLA.md): you keep your copyright,
+your contribution stays available under CERN-OHL-S-2.0, and the agreement also lets
+the maintainer offer it under other terms. See [CONTRIBUTING.md](CONTRIBUTING.md).
