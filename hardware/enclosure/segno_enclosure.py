@@ -3026,10 +3026,25 @@ def aux_board_holes():
 # DXF  (ezdxf)
 # ===========================================================================
 
+def _dxf_mm(doc):
+    """Millimetres, 1:1, for whatever CAD the shop opens the file in.
+    ezdxf's setup=True writes $DIMLFAC = 100 and the same factor on its preset
+    dimension styles: they are meant for drawings in metres, dimensioned in
+    centimetres. Setting $INSUNITS to millimetres leaves that factor in place, so
+    every length the shop measured or dimensioned read 100x: Dinacut saw the
+    monitor deck as 33057 x 12318 (#1867). Reset it to 1 in the header and in
+    every style that sets it."""
+    doc.units = 4  # mm
+    doc.header["$DIMLFAC"] = 1.0
+    for style in doc.dimstyles:
+        if style.dxf.hasattr("dimlfac"):
+            style.dxf.dimlfac = 1.0
+
+
 def _doc():
     import ezdxf
     doc = ezdxf.new("R2018", setup=True)
-    doc.units = 4  # mm
+    _dxf_mm(doc)
     doc.layers.add("CUT", color=7)
     doc.layers.add("BEND", color=4, linetype="DASHED")
     doc.layers.add("DRILL", color=6, linetype="DASHDOT")

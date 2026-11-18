@@ -25,6 +25,21 @@ from fusion_export_formed import _sketch_curves, _validate_sketch_curves
 
 
 class ManufacturingPipelineTest(unittest.TestCase):
+    def test_saved_dxf_is_millimetres_at_one_to_one(self):
+        # ezdxf's setup=True leaves $DIMLFAC = 100, and Dinacut measured the
+        # monitor deck at 100x its size (#1867).
+        with tempfile.TemporaryDirectory() as tmp:
+            doc = enclosure._doc()
+            doc.modelspace().add_circle((2,2),2,dxfattribs={'layer':'CUT'})
+            path = Path(tmp)/'part.dxf'
+            enclosure._save(doc,str(path))
+            saved = ezdxf.readfile(path)
+            self.assertEqual(saved.header['$INSUNITS'], 4)
+            self.assertEqual(saved.header['$DIMLFAC'], 1.0)
+            for style in saved.dimstyles:
+                with self.subTest(dimstyle=style.dxf.name):
+                    self.assertEqual(style.dxf.get('dimlfac', 1.0), 1.0)
+
     def test_saved_dxf_extents_include_annotations_and_handle_the_origin(self):
         with tempfile.TemporaryDirectory() as tmp:
             for annotations in (False,True):
