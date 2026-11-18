@@ -159,7 +159,7 @@ dimension ±0.20 mm. Do not transfer-drill the retired rear round-hole pattern.
 
 Use nine front M3 OD7 washers. The rear reference is nine **OD12 / ID3.2 /
 1.0 mm M3 washers**, with procurement limits and actual seating still to
-confirm. The [fit calculation](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/dinacut-fit-calculations.md)
+confirm. The [fit calculation](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/dinacut-fit-calculations.md)
 checks slot passage under simultaneous axial/transverse offsets and coating;
 it does not qualify angular washer bearing, clamp torque or screw engagement.
 The rear washer may leave part of the slot visible. Verify the actual bearing
@@ -469,9 +469,9 @@ by 2 mm.
 
 The quantities above are the one-unit assembly need; JLCPCB's order is five
 individual copies of each board. Use only the ZIP hashes in the
-[current manufacturing record](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json).
+[current manufacturing record](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/pcb-finish-all-three-1072/manufacturing-zips.json).
 Older exports in other directories are superseded. The
-[current adversarial review](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/screen-power-ground-cleanup-1072/review.md)
+[current adversarial review](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/screen-power-ground-cleanup-1072/review.md)
 records the completed corrections, review coverage and verification. No stencil or factory
 component assembly is required. The selected 35-LED strip uses the direct AUX
 star harness in [the ring assembly guide](kicad/RING_ASSEMBLY.md); J2 carries
@@ -579,7 +579,7 @@ The enclosure (#1088) places this board behind CLEAR/BANK on M3 × 10
 standoffs at its four Revision P holes; see
 [the enclosure release review](enclosure/RELEASE_REVIEW.md). The original
 placement proposal is in
-[the enclosure clearance assessment](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/docs/reviews/pcb-completion-1072/screen-power-placement.md).
+[the enclosure clearance assessment](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/pcb-completion-1072/screen-power-placement.md).
 The bare PCB outline and mounting centers are fixed.
 
 
