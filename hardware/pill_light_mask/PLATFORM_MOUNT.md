@@ -7,6 +7,22 @@ or a PR's `hardware-outputs` artifact, or regenerate it using the commands below
 that rocked on the platform and whose housing hooks would not engage. The owner
 confirmed **PLA** and requested a friction fit instead of bending snaps or screws.
 
+**Fit revision 3 — grips span the collar's inner width.** Revision 2's two
+14 mm grips held only part of the rear wall, so the housing slid left and right
+along it. Each grip now runs from its old inner end (13 mm off centre) out to
+the side wall, so the pair spans the collar's **79.15 mm** inner width less
+`SIDE_GAP` **0.05 mm** at each end. The grip ends stop the housing against the
+side walls' inner faces. The face keeps the **75.7 × 32.43 mm** pill. Below it
+the ends slope down at 44° to the full **79.05 mm** grip length at the
+housing's bottom, still inside the side walls, so the grip ends print on the
+housing face down without supports. Because the housing tips forward, the grip
+necks join its front edge higher up, so a 2.5 mm strip along that edge runs the
+full grip length at every height. The contact pads that squeeze the rear wall keep their revision 2
+position and 14 mm width, so the grip force on the wall is unchanged. Reprint
+the **black cover** only; the black base, the white diffuser and the fit
+samples are unchanged. If the cover will not go in between the side walls,
+raise `SIDE_GAP` in `top_mount.py` and regenerate.
+
 **Fit revision 2 — tighter at both connections.** The first friction-fit sample
 was printed and reported slightly loose both inside the cover and on the
 platform. A 0.25 mm thickness gauge takes up the gap at a housing grip rib and at
@@ -57,7 +73,8 @@ when seated against the outside jaw. This is a friction grip on a plain wall;
 it does not latch into the platform.
 
 The case centre moves 1.2 mm outward to clear the thicker jaw during housing
-assembly. The black capsule is **75.7 × 32.43 mm in its face plane**. The housing,
+assembly. The black cover's face is the **75.7 × 32.43 mm** capsule; in
+revision 3 its ends slope out to 79.05 mm at the bottom, where the grips are. The housing,
 LED bed and diffuser now follow the platform's **12.498° slope**; the mounting
 jaws stay vertical against the wall. The face centre is **10.2 mm above the rear
 rim**, leaving the tilted floor clear of the existing pedal cable opening.
@@ -70,6 +87,10 @@ References remain the current front/mid cradle release: 118.47 mm depth,
 the same housing. `reference/provenance.json` records the pinned source hashes.
 
 ## Print the fit sample first
+
+The fit samples cover one grip section and one pair of housing ribs, not the
+revision 3 grip ends. Check the side fit on the full cover: it should drop in
+between the collar's side walls and not move left or right.
 
 The two `pill_top_mount_fit_sample_*.stl` files reproduce one pair of housing
 contact ribs and one complete pair of platform jaws in a 16 mm long section.
