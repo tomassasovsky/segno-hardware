@@ -22,7 +22,7 @@ documents and the parts exported from them (`enclosure/fusion/`,
 
 The firmware for the boards, and the pedal link contract it shares with the
 app, are in the Segno repository:
-[`firmware/`](https://github.com/tomassasovsky/segno/blob/claude/segno-integration/firmware/README.md).
+[`firmware/`](https://github.com/tomassasovsky/segno/blob/master/firmware/README.md).
 
 ## Current design
 
