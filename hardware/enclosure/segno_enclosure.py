@@ -3811,20 +3811,19 @@ def dxf_beam(path):
 
 def dxf_monitor_deck(path):
     """The 15.6in MONITOR DECK (#1867), x1: one 2.0 mm 1100-H14 plate across
-    both stand towers, front flange folded down, rear flange folded up, both
-    running edge to edge (no corner reliefs). The monitor's raised block bears
+    both stand towers, one fold: the front flange folded down, edge to edge
+    (no corner reliefs); the rear edge is a plain cut. The monitor's raised block bears
     on its top face and screws to it through the two VESA holes; four M3 clamp
     it to the towers under the printed pads; the window over the Pi leaves the
     Pi room for a cooler and lets its Wi-Fi out. BARE: it is internal and the
     monitor bears on it, so no coating and no coating allowance on its holes.
     Drawn on the TOP face (s16_deck), front edge at the bottom. Flat developed
-    with DEV90 (K 0.33, Ri 2.0) on both folds."""
+    with DEV90 (K 0.33, Ri 2.0) on the fold."""
     d = s16_deck()
     doc = _doc(); msp = doc.modelspace()
     Wf, Hf = d.flat_w, d.flat_d
     _poly(msp, [(0, 0), (Wf, 0), (Wf, Hf), (0, Hf)], "CUT")
     _poly(msp, [(0, d.bend_f), (Wf, d.bend_f)], "BEND", closed=False)   # front: fold DOWN
-    _poly(msp, [(0, d.bend_r), (Wf, d.bend_r)], "BEND", closed=False)   # rear: fold UP
     for x, L in d.vesa:
         _circle(msp, *d.flat(x, L), S16_VESA_CLR_D)
     for x, L in d.screws:
@@ -3836,10 +3835,10 @@ def dxf_monitor_deck(path):
           f"Segno PLATAFORMA DEL MONITOR (segno_monitor_deck)  ALUMINIO {ALLOY_2MM} de {T:.1f} mm  "
           f"CANT. 1  SIN PINTAR: pieza interna, el monitor apoya directo sobre la chapa, así que "
           f"los agujeros no llevan tolerancia de pintura. Dibujada la CARA SUPERIOR (la del monitor), "
-          f"frente abajo. Perfil en Z de {Wf:.1f} mm de ancho y {S16_BEAM_D:.1f} mm de profundidad "
-          f"exterior: pestaña frontal de {S16_DECK_FRONT_FL:.1f} mm exteriores plegada ABAJO a 90°, "
-          f"pestaña trasera de {S16_DECK_REAR_FL:.1f} mm exteriores plegada ARRIBA a 90°, las dos de "
-          f"punta a punta (sin alivios). 2 agujeros Ø{S16_VESA_CLR_D:.1f} a {S16_VESA:.0f} mm "
+          f"frente abajo. Perfil en L de {Wf:.1f} mm de ancho y {S16_BEAM_D:.1f} mm de profundidad "
+          f"exterior: UN SOLO PLEGADO, la pestaña frontal de {S16_DECK_FRONT_FL:.1f} mm exteriores "
+          f"plegada ABAJO a 90°, de punta a punta (sin alivios); el borde trasero es un corte recto. "
+          f"2 agujeros Ø{S16_VESA_CLR_D:.1f} a {S16_VESA:.0f} mm "
           f"(tornillos M4 del monitor), 4 agujeros Ø{D_M3_METAL:.1f} (M3 a las torres), ventana "
           f"{X1 - X0:.1f} x {Y1 - Y0:.1f} R{R_FILLET:.0f} sobre la Raspberry Pi. Deducción aplicada "
           f"(K {KF}, Ri {RI:.1f}): {DEV90:.3f} mm por plegado; desarrollo {Wf:.2f} x {Hf:.2f} mm. "
@@ -5494,7 +5493,7 @@ S16_BLOCK_INSET = 9.75    # measured: block inset from the body's bottom edge an
 S16_GAP     = 0.5     # original deck/block gap; shortened contacts leave
                       # S16_GAP - SCREEN_COATED_SETBACK after the screen setback.
 S16_BEAM_D  = 110.0   # deck depth (v): the plate's outside depth, front flange face to
-                      # rear flange face, and the towers' depth (frozen with the anchors)
+                      # its plain rear edge, and the towers' depth (frozen with the anchors)
 S16_TOWER_X = (460.0, 500.0)   # LEFT tower's x span, in the 48 mm strip between
                       # platform_mid's body edge (x~417) and the board standoffs. The
                       # right tower is its mirror about SCREEN_16_U. Frozen: the floor
@@ -5504,24 +5503,27 @@ S16_FLANGE  = 12.0
 S16_PAD_H   = S16_BLOCK_PROUD + S16_GAP   # 8.3 mm unrecessed contact datum;
                       # the printed pads subtract SCREEN_COATED_SETBACK.
 # --- the monitor deck (#1867): segno_monitor_deck, 2.0 mm 1100-H14, qty 1 -------
-# Folded on the same brake rules as the base (RI, KF, DEV90). Its TOP face is
-# where the PETG deck's VESA bosses' top was, so the raised block bears on it.
+# ONE fold, on the same brake rules as the base (RI, KF, DEV90): the front flange
+# down; the rear edge is a plain cut edge. Its TOP face is where the PETG deck's
+# VESA bosses' top was, so the raised block bears on it. A rear flange folded up
+# was dropped: at 8 mm it sat on the brake's 4 x T minimum, and the plate passes
+# its strength gate without it.
 S16_DECK_FRONT_FL = 17.0  # front flange, folded DOWN, outside depth from the plate's
                       # TOP face: 15 mm below its underside, the depth of the PETG
                       # deck's front rib. 15 outside (13 below) fails the strength
                       # gate below at the spec-minimum yield.
-S16_DECK_REAR_FL  = 8.0   # rear flange, folded UP, outside height from the plate's
-                      # underside: 6.0 above the top face, under the monitor's flat back
-S16_DECK_FL_AIR   = 1.5   # minimum air, rear flange top edge to the monitor's flat back
 S16_DECK_MIN_FL   = 4.0 * T   # shortest flange the brake can form: 4 x thickness
-                      # (Protolabs' sheet-metal rule). The rear flange sits right on it.
+                      # (Protolabs' sheet-metal rule)
 S16_DECK_WIN_PAD  = 2.0   # the Pi window runs this far past the Pi PCB in u, each side
 DIE_V             = 12.0  # the V12 die on every fold ("Matriz V12", BEND_FOOTNOTES). Flat
                       # material within V/2 of a bend line rides the die's shoulders, so
                       # a cut edge there distorts in the fold (see FRONT_PILOT_D). The
-                      # deck keeps every cut edge DIE_V/2 + T from its bend lines.
+                      # deck keeps every cut edge DIE_V/2 + T from its bend line.
 S16_VESA_WASHER_D = 12.0  # washer envelope kept clear of the window (an M4 DIN 125 is O9)
 S16_PAD_SCREW_IN  = 8.0   # pad screws: centre to the tower's outer x faces (= PEM_EDGE)
+S16_PAD_REAR_IN   = 4.5   # the pad stops this far in from the plate's rear edge (where the
+                      # dropped rear fold's inside radius began; kept so the pads and the
+                      # tower inserts did not move with it)
 S16_BOSS_D        = 12.0  # tower insert boss, vertical, hung on the side wall
 # Strength check (#1867). A beam formula, not an FEA: the folded section between the
 # towers' inner faces, simply supported, one point load at mid-span.
@@ -5620,13 +5622,14 @@ def s16_deck():
     boss_y = v2L(body_v0 + S16_VESA_UP)
     pu0, pu1, _pv0, _pv1 = pi_pcb_extent()
     # Window over the Pi: the Pi's u span plus a margin, from 1 mm behind the
-    # raised block (the block bears on solid plate in front of it) to DIE_V/2 + T
-    # ahead of the rear bend line, which sits DEV90 inside the fold's outside face.
+    # raised block (the block bears on solid plate in front of it) to PEM_EDGE
+    # short of the plate's plain rear edge: the web behind it is held to the
+    # generator's edge-distance rule, as a hole's centre is.
     win = (pu0 - S16_DECK_WIN_PAD, pu1 + S16_DECK_WIN_PAD,
-           v2L(block_v1) + 1.0, Lr - DEV90 - (DIE_V / 2.0 + T))
-    # Pad: 2 mm behind the block (as the PETG pads were), to 0.5 mm ahead of the
-    # rear fold's inside radius.
-    pad = (v2L(block_v1 + 2.0), Lr - T - RI - 0.5)
+           v2L(block_v1) + 1.0, Lr - PEM_EDGE)
+    # Pad: 2 mm behind the block (as the PETG pads were), to S16_PAD_REAR_IN short
+    # of the rear edge.
+    pad = (v2L(block_v1 + 2.0), Lr - S16_PAD_REAR_IN)
     Ls = (pad[0] + pad[1]) / 2.0
     screws = tuple((sx, Ls) for t0, t1 in towers
                    for sx in (t0 + S16_PAD_SCREW_IN, t1 - S16_PAD_SCREW_IN))
@@ -5635,13 +5638,13 @@ def s16_deck():
         cs=cs, sn=sn, tn=sn / cs, xc=xc, yc=yc, pyc=pyc, z0=z0, drop=drop, v2L=v2L,
         body_v0=body_v0, block_v0=block_v0, block_v1=block_v1,
         w_top=w_top, w_bot=w_bot, w_front_tip=w_top - S16_DECK_FRONT_FL,
-        w_rear_tip=w_bot + S16_DECK_REAR_FL, w_flat_back=w_top + S16_BLOCK_PROUD,
+        w_flat_back=w_top + S16_BLOCK_PROUD,
         x0=towers[0][0], x1=towers[1][1], Lf=Lf, Lr=Lr, towers=towers,
         vesa=((xc - S16_VESA / 2.0, boss_y), (xc + S16_VESA / 2.0, boss_y)),
         win=win, pad=pad, screws=screws,
-        bend_f=bend_f, bend_r=bend_f + S16_BEAM_D - 2.0 * DEV90,
+        bend_f=bend_f,
         flat_w=towers[1][1] - towers[0][0],
-        flat_d=S16_DECK_FRONT_FL + S16_BEAM_D + S16_DECK_REAR_FL - 4.0 * DEV90,
+        flat_d=S16_DECK_FRONT_FL + S16_BEAM_D - 2.0 * DEV90,
         flat=lambda x, L: (x - towers[0][0], L - Lf + S16_DECK_FRONT_FL - 2.0 * DEV90),
         world=lambda x, L, w: (x, L * cs - w * sn, z0 + L * sn + w * cs),
         plane_z=lambda w, y: z0 + w / cs + y * sn / cs,   # world z of plane w at world y
@@ -5667,9 +5670,9 @@ def _rrect_distance(x, y, x0, x1, y0, y1, r):
 def s16_ceiling(d, x, y):
     """(z, what) of the lowest thing above floor point (x, y) under the 15.6in
     module: the deck plate where it is solid, else the monitor's back (block or
-    flat back), else the lid underside. The bend zones count as flat plate,
-    which can only make the ceiling lower; neither flange hangs over anything
-    this is asked about (gated in _check_monitor_deck)."""
+    flat back), else the lid underside. The front bend zone counts as flat
+    plate, which can only make the ceiling lower; the front flange hangs over
+    nothing this is asked about (gated in _check_monitor_deck)."""
     L = d.plane_L(d.w_bot, y)
     if (d.x0 <= x <= d.x1 and d.Lf <= L <= d.Lr
             and not _in_rrect(x, L, *d.win, R_FILLET)):
@@ -5741,25 +5744,24 @@ def s16_deck_strength(d=None):
     The section is thin rectangles with sharp corners (the R2 bends add a little
     material). Two sections, both under the mid-span moment, which only the
     full one actually sees: the full fold, and the one through the Pi window,
-    whose web is cut between the window's front and rear edges. The fold is
-    unsymmetric -- one flange down at the front, one up at the rear -- so the
-    deflection normal to the deck and the stress use the unsymmetric-bending
+    whose web is cut between the window's front and rear edges. The section is
+    an L -- one flange, down at the front -- so its principal axes are tilted:
+    the deflection normal to the deck and the stress use the unsymmetric-bending
     terms with the product of inertia (the plate is free to bow sideways in its
-    own plane, which is what a Z-like section does). I_w alone, the symmetric
-    figure a hand check gives, is reported beside it."""
+    own plane). I_w alone, the symmetric figure a hand check gives, is reported
+    beside it."""
     d = d or s16_deck()
-    D, ffl, rfl = S16_BEAM_D, S16_DECK_FRONT_FL, S16_DECK_REAR_FL
+    D, ffl = S16_BEAM_D, S16_DECK_FRONT_FL
     span = d.towers[1][0] - d.towers[0][1]
     P = S16_DECK_TEST_N + S16_MONITOR_KG * 9.81
     M = P * span / 4.0
     ws0, ws1 = d.win[2] - d.Lf, d.win[3] - d.Lf
     # s from the front flange's outer face, w from the plate's underside
     front = (0.0, T, T - ffl, 0.0)
-    rear = (D - T, D, T, rfl)
     out = {"span": span, "P": P, "M": M}
     for name, web in (("full", [(0.0, D, 0.0, T)]),
                       ("window", [(0.0, ws0, 0.0, T), (ws1, D, 0.0, T)])):
-        rects = [front] + web + [rear]
+        rects = [front] + web
         A, sb, wb, Iw, Is, Isw = _section_props(rects)
         det = Iw * Is - Isw ** 2
         corners = [(s, w) for s0, s1, w0, w1 in rects for s in (s0, s1) for w in (w0, w1)]
@@ -5777,42 +5779,30 @@ def _check_monitor_deck():
     """Gates for the #1867 monitor deck, its towers and pads. Arithmetic only."""
     d = s16_deck()
     # --- the plate and the monitor ------------------------------------------
-    # The rear flange stands up under the monitor's FLAT back: it must stay
-    # S16_DECK_FL_AIR short of it, or the panel rests on a flange edge.
-    air = d.w_flat_back - d.w_rear_tip
-    assert air >= S16_DECK_FL_AIR - 1e-9, (
-        f"MONITOR_DECK: the rear flange top is {air:.2f} mm from the monitor's flat "
-        f"back, under the {S16_DECK_FL_AIR} mm minimum -- shorten S16_DECK_REAR_FL")
-    assert (d.v2L(d.body_v0 + S16_BODY_H) > d.Lr
-            and d.xc - S16_BODY_W / 2.0 < d.x0 and d.x1 < d.xc + S16_BODY_W / 2.0), (
-        "MONITOR_DECK: the rear flange is not under the monitor's flat back, so the "
-        "air gate above measured against nothing")
-    for name, fl in (("front", S16_DECK_FRONT_FL), ("rear", S16_DECK_REAR_FL)):
-        assert fl >= S16_DECK_MIN_FL - 1e-9, (
-            f"MONITOR_DECK: the {name} flange is {fl:.1f} mm outside, shorter than "
-            f"the {S16_DECK_MIN_FL:.1f} mm the brake can form")
-    # The screw row must bolt into the raised block, on the plate, clear of the folds.
+    assert S16_DECK_FRONT_FL >= S16_DECK_MIN_FL - 1e-9, (
+        f"MONITOR_DECK: the front flange is {S16_DECK_FRONT_FL:.1f} mm outside, shorter "
+        f"than the {S16_DECK_MIN_FL:.1f} mm the brake can form")
+    # The screw row must bolt into the raised block, on the plate, clear of the fold.
     boss_v = d.body_v0 + S16_VESA_UP
     assert d.block_v0 < boss_v < d.block_v1, (
         f"MONITOR_DECK: the screw row (v {boss_v:.1f}) is not on the raised block "
         f"(v {d.block_v0:.1f}..{d.block_v1:.1f}) -- one of S16_VESA_UP / "
         "S16_BLOCK_INSET / S16_BLOCK_H is wrong")
-    # --- holes: the FOOT_CLEAR rule, hole edge (RI + T) + 2.0 from a fold's
-    # outside face; PEM_EDGE from a free edge; two thicknesses of web to the window.
+    # --- holes: the FOOT_CLEAR rule, hole edge (RI + T) + 2.0 from the fold's
+    # outside face, and out of the die zone; PEM_EDGE from a free edge (the ends
+    # and the plain rear edge); two thicknesses of web to the window.
     holes = [("VESA", x, L, S16_VESA_CLR_D) for x, L in d.vesa]
     holes += [("pad screw", x, L, D_M3_METAL) for x, L in d.screws]
     for what, x, L, dia in holes:
-        for fold, Lb in (("front", d.Lf), ("rear", d.Lr)):
-            assert abs(L - Lb) >= RI + T + dia / 2.0 + 2.0 - 1e-9, (
-                f"MONITOR_DECK: {what} hole at L {L - d.pyc:+.1f} is "
-                f"{abs(L - Lb):.2f} mm from the {fold} fold's outside face")
-        assert min(x - d.x0, d.x1 - x) >= PEM_EDGE - 1e-9, (
-            f"MONITOR_DECK: {what} hole at x {x:.1f} is closer than {PEM_EDGE} "
-            "to the plate's end")
-        for fold, Lb in (("front", d.Lf + DEV90), ("rear", d.Lr - DEV90)):
-            assert abs(L - Lb) - dia / 2.0 >= DIE_V / 2.0 + T - 1e-9, (
-                f"MONITOR_DECK: {what} hole at L {L - d.pyc:+.1f} is inside the V{DIE_V:.0f} "
-                f"die zone of the {fold} bend line")
+        assert L - d.Lf >= RI + T + dia / 2.0 + 2.0 - 1e-9, (
+            f"MONITOR_DECK: {what} hole at L {L - d.pyc:+.1f} is "
+            f"{L - d.Lf:.2f} mm from the front fold's outside face")
+        assert L - (d.Lf + DEV90) - dia / 2.0 >= DIE_V / 2.0 + T - 1e-9, (
+            f"MONITOR_DECK: {what} hole at L {L - d.pyc:+.1f} is inside the V{DIE_V:.0f} "
+            "die zone of the front bend line")
+        assert min(x - d.x0, d.x1 - x, d.Lr - L) >= PEM_EDGE - 1e-9, (
+            f"MONITOR_DECK: {what} hole at ({x:.1f}, L {L - d.pyc:+.1f}) is closer than "
+            f"{PEM_EDGE} to a free edge of the plate")
         gap = _rrect_distance(x, L, *d.win, R_FILLET) - dia / 2.0
         assert gap >= 2.0 * T, (
             f"MONITOR_DECK: {what} hole at x {x:.1f} leaves {gap:.2f} mm of web to the window")
@@ -5822,9 +5812,11 @@ def _check_monitor_deck():
     assert wx0 <= pu0 and pu1 <= wx1, "MONITOR_DECK: the window does not span the Pi in u"
     assert wL0 > d.v2L(d.block_v1), (
         "MONITOR_DECK: the window reaches under the raised block, which bears on the plate there")
-    assert (wL1 <= d.Lr - (RI + T) - 2.0 + 1e-9
-            and d.Lr - DEV90 - wL1 >= DIE_V / 2.0 + T - 1e-9), (
-        "MONITOR_DECK: the window runs into the rear fold's bend land or its die zone")
+    assert d.Lr - wL1 >= max(PEM_EDGE, 2.0 * T) - 1e-9, (
+        f"MONITOR_DECK: only {d.Lr - wL1:.2f} mm of web between the window and the "
+        f"plate's rear edge, under PEM_EDGE ({PEM_EDGE})")
+    assert wL0 - (d.Lf + DEV90) >= DIE_V / 2.0 + T, (
+        "MONITOR_DECK: the window reaches the front fold's die zone")
     for x, L in d.vesa:
         gap = _rrect_distance(x, L, *d.win, R_FILLET) - S16_VESA_WASHER_D / 2.0
         assert gap >= 2.0, (
@@ -5841,7 +5833,7 @@ def _check_monitor_deck():
     assert p0 > d.v2L(d.block_v1) and p1 - p0 > 20.0, (
         f"MONITOR_DECK: tower pad L {p0 - d.pyc:+.1f}..{p1 - d.pyc:+.1f} either fouls the "
         "raised block or has too little bearing behind it")
-    assert p1 <= d.Lr - T - RI, "MONITOR_DECK: the pad sits on the rear fold's inside radius"
+    assert p1 < d.Lr, "MONITOR_DECK: the pad overhangs the plate's rear edge"
     for x, L in d.screws:
         assert p0 + RAIL_CBORE_D / 2.0 + 2.0 <= L <= p1 - RAIL_CBORE_D / 2.0 - 2.0, (
             "MONITOR_DECK: a pad counterbore runs off its pad")
@@ -5984,16 +5976,16 @@ def build_screen16_monitor_step():
                     f"glass, but the panel's flat back is at {S16_BODY_D:.3f}. The pad "
                     f"{'stands proud of' if min(sv) < S16_BODY_D else 'falls short of'} the panel.")
             else:
-                # the plate's top face is the block's back face; only the rear
-                # flange rises past it, and it stops short of the flat back
+                # the plate's top face is the block's back face, and nothing of
+                # the plate rises past it
                 top = [f for f in part.Faces() if f.geomType() == "PLANE"
                        and abs(_glass_depth(f.Center()) - S16_BLOCK_D) < 1e-6
                        and f.normalAt().z > 0.9]
                 assert top and part.distance(mon) < 1e-6, (
                     f"MONITOR/STAND CONTACT: the {nm} top face does not reach the raised block")
-                assert min(sv) >= S16_BODY_D + S16_DECK_FL_AIR - 1e-6, (
-                    f"MONITOR/STAND CONTACT: the {nm} rear flange comes within "
-                    f"{min(sv) - S16_BODY_D:.2f} mm of the monitor's flat back")
+                assert min(sv) >= S16_BLOCK_D - 1e-6, (
+                    f"MONITOR/STAND CONTACT: the {nm} rises {S16_BLOCK_D - min(sv):.2f} mm "
+                    "past its top face, into the monitor")
     sp = os.path.join(OUT, "segno_screen16_monitor.step")
     cq.exporters.export(cq.Compound.makeCompound(
         [display.val(), body.val(), block.val()]), sp)
@@ -6047,21 +6039,19 @@ def _monitor_deck_solid(d=None):
 
     The section is built in the deck frame like _beam_solid's -- both bend
     radii modelled, inside RI and outside RI + T, so the sheet keeps its
-    thickness through the folds -- extruded across the full width (both flanges
-    run edge to edge, so no corner reliefs), cut, then turned into the deck
-    plane. Front flange DOWN, rear flange UP."""
+    thickness through the fold -- extruded across the full width (the flange
+    runs edge to edge, so no corner reliefs), cut, then turned into the deck
+    plane. One fold: the front flange DOWN; the rear edge is a plain cut."""
     import cadquery as cq
     d = d or s16_deck()
     t, Lf, Lr, wt, wb = T, d.Lf, d.Lr, d.w_top, d.w_bot
-    points = [(Lf, d.w_front_tip), (Lf, wt), (Lr - t, wt), (Lr - t, d.w_rear_tip),
-              (Lr, d.w_rear_tip), (Lr, wb), (Lf + t, wb), (Lf + t, d.w_front_tip)]
+    points = [(Lf, d.w_front_tip), (Lf, wt), (Lr, wt), (Lr, wb),
+              (Lf + t, wb), (Lf + t, d.w_front_tip)]
     wire = cq.Workplane("YZ").polyline(points).close().val()
-    for radius, corners in ((RI + t, [(Lf, wt), (Lr, wb)]),
-                            (RI, [(Lr - t, wt), (Lf + t, wb)])):
+    for radius, corner in ((RI + t, (Lf, wt)), (RI, (Lf + t, wb))):
         vertices = [v for v in wire.Vertices()
-                    if any(abs(v.Center().y - y) < 1e-6 and abs(v.Center().z - z) < 1e-6
-                           for y, z in corners)]
-        assert len(vertices) == 2, "monitor deck bend corners missing"
+                    if abs(v.Center().y - corner[0]) < 1e-6 and abs(v.Center().z - corner[1]) < 1e-6]
+        assert len(vertices) == 1, "monitor deck bend corner missing"
         wire = wire.fillet2D(radius, vertices)
     body = (cq.Workplane("YZ").add(wire).toPending().extrude(d.flat_w)
             .translate((d.x0, 0, 0)))
@@ -7234,11 +7224,10 @@ def _bend_tables():
         (1, "apoyo -> alma",   "y", BEAM_PAD_F,              BEAM_LEN, 90.0 + BEAM_TILT, UP_TOWARD, BEAM_RI, BEAM_DD_PAD),
         (2, "alma -> pie",     "y", BEAM_PAD_F + BEAM_WEB_F, BEAM_LEN, 90.0,             UP_TOWARD, BEAM_RI, BEAM_DD_FOOT),
     ]
-    # Two full-length folds in opposite senses: a Z profile (#1867).
+    # One full-length fold, the front flange down (#1867).
     _d = s16_deck()
     tabs["segno_monitor_deck"] = [
-        (1, "pestaña frontal", "y", _d.bend_f, _d.flat_w, 90.0, DN_AWAY,   RI, DEV90),
-        (2, "pestaña trasera", "y", _d.bend_r, _d.flat_w, 90.0, UP_TOWARD, RI, DEV90),
+        (1, "pestaña frontal", "y", _d.bend_f, _d.flat_w, 90.0, DN_AWAY, RI, DEV90),
     ]
     return tabs
 
@@ -7296,11 +7285,9 @@ BEND_FOOTNOTES = {
                    f"Dos plegados a lo largo de {_beam_flange_len_mm():.1f} mm, extremos rectos sin orejas. "
                    f"El plegado del apoyo es AGUDO (incluido {90.0 - BEAM_TILT:.1f}°): punzón de 30° y matriz aguda, no el juego de 88°."),
     "segno_monitor_deck": (f"Factor K {KF} | desarrollo del plegado = rad(rotación) x (Ri + K x T) | pestaña plana = longitud exterior - deducción. "
-                           f"Matriz V12 y Ri {RI:.1f} mm, como el cuerpo. Las dos pestañas se pliegan en sentidos OPUESTOS (perfil en Z): "
-                           f"la frontal ({S16_DECK_FRONT_FL:.1f} mm exteriores) hacia ABAJO y la trasera ({S16_DECK_REAR_FL:.1f} mm exteriores) hacia ARRIBA, respecto de la cara dibujada. "
-                           f"La pestaña trasera está en el mínimo para la V12 ({S16_DECK_MIN_FL:.1f} mm = 4 x espesor) y casi no puede crecer: "
-                           f"queda {S16_BLOCK_PROUD - (S16_DECK_REAR_FL - T):.1f} mm por debajo del monitor. Confirmar con el herramental antes de cortar. "
-                           f"Ningún corte a menos de {DIE_V / 2.0 + T:.1f} mm de una línea de plegado (zona de la matriz). "
+                           f"Matriz V12 y Ri {RI:.1f} mm, como el cuerpo. UN SOLO PLEGADO: la pestaña frontal ({S16_DECK_FRONT_FL:.1f} mm exteriores) "
+                           f"hacia ABAJO, opuesta a la cara dibujada. El borde trasero es un corte recto, sin plegar. "
+                           f"Ningún corte a menos de {DIE_V / 2.0 + T:.1f} mm de la línea de plegado (zona de la matriz). "
                            f"Plegado convencional ±0.7. SIN PINTAR: no enviar al pintor. Ignorar NOTE al anidar."),
 }
 
@@ -7995,7 +7982,7 @@ def report():
     P(f"Screens         : 7in {SMALL_W:.0f}x{SMALL_H:.0f} (left) | 15.6in {BIG_W:.0f}x{BIG_H:.0f} (right), tops aligned, from behind")
     _d = s16_deck(); _pc = s16_pi_clearances(_d); _st = s16_deck_strength(_d)
     P(f"15.6in deck     : {T:.1f} mm {ALLOY_2MM} plate, BARE (#1867), {_d.flat_w:.1f} wide x "
-      f"{S16_BEAM_D:.0f} deep, flanges {S16_DECK_FRONT_FL:.0f} down / {S16_DECK_REAR_FL:.0f} up, "
+      f"{S16_BEAM_D:.0f} deep, one {S16_DECK_FRONT_FL:.0f} mm front flange down, "
       f"Pi window {_d.win[1] - _d.win[0]:.1f} x {_d.win[3] - _d.win[2]:.1f}")
     P(f"  over the Pi   : {_pc['solid'][0]:.1f} mm PCB->deck (SD edge), {_pc['open'][0]:.1f} min "
       f"through the window, {_pc['soc'][0]:.1f} at the SoC, {_pc['usb'][0]:.1f} at the USB end")

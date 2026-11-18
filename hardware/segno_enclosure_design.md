@@ -457,9 +457,9 @@ The deck is now `segno_monitor_deck`, one 2.0 mm 1100-H14 plate, bare, in the
 same plane: its top face is where the PETG deck's VESA bosses' top was, so the
 monitor, the towers' floor anchors (`STAND_ANCHORS_156`) and the shims do not
 move. It is 330.6 mm wide (both towers' outer faces) and 110 mm deep outside,
-with a 17 mm front flange folded down and an 8 mm rear flange folded up. The
-monitor's raised VESA block bears on the plate and its two M4 screw into it;
-a 60.0 × 54.4 mm window behind the block opens the plate over the Pi, for a
+with one fold, a 17 mm front flange folded down; the rear edge is a plain cut.
+The monitor's raised VESA block bears on the plate and its two M4 screw into it;
+a 60.0 × 56.3 mm window behind the block opens the plate over the Pi, for a
 cooler, for air and for the Pi's Wi-Fi. The towers keep their footprint and
 reach up to the plate, with heat-set inserts in hung bosses; a printed pad on
 each tower clamps the plate with two M3 and rises to the monitor's flat back,
@@ -473,10 +473,10 @@ as the old pads did.
 | at the USB end, to the plate's rear strip | 1.9 mm over the 16 mm stack | **41.6 mm** (25.6 over the stack) |
 
 `_check_monitor_deck()` gates it: at least 25 mm from the PCB to the plate
-wherever the plate is over the Pi; the rear flange at least 1.5 mm under the
-flat back (it has 1.8); both flanges at least 4 × T; every hole and the window
-clear of the folds by the base's rule ((RI + T) + 2.0 from the outside face)
-and 8.0 mm from a bend line, outside the V12 die's shoulders; the window 2 mm
+wherever the plate is over the Pi; the flange at least 4 × T; every hole and
+the window clear of the fold by the base's rule ((RI + T) + 2.0 from the
+outside face) and 8.0 mm from the bend line, outside the V12 die's shoulders;
+holes and the window PEM_EDGE (8.0 mm) from the plain edges; the window 2 mm
 clear of the VESA washers; the front flange clear of everything that stands on
 the floor; and a beam check. The `REAR_BAY` headroom gate reads the same
 ceiling: it used to take the lid's height at the Pi, ignoring the deck, and
@@ -485,12 +485,15 @@ fed a plan depth to `lid_under_z()`, which expects a distance along the lid.
 The beam check (`s16_deck_strength()`) takes the plate as simply supported
 between the towers' inner faces (250.6 mm), with 60 N plus an assumed 1.2 kg
 monitor (72 N) at mid-span, on both the full fold and the section through the
-window. The fold is a Z, so the check uses unsymmetric bending (I_w 2.87e3 mm⁴,
-effective 2.15e3 mm⁴ with the product of inertia): **0.17 mm and 28.2 MPa**,
-against 0.5 mm and a third of the 95 MPa spec-minimum yield (31.7 MPa). The
-symmetric hand-check figures are 0.12 mm and 23.8 MPa. A 15 mm front flange
-measured outside (13 below the plate) fails this at 33–35 MPa, which is why the
-flange is 17. The monitor's weight is not measured.
+window. The section is an L, so the check uses unsymmetric bending (at the
+window, I_w 2.29e3 mm⁴, effective 1.95e3 mm⁴ with the product of inertia):
+**0.17 mm and 29.6 MPa**, against 0.5 mm and a third of the 95 MPa spec-minimum
+yield (31.7 MPa); the full section gives 0.17 mm and 28.7 MPa. The symmetric
+hand-check figures are 0.15 mm and 27.7 MPa. A 15 mm front flange measured
+outside (13 below the plate) fails this at 36–38 MPa, which is why the flange
+is 17. An 8 mm rear flange folded up was dropped before ordering: it sat at the
+brake's 4 × T minimum, and the plate passes without it. The monitor's weight is
+not measured.
 The console board uses separate 15 mm M3 standoffs. Actual kit thread lengths,
 board thicknesses, cable routes and the cooler/SSD fit still require the
 hardware checks in [MANUFACTURING.md](MANUFACTURING.md).

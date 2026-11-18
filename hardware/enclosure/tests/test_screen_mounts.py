@@ -166,9 +166,9 @@ class ScreenMountTest(unittest.TestCase):
         self.assertAlmostEqual(bb.xmin, d.towers[0][0], places=6)
         self.assertAlmostEqual(bb.xmax, d.towers[1][1], places=6)
         # sheet volume: the blank less its cut-outs, times the thickness. The
-        # solid's bends hold their mid-surface length (K = 0.5), not the K 0.33
+        # solid's bend holds its mid-surface length (K = 0.5), not the K 0.33
         # development the flat pattern uses.
-        mid = d.flat_d + 2 * (math.pi / 2 * (enclosure.RI + enclosure.T / 2) - enclosure.BA90)
+        mid = d.flat_d + (math.pi / 2 * (enclosure.RI + enclosure.T / 2) - enclosure.BA90)
         wx0, wx1, wL0, wL1 = d.win
         window = (wx1 - wx0) * (wL1 - wL0) - (4 - math.pi) * enclosure.R_FILLET ** 2
         holes = math.pi / 4 * (2 * enclosure.S16_VESA_CLR_D ** 2 + 4 * enclosure.D_M3_METAL ** 2)
@@ -182,7 +182,7 @@ class ScreenMountTest(unittest.TestCase):
         self.assertLess(deck.intersect(monitor).Volume(), 1e-6)
         self.assertLess(deck.distance(monitor), 1e-6)
 
-    def test_15in6_deck_flanges_fold_down_at_the_front_and_up_at_the_rear(self):
+    def test_15in6_deck_folds_down_at_the_front_and_is_flat_at_the_rear(self):
         d = enclosure.s16_deck()
         deck = self.parts['segno_monitor_deck']
         x = d.xc - 100.0
@@ -192,13 +192,15 @@ class ScreenMountTest(unittest.TestCase):
             self.assertTrue(inside(d.Lf + 1.0, w), w)
         self.assertFalse(inside(d.Lf + 1.0, d.w_front_tip - 0.5))
         self.assertFalse(inside(d.Lf + 1.0, d.w_top + 3.0))
-        # rear flange: up to its tip, not down
-        for w in (d.w_top + 3.0, d.w_rear_tip - 0.5):
-            self.assertTrue(inside(d.Lr - 1.0, w), w)
-        self.assertFalse(inside(d.Lr - 1.0, d.w_rear_tip + 0.5))
-        self.assertFalse(inside(d.Lr - 1.0, d.w_bot - 3.0))
-        # the rear flange stays under the monitor's flat back
-        self.assertGreaterEqual(d.w_flat_back - d.w_rear_tip, enclosure.S16_DECK_FL_AIR)
+        # rear edge: a plain cut, flat plate up to it and nothing above or below
+        mid = (d.w_top + d.w_bot) / 2.0
+        self.assertTrue(inside(d.Lr - 0.5, mid))
+        self.assertFalse(inside(d.Lr + 0.5, mid))
+        self.assertFalse(inside(d.Lr - 1.0, d.w_top + 1.0))
+        self.assertFalse(inside(d.Lr - 1.0, d.w_bot - 1.0))
+        bb = deck.BoundingBox()
+        top = max(d.world(x, L, d.w_top)[2] for x in (d.x0,) for L in (d.Lf, d.Lr))
+        self.assertAlmostEqual(bb.zmax, top, places=4)
 
     def test_15in6_deck_window_opens_over_the_pi(self):
         """Every point of the Pi's footprint behind the raised block sees through

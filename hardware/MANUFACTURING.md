@@ -55,7 +55,8 @@ not identify the steel grade. There is no separate rear I/O panel since #1088.
 
 There are no rear corner brackets or their ten base rivet holes. The metal
 archive excludes assembly, README, drafts, purchased hardware, printed parts
-and removed brackets/posts.
+and removed brackets/posts. Purchased shims and front/rear washer references
+remain internal assembly aids. Labels stay on individual pedal tiles.
 
 ### Monitor deck: a separate order (#1867)
 
@@ -66,19 +67,17 @@ Nothing is ordered until the owner approves the renders on #1867.
 
 | Part | Qty | Material | Notes |
 |---|---|---|---|
-| `segno_monitor_deck` | 1 | 2.0 mm 1100-H14 aluminium, **bare** | One plate across both 15.6-inch stand towers, 330.6 mm wide and 110 mm deep outside, developed 330.57 × 127.36. A 17 mm front flange folds **down** and an 8 mm rear flange folds **up** (a Z profile), both full length, so there are no corner reliefs. Two Ø4.8 holes for the monitor's M4 screws at 75 mm, four Ø3.6 holes for the M3 that clamp it to the towers, and a 60.0 × 54.4 mm R3 window over the Raspberry Pi. Same brake rules as the base: V12, Ri 2.0, K 0.33. |
+| `segno_monitor_deck` | 1 | 2.0 mm 1100-H14 aluminium, **bare** | One plate across both 15.6-inch stand towers, 330.6 mm wide and 110 mm deep outside, developed 330.57 × 123.18. **One fold:** a 17 mm front flange folds **down**, full length, so there are no corner reliefs; the rear edge is a plain cut. Two Ø4.8 holes for the monitor's M4 screws at 75 mm, four Ø3.6 holes for the M3 that clamp it to the towers, and a 60.0 × 56.3 mm R3 window over the Raspberry Pi. Same brake rules as the base: V12, Ri 2.0, K 0.33. |
 
 It is **not painted**. It is inside the console, and the monitor's raised VESA
 block bears directly on its top face, so a coating would only add thickness at
 that contact and on its hole diameters; none of its holes carries a coating
 allowance. It is not in `segno_pintura.zip`. Deburr all edges.
 
-The 8 mm rear flange is 4 × the thickness, the shortest flange this rule allows
-on a V12 die, and it cannot grow much: its top edge already sits 1.8 mm under
-the monitor's flat back (1.5 mm is the minimum). Confirm it with Dinacut's
-tooling before cutting. The window's rear edge stays 8.0 mm from the rear bend
-line, outside the die's shoulders. Purchased shims and front/rear washer references
-remain internal assembly aids. Labels stay on individual pedal tiles.
+No cut comes within 8.0 mm of the bend line, outside the V12 die's shoulders.
+The window leaves an 8.0 mm web to the plain rear edge. An 8 mm rear flange
+folded up was dropped before ordering: it sat at the brake's 4 × T minimum and
+the plate passes its strength gate without it.
 
 ### Work sequence
 
