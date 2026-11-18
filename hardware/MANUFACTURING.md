@@ -7,6 +7,9 @@ ring. The digital preparation is complete and matches the parts the owner has
 already printed: the mirrored 15.6-inch stands, the closed-deck 7-inch tower
 (no reprint: the ring moved down the slope instead, #1090), the 2.4 mm-wall front collars, the solid
 CLEAR/BANK collars and the tall eight-LED pills of #1074 (PR #1084).
+The one exception is #1867: it replaces the printed deck of the 15.6-inch
+stands with a folded aluminium plate (`segno_monitor_deck`, a separate metal
+order), so the 15.6-inch towers and their two pads are printed again.
 
 Matías welds all four base corners and closes all corner reliefs, including the
 two indicated upper edges, with his chosen 5356 filler. There is no spot
@@ -52,7 +55,29 @@ not identify the steel grade. There is no separate rear I/O panel since #1088.
 
 There are no rear corner brackets or their ten base rivet holes. The metal
 archive excludes assembly, README, drafts, purchased hardware, printed parts
-and removed brackets/posts. Purchased shims and front/rear washer references
+and removed brackets/posts.
+
+### Monitor deck: a separate order (#1867)
+
+The 15.6-inch monitor deck is ordered on its own, after the four parts above
+were cut (fab-2026-11-03-metal). Its handoff is
+**`enclosure/out/segno_monitor_deck.zip`**: STEP, DXF and PDF of one part.
+Nothing is ordered until the owner approves the renders on #1867.
+
+| Part | Qty | Material | Notes |
+|---|---|---|---|
+| `segno_monitor_deck` | 1 | 2.0 mm 1100-H14 aluminium, **bare** | One plate across both 15.6-inch stand towers, 330.6 mm wide and 110 mm deep outside, developed 330.57 × 127.36. A 17 mm front flange folds **down** and an 8 mm rear flange folds **up** (a Z profile), both full length, so there are no corner reliefs. Two Ø4.8 holes for the monitor's M4 screws at 75 mm, four Ø3.6 holes for the M3 that clamp it to the towers, and a 60.0 × 54.4 mm R3 window over the Raspberry Pi. Same brake rules as the base: V12, Ri 2.0, K 0.33. |
+
+It is **not painted**. It is inside the console, and the monitor's raised VESA
+block bears directly on its top face, so a coating would only add thickness at
+that contact and on its hole diameters; none of its holes carries a coating
+allowance. It is not in `segno_pintura.zip`. Deburr all edges.
+
+The 8 mm rear flange is 4 × the thickness, the shortest flange this rule allows
+on a V12 die, and it cannot grow much: its top edge already sits 1.8 mm under
+the monitor's flat back (1.5 mm is the minimum). Confirm it with Dinacut's
+tooling before cutting. The window's rear edge stays 8.0 mm from the rear bend
+line, outside the die's shoulders. Purchased shims and front/rear washer references
 remain internal assembly aids. Labels stay on individual pedal tiles.
 
 ### Work sequence
@@ -278,9 +303,9 @@ unchanged by these console paint allowances.
 | `segno_ring_diffuser` | 1 | **WHITE translucent** (exception to the all-black rule: it is a lens) | Ø67-window lens and disc holder for the selected PR #990 Ring 24 on its 2.54 mm pin strip. The open-bottom cavity has eight 1.2 mm ribs in verified component gaps, a 0.25 mm shelf and a 1.05 mm lens roof. Nominal minimum PCB clearance is **0.135 mm**, LED clearance 0.332 mm; qualify one actual print and its light diffusion before ordering a set. Orient and dry-fit it as described below before gluing. |
 | `console_ring_{diffuser,cup,encoder_retainer,encoder_spacer,centre_cap}` (#1075, `hardware/strip_ring/out_console/`) | 1 each | diffuser and cup **WHITE PLA**, the rest **BLACK** | **The selected ring** (owner, 2026-10-13; final count 35 LEDs, 2026-10-19, #1075), replacing `segno_ring_diffuser`. A 35-LED strip on the cup wall, LEDs facing in; the cup's roof is glued to the faceplate underside and the lens sits flush in the unchanged Ø67 window. Three snap arms on the cup click under the Ø80 carrier's edge (0.6 mm overlap, 0.3 mm play; the encoder nut still sets its height), so the carrier needs no screws (#1090). The cup prints roof-down, so the arms stand up with their layers across the way they bend; the first print's thin arms snapped coming off the bed. The arms are now 8 mm wide and taper from 1.8 mm at the root to 1.0 mm at the catch, with a chamfered root, and a full flex strains the root about 0.45 %. Release the part by flexing the bed, not by levering against the arms. A 0.48 mm-deep relief pocket behind each arm keeps it from printing fused to the wall; fully flexed, the arms stay 17 mm clear of the printed 7-inch tower. The v3 carrier hangs 7 mm deeper than with the Ring 24 (J3 unfitted, strip on J2); since the ring moved to v 215.0 (#1090) it clears the printed 7-inch tower with 1.5 mm of air. The aluminium `segno_ring_disc` is glued on its printed centre cap (the cap sits 2 mm lower for it), so the centre matches the lid's coating; order the disc. The carrier hangs from its Same Sky ACZ11 encoder, whose shoulder measured 6.39 mm above the board, so the encoder spacer is 1.695 mm thick (the 3.5 mm one assumed an EC11). Push the knob on until its underside is 1.0 mm above the face, so a full press of the switch (0.8 mm) never bottoms it; the shaft then enters 9.4 mm of the knob's bore. The cup is drawn for 34 LEDs (`COUNT` in `console_ring.py`), and a 35-LED strip fits it as printed: the first and last LEDs overlap slightly at the seam (owner, bench fit, 2026-10-23), so the cup stays as drawn. |
 | `segno_screen7_tower` | 1 | **BLACK PETG**, ≥40% infill | 7-inch screen support tower (#762, closed deck #1070). One piece, closed wedge box, six M3 to the floor through Ø5.5 float holes. The deck is closed: four internal front-to-back ribs carry it, and each cell's ceiling is a 45° gable, so **print it flange-down with no support** (there is no way to get support out of a closed box). The openings are the connector notch on the edge facing the console centre, where the module's HDMI, micro-USB and backlight switch are. The strip-ring notch of #1075 is gone again: the ring moved 14.16 mm down the slope (#1090), so **the tower already printed is the current part**; a generator gate keeps the carrier clear of it. |
-| `segno_screen16_stand_L` | 1 | **BLACK PETG**, ≥40% infill | Left 15.6-inch stand (#1070). |
-| `segno_screen16_stand_R` | 1 | **BLACK PETG**, ≥40% infill | Right 15.6-inch stand: **the exact mirror of `_L`** (either print `_R`, or print `_L` mirrored in the slicer). The halves butt at the screen centre and the splice below joins them. |
-| `segno_screen16_splice` | 1 | **BLACK PETG**, ≥40% infill | Flat plate between the deck ribs at the 15.6-inch screen centre. Four M3×12 up into heat-set inserts, two in each half. |
+| `segno_screen16_stand_L` | 1 | **BLACK PETG**, ≥40% infill | Left 15.6-inch stand tower (#1070, #1867). Since #1867 it is only the tower: a 40 × 110 mm tube up to the aluminium `segno_monitor_deck`, with the same flange, floor float holes and shim kit as before. Two insert bosses hang inside the tube on 45° cones, so **print it flange-down with no support**. The front wall is cut down where the deck's front flange folds through it. **Reprint required: the printed stands with the PETG deck do not take the aluminium deck.** |
+| `segno_screen16_stand_R` | 1 | **BLACK PETG**, ≥40% infill | Right 15.6-inch tower: **the exact mirror of `_L`** (either print `_R`, or print `_L` mirrored in the slicer). |
+| `segno_screen16_pad` | 2 | **BLACK PETG**, ≥40% infill | 15.6-inch stand pad (#1867), 40 × 58.8 × 7.8 mm, one on each tower, on the deck behind the monitor's raised block. Its top meets the monitor's flat back, as the old printed pads did. Symmetric, so both towers take the same part. Print it flat, counterbores up. |
 | `segno_screen7_shim_{0p2,0p4,0p8,1p6}` | 1 each | **BLACK PETG**, 100% infill | Height shims under the 7-inch tower: the tower's whole underside (flange ring and rib feet) with the same float holes. The kit is binary, so any stack from 0 to 3.0 mm in 0.2 mm steps is available. **Nominal is 0.2 + 0.8 = 1.0 mm**: the tower is built 1.0 mm short of the lid, so the stack trims it -1.0 to +2.0 mm. Print the 0.2 as a single first layer and check it with calipers; a first layer squashed to 0.15 is a 0.05 mm height error. |
 | `segno_screen16_shim_{0p2,0p4,0p8,1p6}` | 2 each | **BLACK PETG**, 100% infill | The same kit for the 15.6-inch stands, one set per stand. The flange outline is not symmetric; for the right stand **turn each shim over**. |
 
@@ -345,8 +370,8 @@ holds the lid off its seats. The 15.6-inch stand has one stack per tower, so
 left and right can be set separately to level the panel. In-plane, every floor
 screw has ±1.25 mm of float (M3 in a Ø5.5 hole under a Ø9 washer): centre
 the image in the aperture before torquing. The 15.6-inch monitor is screwed
-FIXED to its stands (Ø4.8 clearance for M4); join the two halves with the splice
-first, then move the whole platform.
+FIXED to the aluminium deck (Ø4.8 clearance for M4); bolt the deck to both
+towers under their pads first, then move the whole platform.
 
 **Ring-holder orientation and fit.** The ribs make this part rotationally
 indexed. Use the [top-view alignment reference](enclosure/reference/ring24_orientation.svg):
@@ -644,8 +669,8 @@ finished stack, actual insert depth and screw-tip clearance. Rows marked
 | Front lid lip → base, between painted bearing faces | **9 fitted solid-metal shim packs**, layer quantity depends on finished gaps | Stainless, OD6.90–7.00 / ID4.0–4.2 mm. Fit after coating with the lid freely seated; nominal 1.10 mm STEP thickness is reference only. Check face alignment and bearing, then record thicknesses and stations 1–9. Use edge-only retention, without coating removal or adhesive in the bearing stack. |
 | Support-beam foot → base | **9 M4 screws, 9 nuts and washer sets; measure before ordering** | The beam's foot, through depth-slotted holes, one at each of the lid's nine front screw stations (#1090): each interior pedal gap plus one outboard of each end pedal. Bare metal stack is **3.6 mm**; add both parts' coating, washers and the selected nut. Nuts are under the floor. Check that the ends and hardware remain above the neoprene floor-contact plane. |
 | Screen stands → base | **14 M3 screws and 14 M3 DIN 9021 washers (Ø9); confirm length before ordering** | Six for the 7-inch tower and four for each 15.6-inch stand. Each passes a Ø9 washer, **5 mm of printed flange, 0–3.0 mm of shims** (1.0 nominal) and the 2 mm base's M3 threads. The flange holes are Ø5.5 float holes, so the washer is what bears. M3×10 covers the full shim range; verify engagement and tip clearance after coating. |
-| 15.6-inch stand splice | **4 M3×12 screws and 4 M3 heat-set inserts** (the sleds' 5.0 mm long ×5.0 mm OD) | Two per half, up through the 6 mm splice plate into Ø4.5 ×6.0 mm blind pilots in the 10 mm deck. Blind from below on purpose: the deck's top face sits 0.3 mm off the monitor, with no room for a head. |
-| 15.6-inch monitor → stands | **2 M4×16 screws and 2 M4 DIN 125 washers (4.3 × 9 × 0.8); measure the thread depth before ordering** | One horizontal pair at 75 mm pitch, up from under the deck. The holes are **fixed** Ø4.8 clearance (#1070); the monitor no longer adjusts on the stand. The spliced stand pair moves as one platform on its ±1.25 mm floor float holes instead. Stack under the monitor: washer 0.8 + deck 10 + gap 0.3 = 11.1 mm, so M4×16 engages about 4.9 mm. The reference model's 6 mm blind holes were not measured, so check the monitor's real thread depth first. |
+| 15.6-inch pads + deck → towers | **4 M3×12 ISO 7380 button-head screws and 4 M3 heat-set inserts** (the sleds' 5.0 mm long ×5.0 mm OD) | Two per tower (#1867), down through the pad and the 2 mm deck into Ø4.5 ×6.0 mm pilots at the top of the tower's insert bosses, with a Ø3.4 clearance below each pilot. The head sinks in a Ø6.2 ×2.3 mm counterbore, the floor rails' own, so it stays under the monitor's flat back. Under the head: 5.5 mm of pad + 2.0 mm of deck, so M3×12 engages 4.5 mm of the 5 mm insert. Set the inserts flush with the tower top. Same count as the splice joint these replace. |
+| 15.6-inch monitor → deck | **2 M4×8 screws and 2 M4 DIN 125 washers (4.3 × 9 × 0.8); measure the thread depth before ordering** | One horizontal pair at 75 mm pitch, up from under the aluminium deck (#1867). The holes are **fixed** Ø4.8 clearance (#1070). The deck and both towers move as one platform on the towers' ±1.25 mm floor float holes. Stack under the monitor: washer 0.8 + deck 2.0 = 2.8 mm, so M4×8 engages about 5.2 mm; the M4×16 of the PETG deck is far too long now. The reference model's 6 mm blind holes were not measured, so check the monitor's real thread depth first. |
 | 7-inch monitor → tower | **4 M3×8 screws and 4 M3 heat-set inserts** (5.0 mm long ×5.0 mm OD, the sleds' insert) | One per tab, through the module's Ø3.1 tabs (1.7 mm) into Ø4.5 ×6.0 mm pilots in Ø10.5 bosses (#1070). Below the insert there is a Ø3.4 clearance, so a longer screw passes rather than self-tapping. Set each insert flush with the boss top: a proud insert holds the glass off the lid. |
 | Console board → base | **4 M3 female/female standoffs, 15 mm body length, plus 8 M3 screws; measure screw lengths before ordering** | Four floor-side and four board-side screws. Include any washers in the length check and preserve the specified H1 electrical bond. If the supplied standoffs are male/female, replace the four floor-side screws with the matching nuts instead; the installed height stays 15 mm. |
 | N07 / Raspberry Pi → base | **4 M2.5 female/female standoffs, 12 mm body length; 4 M2.5 male/female extenders, 6 mm body length; 8 M2.5 screws** | Four screws secure the lower standoffs from below and four secure the Pi from above. The extenders pass through the N07 board into the lower standoffs. Confirm the supplied kit's thread lengths and avoid bottoming in its blind threads. **35.3 mm risers are not used.** Retain the N07 kit's separate SSD-retaining hardware. |

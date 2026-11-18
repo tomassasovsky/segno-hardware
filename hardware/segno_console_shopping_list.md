@@ -194,6 +194,9 @@ Wiring, the resistor choice and the calibration are in
 
 - [ ] Enclosure material (plywood / aluminium / 3D-printed panels) — tilted body
 - [ ] M2.5/M3 screws + standoffs for the Pi, the console board, and screen mounts ×1 set
+      (15.6″ stand, #1867: 4× M3×12 ISO 7380 button head + 4× M3 heat-set
+      inserts 5×5 for the pads, and 2× M4×8 + DIN 125 washers for the monitor,
+      replacing the M4×16; counts and lengths in `MANUFACTURING.md`)
 - [ ] Stomp-panel face (steel/aluminium) for the footswitches ×1
 - [ ] Rubber feet / non-slip base ×1 set
 - [ ] Cable strain reliefs / grommets ×1 set
