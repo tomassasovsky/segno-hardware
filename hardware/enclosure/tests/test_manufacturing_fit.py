@@ -466,7 +466,8 @@ class ManufacturingFitTest(unittest.TestCase):
             assembly = cq.importers.importStep(path).val()
             self.assertTrue(assembly.isValid())
             solids = assembly.Solids()
-            self.assertEqual(len(solids),31)       # four metal parts and 27 purchased references (#1088)
+            self.assertEqual(len(solids),32)       # five metal parts (the monitor deck since #1867)
+                                                   # and 27 purchased references (#1088)
             names = re.findall(r"NEXT_ASSEMBLY_USAGE_OCCURRENCE\('[^']*',\s*'([^']*)'",
                                Path(path).read_text())
             purchased = {f'PURCHASED_FITTED_FRONT_SHIM_PACK_{i}' for i in range(1,10)}
@@ -474,8 +475,8 @@ class ManufacturingFitTest(unittest.TestCase):
                           for end in ('FRONT','REAR')for i in range(1,10)}
             self.assertEqual(set(names),purchased | {
                 'segno_base_1','segno_faceplate_1',
-                'segno_ring_disc', 'segno_beam'})
-            self.assertEqual(len(names),31)
+                'segno_ring_disc', 'segno_beam', 'segno_monitor_deck'})
+            self.assertEqual(len(names),32)
             shims = [s for s in solids if len(self._cylinder_axes(s,2.05)) == 1
                      and s.BoundingBox().xlen < 10]
             washers = [s for s in solids if len(self._cylinder_axes(s,1.6)) == 1
@@ -483,7 +484,7 @@ class ManufacturingFitTest(unittest.TestCase):
                             or len(self._cylinder_axes(s,6.0)) == 1)]
             self.assertEqual(len(shims),9)
             self.assertEqual(len(washers),18)
-            self.assertEqual(len(solids)-len(shims)-len(washers),4)
+            self.assertEqual(len(solids)-len(shims)-len(washers),5)
             base, lid = sorted(solids,key=lambda s:s.Volume(),reverse=True)[:2]
             self.assertAlmostEqual(base.BoundingBox().zmin,0.0,places=5)
             self.assertAlmostEqual(lid.BoundingBox().ymin,-5.0108425,places=4)
