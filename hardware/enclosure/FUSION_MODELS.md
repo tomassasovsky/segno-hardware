@@ -1,5 +1,86 @@
 # The Fusion 360 models — how to change anything without wrecking them
 
+## Aluminium monitor deck, reprinted towers and pads - 2026-11-18, clone v35 (tomassasovsky/segno#1867)
+
+Clone "VAMP console (populated) - 1067 tabs + seat flanges", saved as version
+35 ("#1867 aluminium monitor deck: native 2.0 mm sheet-metal plate with one
+17 mm front fold and the Pi window, reprinted towers, pads; old PETG deck
+halves and splice removed"). Outputs from commit d62e39d (`out/`), world mm at
+identity. All transforms below are in cm.
+
+- `screen16_stand_L`, `screen16_stand_R`, `screen16_pad`: new components,
+  each with one base feature holding the STEP body, which came in as SMT
+  through a throwaway document and was scaled by 0.1. Do not use
+  `importToTarget` with a STEP here: it nests an "Open CASCADE STEP translator"
+  child occurrence. Volumes: towers 70,628.279 mm3 each and pad 18,100.839
+  mm3. `screen16_pad:1` is at identity, over the left tower. `screen16_pad:2` is
+  the same component at `[1,0,0,29.057143 | 0,1,0,0 | 0,0,1,0]`
+  (dx = 2·SCREEN_16_U − 500 − 460 = 290.571 mm). Its root bbox is x
+  750.571..790.571, which is the right tower's 40 mm tube.
+  Appearance is `Plastic - Matte (Black)` (Prism-113), copied from the old
+  stands. The body appearance set in the same call as `finishEdit` was lost
+  when the old occurrences were deleted (the bodies fell back to the Steel
+  material's `Steel - Satin`). Setting it again in its own call held through
+  the save.
+- `monitor_deck`: native sheet metal. `out/segno_monitor_deck.dxf` was
+  imported at identity, giving the sketches `CUT` and `BEND`. The CUT max-area
+  profile (8 loops) was extruded −0.2 and the top face (z 0) converted with a
+  T 0.2 / R 0.2 / K 0.33 rule. `Fold2` is a `foldFeatures` fold with the top
+  face as stationary face, the BEND line (Y 15.089) at
+  `CenterFoldBendLinePositionType` and **−90 deg**. +90 folds the flange up
+  (`Fold1`, deleted). Flat 74,546.417 mm3, folded 74,899.514 mm3. Local frame:
+  top face z 0, flange down to z −17, flange outer face at Y 13.178 (= 17 −
+  2·DEV90). Placement `[1,0,0,46.0 | 0,c,−s,19.927448 | 0,s,c,4.133330]` with
+  c/s of SLOPE_ANGLE (0.976303/0.216410). That is `s16_deck().world(460, Lf −
+  13.1783, w_top)`. Appearance `Aluminum - Satin` (bare). All three features
+  are healthy.
+- Fit to the generator. Each body was copied from its root-space proxy and
+  compared with its STEP, loaded through SMT and scaled 0.1. Native minus STEP
+  and STEP minus native are **0.0 mm3** for the deck, both towers and the pad.
+  The fine-mesh bboxes are identical: deck x 460.000..790.571, y
+  212.920..319.967, z 27.588..67.990; L tower 448.000..500.000 / 198.902..332.902
+  / 3.000..66.245; R tower 750.571..802.571 (same y/z); pad 460.000..500.000 /
+  256.065..315.140 / 54.296..74.632. The proxy `boundingBox` of the tilted
+  deck is loose (y 212.141..323.213): use mesh nodes for tilted bodies.
+- Deleted: `screen16_stand_L_pre1867`, `screen16_stand_R_pre1867`
+  (372,441.7 mm3 each, towers + PETG deck halves) and `screen16_splice_pre1867`.
+  Their components went with them. `screen16_shim_{L,R}_{0p2,0p8}` and
+  `lid_stack/screen16_monitor` are unchanged.
+- Visibility: before the swap the clone had unsaved light-bulb changes from
+  the owner (confirmed by the owner). Turned back on: `base`, `faceplate`,
+  `lid_stack`, the four `screen16_shim_*` and `screen7_shim_0p2`/`_0p8`.
+  Still hidden as documented: `ring_comet`, `lid_stack/encoder`,
+  `lid_stack/texts`, the ten `led_diffuser_*` and
+  `ring_board_v3/NeoPixel_Ring24`.
+- Fasteners: none of the stand's fasteners were ever modelled. `fasteners:1`
+  holds only the 18 lid screws and 18 washers, and nothing named like a screw
+  or washer sits in the stand region elsewhere. The old splice had no screws to
+  remove. Not modelled (per `MANUFACTURING.md`): 2 M4×8 + 2 DIN 125 (VESA, up
+  through the deck), 4 M3×12 ISO 7380 + 4 heat-set inserts (pads and deck
+  into the towers), 8 M3 + DIN 9021 (stands to base).
+- Interference: 116 bbox-overlapping pairs, checked by a temporary-body
+  intersection and the minimum distance. Every new body was checked against
+  every visible body and the other new bodies.
+  - Touching only (0 mm3, distance 0): towers on `screen16_shim_*_0p8`, towers
+    under the deck, pads on the deck, pads on `screen16_case` (flat back), and
+    the deck on `screen16_block`. No contact with the Pi, the N07, the bucks,
+    the faceplate or the base.
+  - Overlap: `screen16_stand_L` with `console_board_v4` (PCB 1,010.505 mm3,
+    Pico 83.65, DIP-6 72.50, four JST XH 35.9–98.7, axial resistors, a diode
+    and capacitors 0.42–26.4). This was already there: the old stand overlapped
+    the v4 PCB by exactly the same 1,010.505 mm3. `console_board_v4` was
+    retired by #1088 (`console_board_v3` replaced it) but is still in the
+    clone, visible. The current `console_board_v3` does not touch either
+    tower.
+- Pi ceiling with the native deck, over the full Pi width, from the PCB top
+  (z 23.035):
+  - y 249.25–257: 27.33 mm (deck)
+  - y 257–270: 29.05 (deck)
+  - y 260–270: 39.75 (monitor case, through the window)
+  - over the SoC face (z 26.42): 39.45 (case), the same as the STEP deck
+    measurement.
+  - y 254–260: 28.38, also the same.
+
 ## Ambient light sensor window and sleeve - 2026-11-03, clone v33 (tomassasovsky/segno#1564)
 
 Clone "VAMP console (populated) - 1067 tabs + seat flanges". Version 31 added
