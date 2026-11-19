@@ -1,4 +1,4 @@
-"""Exact metal ordering and preservation of complete archives on failure."""
+"""Exact metal orders and preservation of complete archives on failure."""
 from pathlib import Path
 import os
 import sys
@@ -21,19 +21,22 @@ class ManufacturingPackageTest(unittest.TestCase):
             for stem in ('segno_base', 'segno_faceplate', 'segno_ring_disc')
         }
         self.specs['segno_beam'] = ('acero laminado en frío de 1.6 mm', 1, 'sheetmetal')
+        self.specs['segno_monitor_deck'] = ('aluminio 1100-H14 de 2.0 mm', 1, 'monitor_deck')
         self.specs['segno_pedal_tiles'] = ('plástico de 2.0 mm', 10, 'tiles')
         self.members = package.metal_package_members(self.specs)
-        for source in self.members.values():
+        self.deck = package.deck_package_members(self.specs)
+        for source in [*self.members.values(), *self.deck.values()]:
             (self.out/source).write_bytes(('current artifact: '+source).encode())
         self.previous = {name: ('previous '+name).encode() for name in (
-            package.METAL_ARCHIVE, *package.OBSOLETE_METAL_ARCHIVES,
+            package.METAL_ARCHIVE, package.DECK_ARCHIVE, *package.OBSOLETE_METAL_ARCHIVES,
             'segno_3dprint.zip', 'segno_pintura.zip')}
         for name, content in self.previous.items():
             (self.out/name).write_bytes(content)
 
     def write(self):
         return package.write_archives(
-            self.out, {package.METAL_ARCHIVE: self.members}, run_started=0)
+            self.out, {package.METAL_ARCHIVE: self.members,
+                       package.DECK_ARCHIVE: self.deck}, run_started=0)
 
     def assert_previous_preserved(self):
         for name, content in self.previous.items():
@@ -49,7 +52,8 @@ class ManufacturingPackageTest(unittest.TestCase):
                      'segno_corner_bracket_rear.dxf', 'segno_post.pdf'):
             (self.out/name).write_bytes(b'not part of the metal order')
         produced = self.write()
-        self.assertEqual(produced, [str(self.out/package.METAL_ARCHIVE)])
+        self.assertEqual(produced, [str(self.out/package.METAL_ARCHIVE),
+                                    str(self.out/package.DECK_ARCHIVE)])
         with zipfile.ZipFile(produced[0]) as archive:
             self.assertEqual(len(archive.namelist()), 12)   # #1088: the rear panel is gone
             self.assertEqual(set(archive.namelist()), set(self.members))
@@ -63,6 +67,13 @@ class ManufacturingPackageTest(unittest.TestCase):
                     self.assertIn('aluminio-1100-H14-de-2.0-mm', name)
                 self.assertEqual(archive.read(name),
                                  (self.out/self.members[name]).read_bytes())
+        with zipfile.ZipFile(produced[1]) as archive:
+            self.assertEqual(sorted(archive.namelist()), sorted(self.deck))
+            self.assertEqual({Path(name).suffix for name in archive.namelist()},
+                             {'.step', '.dxf', '.pdf'})
+            self.assertTrue(all(name.startswith(
+                'segno_monitor_deck__aluminio-1100-H14-de-2.0-mm__qty1.')
+                for name in archive.namelist()))
         package.verify_manufacturing_archive(self.out, self.specs)
         self.assertTrue(all(not (self.out/name).exists()
                             for name in package.OBSOLETE_METAL_ARCHIVES))
@@ -70,7 +81,7 @@ class ManufacturingPackageTest(unittest.TestCase):
             self.assertEqual((self.out/name).read_bytes(), self.previous[name])
 
     def test_each_missing_artifact_preserves_every_previous_archive(self):
-        for source in self.members.values():
+        for source in [*self.members.values(), *self.deck.values()]:
             with self.subTest(source=source):
                 path = self.out/source
                 content = path.read_bytes()
@@ -118,6 +129,28 @@ class ManufacturingPackageTest(unittest.TestCase):
         (self.out/'tile.dxf').write_bytes(b'new tile')
         package.write_archives(self.out,
             {'segno_pedal_tiles.zip': {'tile.dxf': 'tile.dxf'}}, run_started=0)
+        self.assert_previous_preserved()
+
+    def test_the_deck_is_its_own_order_and_never_joins_the_enclosure_set(self):
+        self.assertFalse(set(self.deck.values()) & set(self.members.values()))
+        for fault in ('missing', 'quantity', 'material', 'in the metal set'):
+            with self.subTest(fault=fault):
+                specs = self.specs.copy()
+                if fault == 'missing':
+                    del specs['segno_monitor_deck']
+                elif fault == 'quantity':
+                    specs['segno_monitor_deck'] = (specs['segno_base'][0], 2, 'monitor_deck')
+                elif fault == 'material':
+                    specs['segno_monitor_deck'] = ('acero de 2.0 mm', 1, 'monitor_deck')
+                else:
+                    specs['segno_monitor_deck'] = specs['segno_base']
+                with self.assertRaises(ValueError):
+                    package.deck_package_members(specs)
+                    package.metal_package_members(specs)
+        invalid = self.deck | {'README.md': 'README.md'}
+        (self.out/'README.md').write_bytes(b'unwanted note')
+        with self.assertRaisesRegex(ValueError, '3 reviewed'):
+            package.write_archives(self.out, {package.DECK_ARCHIVE: invalid}, run_started=0)
         self.assert_previous_preserved()
 
     def test_changed_parts_quantities_or_materials_require_a_reviewed_manifest(self):

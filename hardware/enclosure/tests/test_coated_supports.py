@@ -133,13 +133,22 @@ class CoatedSupportTest(unittest.TestCase):
         self.assertEqual(inserts, self.reference['sled_insert_cylinders'])
 
     def test_screen16_remains_seated_on_both_stands_and_clears_coated_lid(self):
+        # #1867: the monitor bears on the aluminium deck (its raised block) and on
+        # a printed pad over each tower (its flat back); the towers carry the deck.
         monitor = self.parts['segno_screen16_monitor']
-        for side in ('L', 'R'):
-            stand = self.parts['segno_screen16_stand_'+side]
-            contact = stand.intersect(monitor)
+        deck = self.parts['segno_monitor_deck']
+        pad = self.parts['segno_screen16_pad']
+        d = enclosure.s16_deck()
+        pads = (pad, pad.translate((d.towers[1][0] - d.towers[0][0], 0, 0)))
+        for part in (deck,) + pads:
+            contact = part.intersect(monitor)
             self.assertTrue(contact.isValid())
             self.assertLess(contact.Volume(), 1e-6)
-            self.assertLess(stand.distance(monitor), 1e-6)
+            self.assertLess(part.distance(monitor), 1e-6)
+        for side in ('L', 'R'):
+            stand = self.parts['segno_screen16_stand_'+side]
+            self.assertLess(stand.intersect(deck).Volume(), 1e-6)
+            self.assertLess(stand.distance(deck), 1e-6)
         for lid in self.painted_lids():
             self.assert_clear(monitor.translate((0, 0, .10)), lid, .12)
 
