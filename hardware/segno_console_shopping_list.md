@@ -151,31 +151,34 @@ The Pi 5's on-board Wi-Fi stopped transmitting on the console; a USB adapter
 replaces it, on a USB 3 hub that also frees the audio interface's controller
 (wiring doc §4). The hub is powered from BUCK_PI (§2).
 
-- [ ] **USB 3.0 hub, 4 ports, with a separate 5 V power input** ×1 — a VIA
-      VL817/VL822 or Genesys GL3523 chipset, small enough to mount inside. A
-      USB-C or barrel power input, not a wall-plug-only design. Candidate: the
-      official **Raspberry Pi USB 3 Hub** (VL817), if its listing confirms the
-      external power input. It plugs into the Pi's blue port on controller B
-- [ ] **USB Wi-Fi adapter, RTL8812BU, detachable RP-SMA antenna** ×1 — e.g.
-      **TP-Link Archer T3U Plus**. Check that the listing names the RTL8812BU
-      chip: the image ships only its firmware (`linux-firmware-rtl8822`), and
-      TP-Link changes chips between hardware revisions. The plain Archer T3U
-      (fixed antenna) is the one tested on the console
-- [ ] **RP-SMA male → RP-SMA female bulkhead extension**, RG316 or better,
-      15–30 cm ×1 (×2 for a two-antenna adapter) — the antenna to the rear
-      panel. Avoid thin RG174: about 2 dB lost per metre at 5 GHz. Its panel
-      station is an enclosure change still to come
-- [ ] **USB 3.0 A-male → A-female extension**, 15–30 cm ×1 — keeps the
-      adapter a little away from the hub, whose USB 3 traffic radiates around
-      2.4 GHz
+- [ ] **Raspberry Pi USB 3 Hub** (official) ×1 — four USB 3.0 ports from one,
+      8 cm captive cable, and an optional **USB-C power input (5 V, 3 A)** that
+      takes BUCK_PI below. Sold by the official Raspberry Pi resellers. It
+      plugs into the Pi's blue port on controller B
+- [ ] **ALFA AWUS036ACU** (RTL8812BU, two detachable 5 dBi antennas on
+      RP-SMA) ×1 — the image ships its firmware (`linux-firmware-rtl8822`) and
+      the kernel's `rtw_8822bu` driver runs it. **Not the AWUS036AC or
+      AWUS036ACH**: those are RTL8812AU, which has no in-kernel driver. TP-Link's
+      Archer T3U (the adapter tested on the console) and T3U Plus have the same
+      chip, but their antennas do not come off
+- [ ] **RP-SMA female bulkhead → RP-SMA male pigtail, RG316, 20 cm** ×2 — one
+      per antenna, to the rear panel. Avoid thin RG174: about 2 dB lost per
+      metre at 5 GHz. Check the genders: an RP-SMA *male* has a hole in the
+      centre and the *female* a pin. Their panel station is an enclosure change
+      still to come
+- [ ] **USB 3.0 A-male → A-female extension**, 30 cm ×1 — keeps the adapter
+      a little away from the hub, whose USB 3 traffic radiates around 2.4 GHz.
+      The ACU's own USB cradle does the same
 - [ ] **Hub power lead from BUCK_PI** ×1:
-      - the plug the hub's power input takes. For USB-C, a power-only
-        USB-C male lead that keeps the source-role CC resistor in the plug, as
-        the screen harness requires;
-      - **inline fuse holder** with a **2 A** fuse, at the buck end;
+      - a **USB-A female socket with screw terminals** (power only), on
+        BUCK_PI's 5 V output, and a short **USB-A → USB-C cable** to the hub's
+        power input. A spec-compliant A-to-C cable carries the 56 kΩ
+        source-role resistor in its C plug, so the hub sees a proper 5 V
+        source;
+      - an **inline blade-fuse holder** with a **2 A** ATO/ATC fuse, at the
+        buck end;
       - **20 AWG** red and black, about 30 cm;
-      - a splice at BUCK_PI's output: **WAGO 221-413** lever connectors ×2, or
-        a small screw terminal block
+      - **WAGO 221-413** lever connectors ×2, to splice at BUCK_PI's output
 
 ## Console v3, ring carrier and screen-power boards
 

@@ -608,7 +608,7 @@ a few seconds.
   - The UPERFECT has its own internal USB hub.
 - **Wi-Fi** — a USB adapter on the hub, not the Pi 5's on-board CYW43455, which
   stopped transmitting on the console (segno#1816). The adapter is an
-  RTL8812BU with a detachable RP-SMA antenna: the appliance image ships its
+  RTL8812BU with detachable RP-SMA antennas (ALFA AWUS036ACU): the appliance image ships its
   firmware (`linux-firmware-rtl8822`, segno#1962) and the kernel's
   `rtw_8822bu` driver. Its antenna moves to the rear panel on an RP-SMA
   bulkhead extension; that panel station is an enclosure change still to
