@@ -145,6 +145,38 @@ are on the respective board BOMs.
 - The power budget is [`segno_wiring.md` §2](segno_wiring.md) — canonical since
   #754.
 
+## USB hub and Wi-Fi (#1816)
+
+The Pi 5's on-board Wi-Fi stopped transmitting on the console; a USB adapter
+replaces it, on a USB 3 hub that also frees the audio interface's controller
+(wiring doc §4). The hub is powered from BUCK_PI (§2).
+
+- [ ] **USB 3.0 hub, 4 ports, with a separate 5 V power input** ×1 — a VIA
+      VL817/VL822 or Genesys GL3523 chipset, small enough to mount inside. A
+      USB-C or barrel power input, not a wall-plug-only design. Candidate: the
+      official **Raspberry Pi USB 3 Hub** (VL817), if its listing confirms the
+      external power input. It plugs into the Pi's blue port on controller B
+- [ ] **USB Wi-Fi adapter, RTL8812BU, detachable RP-SMA antenna** ×1 — e.g.
+      **TP-Link Archer T3U Plus**. Check that the listing names the RTL8812BU
+      chip: the image ships only its firmware (`linux-firmware-rtl8822`), and
+      TP-Link changes chips between hardware revisions. The plain Archer T3U
+      (fixed antenna) is the one tested on the console
+- [ ] **RP-SMA male → RP-SMA female bulkhead extension**, RG316 or better,
+      15–30 cm ×1 (×2 for a two-antenna adapter) — the antenna to the rear
+      panel. Avoid thin RG174: about 2 dB lost per metre at 5 GHz. Its panel
+      station is an enclosure change still to come
+- [ ] **USB 3.0 A-male → A-female extension**, 15–30 cm ×1 — keeps the
+      adapter a little away from the hub, whose USB 3 traffic radiates around
+      2.4 GHz
+- [ ] **Hub power lead from BUCK_PI** ×1:
+      - the plug the hub's power input takes. For USB-C, a power-only
+        USB-C male lead that keeps the source-role CC resistor in the plug, as
+        the screen harness requires;
+      - **inline fuse holder** with a **2 A** fuse, at the buck end;
+      - **20 AWG** red and black, about 30 cm;
+      - a splice at BUCK_PI's output: **WAGO 221-413** lever connectors ×2, or
+        a small screw terminal block
+
 ## Console v3, ring carrier and screen-power boards
 
 Use the current generated/maintained BOMs rather than earlier board lists:
