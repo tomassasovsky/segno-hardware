@@ -54,9 +54,9 @@ longer applies to anything.
 ## 2. Power distribution (#754)
 
 **20 V in, 5 V made next to the loads.** Local bucks keep the high-current
-5 V wiring short. The current design allowances total **64.09 W** at their
-outputs: 25 W for the Pi rail and 39.09 W for AUX. At an illustrative 85–90%
-buck efficiency, that needs approximately **71.2–75.4 W**, or **3.56–3.77 A at
+5 V wiring short. The current design allowances total **71.93 W** at their
+outputs: 25 W for the Pi rail and 46.93 W for AUX. At an illustrative 85–90%
+buck efficiency, that needs approximately **79.9–84.6 W**, or **4.00–4.23 A at
 20 V**. These efficiencies are planning assumptions, not measurements of the
 retained bucks. The 20 V / 5 A / 100 W contract accommodates this model; it
 does not establish enclosed thermal capacity or startup response.
@@ -128,7 +128,7 @@ state the remaining engineering assumptions.
 | Buck | Loads | Design figure |
 | --- | --- | --- |
 | **BUCK_PI** | Pi 5, its USB devices and NVMe | 5.0 A / 25 W device budget |
-| **BUCK_AUX** | Both screens, console, 80 pill LEDs and 40 ring LEDs | 7.818 A / 39.09 W for a full-white ring with normal pill indications and the allowances below |
+| **BUCK_AUX** | Both screens, console, 80 pill LEDs and 40 ring LEDs | 9.386 A / 46.93 W for a full-white ring, all ten pills white and the allowances below |
 
 The selected ring is a **40-pixel strip**, giving 120 LEDs with the ten
 8-pixel pills. The updated v3 console/carrier copper supports the ring at
@@ -141,11 +141,14 @@ Use 60 mA per RGB-white LED as the conservative planning model from
 Add 1 mA per pixel as a separate idle allowance. These are design assumptions,
 not measurements or a guaranteed rating of a particular LED batch.
 
-The v3 firmware preserved in PR #1082 still uses brightness 128 and the pill
-weights `38, 92, 201, 255, 255, 201, 92, 38`. Its normal indications have at most
-nine single-channel pills and one amber REC/PLAY pill. With its actual integer
-scaling and gamma table, their maximum channel-current estimate is 0.498 A.
-This PCB change does not alter those animations or command a full-white mode.
+The console firmware draws each pill on a centre curve with peak 191 and
+weights `38, 92, 201, 255, 255, 201, 92, 38`, and it has no pill current limit
+(segno#1957). White is a normal pill colour (a pressed switch, an idle
+REC/PLAY, a selected or tuned track, any Custom colour), and an earlier
+firmware limit of about 0.47 A dimmed every pill whenever a press pushed the
+total over it, so each press flickered the rest. Ten pills white on the curve
+are 26,340 channel units, **2.066 A** on this model: the most the pills can
+draw, whatever colours the app sends.
 
 | AUX load allowance | Current |
 | --- | ---: |
@@ -153,13 +156,13 @@ This PCB change does not alter those animations or command a full-white mode.
 | Screen-board bleeder, separately counted | 0.060 A |
 | Screen-board relay coils and control circuitry | 0.150 A |
 | 40 ring pixels, all RGB channels at 255 | 2.40 A |
-| All ten pills displaying their brightest normal indications | 0.498 A |
+| All ten pills white on the firmware's curve | 2.066 A |
 | Idle allowance for 120 pixels | 0.120 A |
 | Console logic | 0.140 A |
 | Additional XIAO ring controller and buffer | 0.200 A |
-| **Planning total** | **7.818 A** |
+| **Planning total** | **9.386 A** |
 
-The nominal 10 A buck has approximately 2.18 A headroom against this model.
+The nominal 10 A buck has approximately 0.61 A headroom against this model.
 That is not a guarantee of transient response, capacity at high temperature
 or screen current; physical validation remains part of the first assembled build.
 The 60 mA bleeder allowance is separate from the 4.25 A screen allowance.
@@ -173,7 +176,8 @@ Allowing **all 80 pill LEDs as well as the ring** to display flat unrestricted
 white is a different requirement: 7.2 A of LED channels plus the screens and
 allowances above totals **12.12 A**. That exceeds the retained 10 A AUX
 supply. The ring PCB upgrade does not authorize that simultaneous system load.
-Normal pill rendering remains within the modeled budget with a full-white ring.
+The firmware never drives the pills flat at 255: its peak-191 curve keeps all
+ten white pills within the modeled budget with a full-white ring.
 
 See the [40-pixel power-path verification](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/ring40-full-white-1072/verification.md)
 for conductor widths, connector limits and the source-pinned runtime arithmetic.
@@ -244,7 +248,7 @@ must not be flashed onto the old board.
   any separately counted touch current. Adding up to 1 A for both touch paths
   gives 4.2 A, rounded up to a **4.25 A shared screen allowance**. A separate
   60 mA bleeder and 150 mA controls/coil allowance bring this board to
-  **4.46 A**, or **7.818 A AUX** with a full-white ring and normal pills.
+  **4.46 A**, or **9.386 A AUX** with a full-white ring and all ten pills white.
   This does not qualify the buck, actual new-board voltage drop, thermal
   behavior or inrush.
 

@@ -401,9 +401,9 @@ is additional. Initial contact resistance is not a guaranteed aged/hot
 maximum. These figures do not establish the exact temperature of the
 assembled relay or screens' minimum voltage.
 
-Normal pills, unrestricted full-white 40-LED ring and console total about
-3.358 A from AUX. Together with the screen-board allowance of 4.46 A this is
-**7.818 A** against the retained nominal 10 A buck. The ring remains on its
+All ten pills white, unrestricted full-white 40-LED ring and console total
+about 4.926 A from AUX. Together with the screen-board allowance of 4.46 A this
+is **9.386 A** against the retained nominal 10 A buck. The ring remains on its
 separate direct AUX branch. This does not authorize all 120 LEDs at full
 white simultaneously or turn the nominal buck rating into a surge limit.
 
