@@ -612,11 +612,24 @@ a few seconds.
   - The UPERFECT has its own internal USB hub.
 - **Wi-Fi** — a USB adapter on the hub, not the Pi 5's on-board CYW43455, which
   stopped transmitting on the console (segno#1816). The adapter is an
-  RTL8812BU with detachable RP-SMA antennas (ALFA AWUS036ACU): the appliance image ships its
-  firmware (`linux-firmware-rtl8822`, segno#1962) and the kernel's
-  `rtw_8822bu` driver. Its antenna moves to the rear panel on an RP-SMA
-  bulkhead extension; that panel station is an enclosure change still to
-  come.
+  RTL8812BU with detachable RP-SMA antennas (ALFA AWUS036ACU): the appliance
+  image ships its firmware (`linux-firmware-rtl8822`, segno#1962) and the
+  kernel's `rtw_8822bu` driver.
+- **Antenna** — one, hidden inside the box, so nothing on the panels and no
+  new holes. The 2 mm aluminium enclosure blocks Wi-Fi, so a flat adhesive
+  dual-band antenna goes on the inside of a non-metal opening: the side-wall
+  exhaust vent beside the electronics bay, stuck to the vent's filter foam
+  or a printed clip behind it. The ring window is not a candidate: its centre
+  holds the encoder. The antenna's lead screws into the adapter's first
+  RP-SMA port. A 50 Ω RP-SMA terminator closes the second, so the adapter
+  does not transmit into an open port. With one antenna the link runs one
+  spatial stream, up to 433 Mbit/s on 5 GHz, which is more than the console
+  needs.
+- **Placing the antenna** — with the lid closed, read the link on the console
+  (`iw dev wlan1 link`) at each candidate spot and keep the best. Better than
+  about −70 dBm is enough. If the side-wall vent falls short, try the rear
+  exhaust and a pill slot's printed part before considering a panel
+  connector.
 - **Screens** — 2× micro-HDMI out; touch comes back over USB through the
   screen-power board's switched data paths.
 - **Storage** — NVMe on the N07 board under the Pi (PCIe — no GPIO use beyond
