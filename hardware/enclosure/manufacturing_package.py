@@ -1,4 +1,7 @@
-"""The four-part metal order and atomic publication of generated vendor files.
+"""The metal orders and atomic publication of generated vendor files.
+
+Two orders: the four-part enclosure set (METAL_ARCHIVE) and the 15.6-inch
+monitor deck on its own (DECK_ARCHIVE, #1867), which is cut after the first.
 
 Drawing/native geometry checks belong to the generator and run before this
 module. Here, membership, freshness and complete ZIP writes protect the handoff.
@@ -14,6 +17,7 @@ import zipfile
 
 
 METAL_ARCHIVE = 'segno_sheetmetal.zip'
+DECK_ARCHIVE = 'segno_monitor_deck.zip'
 OBSOLETE_METAL_ARCHIVES = (
     'segno_sheetmetal_step.zip',
     'segno_sheetmetal_STEP_DXF.zip',
@@ -25,6 +29,14 @@ _PART_THICKNESSES = {
     'segno_ring_disc': 2.0,
     'segno_beam': 1.6,
 }
+_DECK_THICKNESSES = {'segno_monitor_deck': 2.0}
+# archive -> (vendor package in PART_SPECS, reviewed stems and bare thicknesses,
+#             what the order must say it contains)
+_ORDERS = {
+    METAL_ARCHIVE: ('sheetmetal', _PART_THICKNESSES,
+                    'base, faceplate, ring disc and steel beam'),
+    DECK_ARCHIVE: ('monitor_deck', _DECK_THICKNESSES, 'the monitor deck'),
+}
 
 
 def metal_package_members(part_specs):
@@ -33,13 +45,21 @@ def metal_package_members(part_specs):
     ``part_specs`` is the generator's existing material/quantity/vendor table.
     A changed part set or thickness requires an intentional package revision.
     """
-    metal = {stem: row for stem, row in part_specs.items()
-             if row[2] == 'sheetmetal'}
-    if set(metal) != set(_PART_THICKNESSES):
-        raise ValueError('metal order must contain only base, faceplate, ring disc '
-                         'and steel beam')
+    return _order_members(part_specs, METAL_ARCHIVE)
+
+
+def deck_package_members(part_specs):
+    """The monitor deck's own order (#1867): its STEP, DXF and PDF."""
+    return _order_members(part_specs, DECK_ARCHIVE)
+
+
+def _order_members(part_specs, archive):
+    package, thicknesses, contents = _ORDERS[archive]
+    metal = {stem: row for stem, row in part_specs.items() if row[2] == package}
+    if set(metal) != set(thicknesses):
+        raise ValueError(f'{archive} must contain only {contents}')
     members = {}
-    for stem, thickness in _PART_THICKNESSES.items():
+    for stem, thickness in thicknesses.items():
         material, quantity, _ = metal[stem]
         if type(quantity) is not int or quantity != 1:
             raise ValueError(f'{stem}: the reviewed order requires quantity 1')
@@ -75,17 +95,18 @@ def _verify_archive(path, members, output_dir):
                 raise AssertionError(f'{path.name}: archived content differs for {member}')
 
 
-def _validate_metal_members(members):
-    expected = {stem+extension for stem in _PART_THICKNESSES
+def _validate_metal_members(members, archive=METAL_ARCHIVE):
+    thicknesses = _ORDERS[archive][1]
+    expected = {stem+extension for stem in thicknesses
                 for extension in ('.step', '.dxf', '.pdf')}
     if set(members.values()) != expected:
-        raise ValueError(f'metal archive requires exactly the {len(expected)} reviewed part artifacts')
+        raise ValueError(f'{archive} requires exactly the {len(expected)} reviewed part artifacts')
     for member, source in members.items():
         stem, extension = os.path.splitext(source)
         material = 'acero' if stem == 'segno_beam' else 'aluminio'
         if (not member.startswith(stem+'__'+material)
                 or not member.endswith('__qty1'+extension)
-                or f'de-{_PART_THICKNESSES[stem]:.1f}-mm' not in member):
+                or f'de-{thicknesses[stem]:.1f}-mm' not in member):
             raise ValueError(f'{member}: metal shipping name lacks matching part metadata')
 
 
@@ -103,8 +124,8 @@ def write_archives(output_dir, packages, *, run_started):
             raise ValueError(f'{archive}: expected a nonempty ZIP member mapping')
         if len(members.values()) != len(set(members.values())):
             raise ValueError(f'{archive}: the same source is ordered more than once')
-        if archive == METAL_ARCHIVE:
-            _validate_metal_members(members)
+        if archive in _ORDERS:
+            _validate_metal_members(members, archive)
         for member, source in members.items():
             _filename(member)
             path = output_dir/_filename(source)
@@ -134,7 +155,8 @@ def write_archives(output_dir, packages, *, run_started):
 
 
 def verify_manufacturing_archive(output_dir, part_specs):
-    """Check the on-disk reviewed metal order, including each file's contents."""
+    """Check both on-disk reviewed metal orders, including each file's contents."""
     output_dir = Path(output_dir)
-    _verify_archive(output_dir/METAL_ARCHIVE,
-                    metal_package_members(part_specs), output_dir)
+    for archive in _ORDERS:
+        _verify_archive(output_dir/archive,
+                        _order_members(part_specs, archive), output_dir)

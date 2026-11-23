@@ -444,6 +444,56 @@ u=670.5–726.5, v=249.25–334.25. These values come from `pi_mount()` and
 
 The N07 stack uses four 12 mm M2.5 lower standoffs and four 6 mm M2.5 extenders.
 The source height budget is 12+7.6+1.6+16=37.2 mm above the bare base floor.
+
+### 15.6-inch monitor deck over the Pi (#1867)
+
+The Pi sits under the 15.6-inch monitor, and the monitor sits on two printed
+towers bridged by a deck. Until #1867 that deck was 10 mm of PETG with 15 mm ribs
+under its front and rear edges: it left 18.7 mm between the Pi's PCB and the
+deck at the SD-card edge, and its rear rib passed 1.9 mm over the USB-A stack.
+No useful cooler fitted and the air over the Pi had nowhere to go.
+
+The deck is now `segno_monitor_deck`, one 2.0 mm 1100-H14 plate, bare, in the
+same plane: its top face is where the PETG deck's VESA bosses' top was, so the
+monitor, the towers' floor anchors (`STAND_ANCHORS_156`) and the shims do not
+move. It is 330.6 mm wide (both towers' outer faces) and 110 mm deep outside,
+with one fold, a 17 mm front flange folded down; the rear edge is a plain cut.
+The monitor's raised VESA block bears on the plate and its two M4 screw into it;
+a 60.0 × 56.3 mm window behind the block opens the plate over the Pi, for a
+cooler, for air and for the Pi's Wi-Fi. The towers keep their footprint and
+reach up to the plate, with heat-set inserts in hung bosses; a printed pad on
+each tower clamps the plate with two M3 and rises to the monitor's flat back,
+as the old pads did.
+
+| Over the Pi PCB (top face, z 23.2) | PETG deck | Aluminium deck |
+|---|---|---|
+| at the SD-card edge, to the deck | 18.7 mm | **27.2 mm** |
+| through the window, minimum (to the monitor's flat back) | — | **39.0 mm** |
+| over the SoC (about 29 mm from the SD edge; approximate) | under the deck | **43.6 mm**, through the window |
+| at the USB end, to the plate's rear strip | 1.9 mm over the 16 mm stack | **41.6 mm** (25.6 over the stack) |
+
+`_check_monitor_deck()` gates it: at least 25 mm from the PCB to the plate
+wherever the plate is over the Pi; the flange at least 4 × T; every hole and
+the window clear of the fold by the base's rule ((RI + T) + 2.0 from the
+outside face) and 8.0 mm from the bend line, outside the V12 die's shoulders;
+holes and the window PEM_EDGE (8.0 mm) from the plain edges; the window 2 mm
+clear of the VESA washers; the front flange clear of everything that stands on
+the floor; and a beam check. The `REAR_BAY` headroom gate reads the same
+ceiling: it used to take the lid's height at the Pi, ignoring the deck, and
+fed a plan depth to `lid_under_z()`, which expects a distance along the lid.
+
+The beam check (`s16_deck_strength()`) takes the plate as simply supported
+between the towers' inner faces (250.6 mm), with 60 N plus an assumed 1.2 kg
+monitor (72 N) at mid-span, on both the full fold and the section through the
+window. The section is an L, so the check uses unsymmetric bending (at the
+window, I_w 2.29e3 mm⁴, effective 1.95e3 mm⁴ with the product of inertia):
+**0.17 mm and 29.6 MPa**, against 0.5 mm and a third of the 95 MPa spec-minimum
+yield (31.7 MPa); the full section gives 0.17 mm and 28.7 MPa. The symmetric
+hand-check figures are 0.15 mm and 27.7 MPa. A 15 mm front flange measured
+outside (13 below the plate) fails this at 36–38 MPa, which is why the flange
+is 17. An 8 mm rear flange folded up was dropped before ordering: it sat at the
+brake's 4 × T minimum, and the plate passes without it. The monitor's weight is
+not measured.
 The console board uses separate 15 mm M3 standoffs. Actual kit thread lengths,
 board thicknesses, cable routes and the cooler/SSD fit still require the
 hardware checks in [MANUFACTURING.md](MANUFACTURING.md).
@@ -476,9 +526,8 @@ The **bottom plate** (`board_mounts()` drives the patterns) is the CENTRE of the
 folded blank — the wall bottom edges are its own fold lines, not a joint — and carries: the **Pi** (58 × 49) and
 **console board v3** (89.5 × 89.5 M3 — the number comes over the
 `console_board_mount.json` seam, gated by `BOARD_MOUNT`, not copied by hand)
-standoff holes in the rear; an **intake-vent block** in the clear gap between the
-two platform rows (air crosses the boards to the rear-wall exhaust); and 15 rubber
-feet. The electronics are reached from the **open top** once the lid is lifted.
+standoff holes in the rear. It carries no vents and no rubber feet any more (both
+below). The electronics are reached from the **open top** once the lid is lifted.
 
 **Floor rails (issue #1019) — the supports that carry the playing.** There are no
 rubber feet any more. Twenty of them sat in the gaps *between* pedals, so a stomp

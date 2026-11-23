@@ -19,12 +19,27 @@ from ezdxf.math import Matrix44
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import segno_enclosure as enclosure
-from manufacturing_package import METAL_ARCHIVE, OBSOLETE_METAL_ARCHIVES
+from manufacturing_package import DECK_ARCHIVE, METAL_ARCHIVE, OBSOLETE_METAL_ARCHIVES
 from flat_pattern_check import compare_flat_pattern, validate_cut_contours
 from fusion_export_formed import _sketch_curves, _validate_sketch_curves
 
 
 class ManufacturingPipelineTest(unittest.TestCase):
+    def test_saved_dxf_is_millimetres_at_one_to_one(self):
+        # ezdxf's setup=True leaves $DIMLFAC = 100, and Dinacut measured the
+        # monitor deck at 100x its size (#1867).
+        with tempfile.TemporaryDirectory() as tmp:
+            doc = enclosure._doc()
+            doc.modelspace().add_circle((2,2),2,dxfattribs={'layer':'CUT'})
+            path = Path(tmp)/'part.dxf'
+            enclosure._save(doc,str(path))
+            saved = ezdxf.readfile(path)
+            self.assertEqual(saved.header['$INSUNITS'], 4)
+            self.assertEqual(saved.header['$DIMLFAC'], 1.0)
+            for style in saved.dimstyles:
+                with self.subTest(dimstyle=style.dxf.name):
+                    self.assertEqual(style.dxf.get('dimlfac', 1.0), 1.0)
+
     def test_saved_dxf_extents_include_annotations_and_handle_the_origin(self):
         with tempfile.TemporaryDirectory() as tmp:
             for annotations in (False,True):
@@ -46,7 +61,7 @@ class ManufacturingPipelineTest(unittest.TestCase):
     def test_all_generated_metal_paths_are_clean_and_match_native_base(self):
         with tempfile.TemporaryDirectory() as tmp:
             for stem, writer in enclosure.DXF_PARTS:
-                if enclosure.PART_SPECS[stem][2] != enclosure.PKG_SHEETMETAL:
+                if enclosure.PART_SPECS[stem][2] not in enclosure.METAL_PKGS:
                     continue
                 with self.subTest(stem=stem):
                     path = Path(tmp)/(stem+'.dxf')
@@ -193,7 +208,7 @@ class ManufacturingPipelineTest(unittest.TestCase):
     @staticmethod
     def _previous_archives(out):
         archives = {name:b'previous complete package' for name in (
-            METAL_ARCHIVE, *OBSOLETE_METAL_ARCHIVES,
+            METAL_ARCHIVE, DECK_ARCHIVE, *OBSOLETE_METAL_ARCHIVES,
             'segno_pintura.zip','segno_3dprint.zip')}
         for name,data in archives.items():
             (out/name).write_bytes(data)
@@ -227,6 +242,7 @@ class ManufacturingPipelineTest(unittest.TestCase):
                         packages = enclosure.build_quote_packages(
                             with_step=with_step,with_pdf=with_pdf)
                         self.assertNotIn(METAL_ARCHIVE,packages)
+                        self.assertNotIn(DECK_ARCHIVE,packages)
                         self.assertFalse(set(OBSOLETE_METAL_ARCHIVES) & packages.keys())
                         self.assertNotIn('segno_pintura.zip',packages)
                         self.assertEqual('segno_3dprint.zip' in packages,with_step)
@@ -276,6 +292,7 @@ class ManufacturingPipelineTest(unittest.TestCase):
                 packages = enclosure.build_quote_packages(with_step=True,with_pdf=True)
             self.assertEqual({name:len(members) for name,members in packages.items()}, {
                 'segno_sheetmetal.zip':12,          # 15 until #1088 retired the rear panel
+                'segno_monitor_deck.zip':3,         # its own order since #1867
                 'segno_pintura.zip':5, 'segno_pedal_tiles.zip':22,
                 # 38 until 2026-09-10, when the twelve floor rail segments and
                 # the mid-field prop were added. They had been generated into
@@ -284,14 +301,15 @@ class ManufacturingPipelineTest(unittest.TestCase):
                 # height kits: nine parts, STEP + STL each.
                 # 80 since the console's pills became the tall #1074 set: the old
                 # segno_led_diffuser is the mini console's part only.
-                # 82 since the ambient light sensor sleeve (#1564).
+                # 82 since the ambient light sensor sleeve (#1564). Still 82 after
+                # #1867: the splice went, the stand pad (one part, x2) came.
                 'segno_3dprint.zip':82,
             })
             for members in packages.values():
                 self.assertFalse([name for name in members if 'corner_bracket' in name])
             for part in ('segno_platform_sled', 'segno_platform_mid_sled',
                          'segno_lid_prop', 'segno_floor_rail_front_a_1',
-                         'segno_floor_rail_rear_4', 'segno_screen16_splice',
+                         'segno_floor_rail_rear_4', 'segno_screen16_pad',
                          'segno_screen7_shim_0p2', 'segno_screen16_shim_1p6',
                          'segno_als_sleeve'):
                 for extension in ('.step', '.stl'):
@@ -306,9 +324,6 @@ class ManufacturingPipelineTest(unittest.TestCase):
                 'segno_rear_wall_fit_test_L',         # jig (#1090)
                 'segno_rear_wall_fit_test_R',
                 'segno_screen7_deck_fit_test',        # jig (#1070)
-                'segno_screen16_vesa_fit_test',       # jig (#1070)
-                'segno_screen16_deck_fit_test_L',     # jig (#1070)
-                'segno_screen16_deck_fit_test_R',
                 'segno_mini_console_tray',            # a different product
                 'segno_mini_console_lid',
                 'segno_mini_console_sled',
@@ -320,6 +335,12 @@ class ManufacturingPipelineTest(unittest.TestCase):
                 for extension in ('.step','.dxf','.pdf')})
             for name in packages[METAL_ARCHIVE]:
                 self.assertIn('__qty1.',name)
+            self.assertEqual(set(packages[DECK_ARCHIVE].values()), {
+                'segno_monitor_deck'+extension for extension in ('.step','.dxf','.pdf')})
+            self.assertTrue(all(name.startswith('segno_monitor_deck__aluminio-1100-H14-de-2.0-mm__qty1.')
+                                for name in packages[DECK_ARCHIVE]))
+            # bare: the coater never sees it
+            self.assertNotIn('segno_monitor_deck.pdf', packages['segno_pintura.zip'].values())
             members = [source for names in packages.values() for source in names.values()]
             self.assertFalse(any('overlay' in name for name in members))
             self.assertNotIn('segno_assembly.step',members)

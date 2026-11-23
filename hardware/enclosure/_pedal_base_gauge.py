@@ -38,6 +38,7 @@ import os
 
 from segno_enclosure import (
     OUT,
+    _dxf_mm,
     PEDAL_BASE_HOLE_D,
     PEDAL_BASE_SPAN_FRONT,
     PEDAL_BASE_SPAN_REAR,
@@ -257,7 +258,8 @@ def write_pdf(path):
 def write_dxf(path):
     """Same marks as CAD, so the gauge can also be measured on screen."""
     import ezdxf
-    doc = ezdxf.new("R2018", setup=True); doc.units = 4
+    doc = ezdxf.new("R2018", setup=True)
+    _dxf_mm(doc)
     doc.layers.add("GAUGE", color=7)
     msp = doc.modelspace()
     for op in ops():
