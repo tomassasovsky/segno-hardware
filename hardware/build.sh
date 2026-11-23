@@ -27,6 +27,7 @@ run() { echo "== $1: ${*:2}"; (cd "$here/$1" && "$py" "${@:2}"); }
 run enclosure segno_enclosure.py
 run enclosure _pedal_base_fit_test.py
 run enclosure _pedal_base_gauge.py
+run enclosure _platform_layout_base.py
 run strip_ring console_ring.py
 run pill_light_mask tall_pill.py
 run pill_light_mask top_mount.py
