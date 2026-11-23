@@ -22,7 +22,8 @@ longer applies to anything.
      USB-C PD inlet -- rear panel, D punch, QIANRENON coupler (all 24 ways wired)
               |   STUSB4500 trigger: ONE 20 V contract, at the source's full current (3-5 A)
               |   fuse, T5A slow-blow, in series with the 20 V feed
-              +--> BUCK_PI  (20->5 V) --> Pi 5 via its USB-C  --> Pi USB + NVMe
+              +--> BUCK_PI  (20->5 V) --+--> Pi 5 via its USB-C --> Pi USB + NVMe
+              |                         +--> 2 A fuse --> USB 3 hub power input (#1816)
               +--> BUCK_AUX (20->5 V) --+--> console J3 --> pills
                                        +--> near-ring split --> strip power + ring J1 power
                                        +--> short 16 AWG pair --> screen-power J1
@@ -38,10 +39,15 @@ longer applies to anything.
         SWD   Pi GPIO24/25 -> the Pico's debug pads (cold flashing)
      console board <-- footswitches x10 | ring board (two UART wires) | CTRL TRS x2
      Pi --HDMI x2--> 7" + 15.6" screens
-     Pi USB2 x2 --> screen J101/J201 --> relays --> J102/J202 --> screen touch
+     USB, by the Pi 5's two controllers (each has one blue and one black port):
+       controller A: blue --> rear coupler USB3_1 (the audio interface, alone)
+                     black --> empty (it would share the audio interface's controller)
+       controller B: blue --> USB 3 hub (#1816) --> Wi-Fi adapter
+                                                --> rear coupler USB3_2
+                                                --> screen J101 (touch, moved off controller A)
+                     black --> screen J201 --> relays --> J202 --> screen touch
+       screen J101/J201 --> relays --> J102/J202 --> screen touch
      Pi GPIO17 --> ribbon --> console J25 --> screen J2 (GPIO17 + GND)
-     Pi's other 2 USB --> internal leads to the rear USB couplers
-                          (the audio interface plugs in there, outside the box)
      power button --J8 -> board -> J9 flying lead--> the Pi 5's own J2 pads
                           (PMIC wake -- no GPIO can wake a Pi 5)
 
@@ -127,7 +133,7 @@ state the remaining engineering assumptions.
 
 | Buck | Loads | Design figure |
 | --- | --- | --- |
-| **BUCK_PI** | Pi 5, its USB devices and NVMe | 5.0 A / 25 W device budget |
+| **BUCK_PI** | Pi 5, its USB devices and NVMe, and the USB 3 hub's power input (#1816) | 5.0 A / 25 W device budget |
 | **BUCK_AUX** | Both screens, console, 80 pill LEDs and 40 ring LEDs | 9.386 A / 46.93 W for a full-white ring, all ten pills white and the allowances below |
 
 The selected ring is a **40-pixel strip**, giving 120 LEDs with the ten
@@ -228,6 +234,15 @@ must not be flashed onto the old board.
   use Pi USB power. After the screen switch is fitted, each touch cable draws
   only approximately 50 µA of host-presence sensing load from Pi VBUS;
   relay coils use AUX and screen touch power comes from switched AUX.
+- **The USB 3 hub takes its power from BUCK_PI, never BUCK_AUX** (#1816). It
+  is tapped at BUCK_PI's output through a 2 A fuse, so the 10 A buck cannot
+  push fault current down the thin hub lead. A hub that back-powers its host
+  port then only feeds the rail the Pi already runs on. The same hub fed from
+  BUCK_AUX would put the two bucks in parallel through the USB cable, which
+  this section forbids. The hub's devices (the Wi-Fi adapter, about 0.5 A) used to
+  count against the Pi's 1.6 A USB limit. They now draw from the buck
+  directly, inside the same 25 W BUCK_PI budget, and leave the Pi's USB
+  current to the audio interface, which is bus-powered.
 - The console board takes 5 V from **BUCK_AUX on J3**, a 2-way **JST VH**
   (~10 A per contact) since #1062; it was a 4-way XH with doubled pins (~6 A). The
   pills' 5 V leaves on **J24**, the JST VH beside it, and their harness is a **5 V
@@ -581,11 +596,40 @@ a few seconds.
 ## 4. Raspberry Pi connections
 
 - **Power** — BUCK_PI into the Pi's USB-C. Not the header, not BUCK_AUX.
-- **USB** — the four ports are exactly consumed: 2× screen touch through the
-  screen-power board, 2× internal A-to-A leads to the rear-panel couplers.
-  No separate hub or HAT is added; the UPERFECT has its own internal USB hub.
-  The audio interface
-  plugs into a rear coupler from outside the box.
+- **USB** (#1816) — the Pi 5 has two USB controllers, each with one blue
+  (USB 3) and one black (USB 2) port. The audio interface gets one controller
+  to itself: the console's xruns followed a touch controller sharing it
+  (segno#1914).
+  - Controller A: blue → rear coupler `USB3_1`, where the audio interface
+    plugs in from outside the box. Black → **empty**.
+  - Controller B: blue → the **USB 3 hub**, powered from BUCK_PI (§2). The hub
+    carries the Wi-Fi adapter, the rear coupler `USB3_2`, and screen touch
+    `J101`. Black → screen touch `J201`.
+  - Which physical port belongs to which controller is not printed on the Pi.
+    After wiring, check on the console that the audio interface is alone on
+    its controller: `readlink -f /sys/bus/usb/devices/*` names `xhci-hcd.0` or
+    `xhci-hcd.1` for each device.
+  - The UPERFECT has its own internal USB hub.
+- **Wi-Fi** — a USB adapter on the hub, not the Pi 5's on-board CYW43455, which
+  stopped transmitting on the console (segno#1816). The adapter is an
+  RTL8812BU with detachable RP-SMA antennas (ALFA AWUS036ACU): the appliance
+  image ships its firmware (`linux-firmware-rtl8822`, segno#1962) and the
+  kernel's `rtw_8822bu` driver.
+- **Antenna** — one, hidden inside the box, so nothing on the panels and no
+  new holes. The 2 mm aluminium enclosure blocks Wi-Fi, so a flat adhesive
+  dual-band antenna goes on the inside of a non-metal opening: the side-wall
+  exhaust vent beside the electronics bay, stuck to the vent's filter foam
+  or a printed clip behind it. The ring window is not a candidate: its centre
+  holds the encoder. The antenna's lead screws into the adapter's first
+  RP-SMA port. A 50 Ω RP-SMA terminator closes the second, so the adapter
+  does not transmit into an open port. With one antenna the link runs one
+  spatial stream, up to 433 Mbit/s on 5 GHz, which is more than the console
+  needs.
+- **Placing the antenna** — with the lid closed, read the link on the console
+  (`iw dev wlan1 link`) at each candidate spot and keep the best. Better than
+  about −70 dBm is enough. If the side-wall vent falls short, try the rear
+  exhaust and a pill slot's printed part before considering a panel
+  connector.
 - **Screens** — 2× micro-HDMI out; touch comes back over USB through the
   screen-power board's switched data paths.
 - **Storage** — NVMe on the N07 board under the Pi (PCIe — no GPIO use beyond
@@ -610,7 +654,7 @@ source of truth.
 | fuse (`FUSE`) | 5×20 screw-cap holder — value and placement are §2's (T5A slow-blow, in the 20 V feed) |
 | MIDI DIN-5 ×2 (`MIDI_IN`/`MIDI_OUT`) | IN is opto-isolated **on the board** — the socket alone is not enough. IN's pin 2 stays unbonded (that isolation is the point) |
 | Neutrik NJ6FD-V ×2 (`CTRL_1`/`CTRL_2`) | 6-pole switching 1/4" jack, fitted in a MEIRIYFA D-size flange plate that screws to the rear wall's D punch (#1088). Vertical PCB pins, no lugs. On v2 connect T / R / S and leave TN / RN / SN open. An expression pedal OR footswitch on the same jack, auto-detected (tip → ADC with pull-up, ring → 3V3 through 1 k). A two-switch pedal on one TRS plug (BOSS FS-6 A&B) puts its B switch on the ring, which firmware ≥ 1.1 reads on GP20/GP21: a trace through 4.7 kΩ on board v3 (R19/R20); on v2 one wire from each jack's ring pin (J20/J21 pin 2) to J22's GP20/GP21 pads. Without either, use the pedal's separate A and B mono jacks, one per CTRL. **v3 jacks are Neutrik NJ6FD-V** (switched): a fourth lead, the **ring-normal (RN)** contact, tells the board whether anything is plugged in (J20/J21 pin 4 → R21/R22 → GP19/GP22). Leave TN and SN open. RN is connected to R while empty and opens on insertion, leaving the ADC tip free of the presence pull-down. Identify RN from the component-side terminal view in [Neutrik's drawing](https://www.neutrik.com/media/8599/download/nj6fd-v-2.pdf?v=1); do not mirror that view |
-| USB 3.0 coupler ×2 (`USB3_1`/`USB3_2`) | internal A-to-A leads to two Pi ports |
+| USB 3.0 coupler ×2 (`USB3_1`/`USB3_2`) | internal A-to-A leads: `USB3_1` to the Pi's blue port on the audio interface's controller, `USB3_2` to a hub port (§4, #1816) |
 | M6 earth stud | centred between the vent block and PD_IN; rules in the grounding doc |
 
 ---

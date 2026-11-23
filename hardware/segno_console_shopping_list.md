@@ -145,6 +145,47 @@ are on the respective board BOMs.
 - The power budget is [`segno_wiring.md` §2](segno_wiring.md) — canonical since
   #754.
 
+## USB hub and Wi-Fi (#1816)
+
+The Pi 5's on-board Wi-Fi stopped transmitting on the console; a USB adapter
+replaces it, on a USB 3 hub that also frees the audio interface's controller
+(wiring doc §4). The hub is powered from BUCK_PI (§2).
+
+- [ ] **Raspberry Pi USB 3 Hub** (official) ×1 — four USB 3.0 ports from one,
+      8 cm captive cable, and an optional **USB-C power input (5 V, 3 A)** that
+      takes BUCK_PI below. Sold by the official Raspberry Pi resellers. It
+      plugs into the Pi's blue port on controller B
+- [ ] **ALFA AWUS036ACU** (RTL8812BU, two detachable RP-SMA antenna ports)
+      ×1 — the image ships its firmware (`linux-firmware-rtl8822`) and the
+      kernel's `rtw_8822bu` driver runs it. **Not the AWUS036AC or
+      AWUS036ACH**: those are RTL8812AU, which has no in-kernel driver. TP-Link's
+      Archer T3U (the adapter tested on the console) and T3U Plus have the same
+      chip, but their antennas do not come off. The ACU's own two whip
+      antennas are not used
+- [ ] **Dual-band 2.4/5 GHz adhesive flat (FPC/PCB) antenna with an RP-SMA
+      male connector**, 15–20 cm lead ×1 — the console's one antenna, stuck
+      inside the box behind the side-wall exhaust vent (wiring doc §4). Buy
+      one with the RP-SMA male already fitted, so it screws straight into the
+      ACU with no adapter cable; one on a bare U.FL plug needs a U.FL →
+      RP-SMA male pigtail as well. Check the genders: an RP-SMA *male* has a
+      hole in the centre and the *female* a pin
+- [ ] **RP-SMA male 50 Ω terminator** (dummy load, 1 W or more) ×1 — closes
+      the ACU's second antenna port, so it does not transmit into an open
+      connector
+- [ ] **USB 3.0 A-male → A-female extension**, 30 cm ×1 — keeps the adapter
+      a little away from the hub, whose USB 3 traffic radiates around 2.4 GHz.
+      The ACU's own USB cradle does the same
+- [ ] **Hub power lead from BUCK_PI** ×1:
+      - a **USB-A female socket with screw terminals** (power only), on
+        BUCK_PI's 5 V output, and a short **USB-A → USB-C cable** to the hub's
+        power input. A spec-compliant A-to-C cable carries the 56 kΩ
+        source-role resistor in its C plug, so the hub sees a proper 5 V
+        source;
+      - an **inline blade-fuse holder** with a **2 A** ATO/ATC fuse, at the
+        buck end;
+      - **20 AWG** red and black, about 30 cm;
+      - **WAGO 221-413** lever connectors ×2, to splice at BUCK_PI's output
+
 ## Console v3, ring carrier and screen-power boards
 
 Use the current generated/maintained BOMs rather than earlier board lists:
