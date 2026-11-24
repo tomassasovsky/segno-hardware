@@ -595,7 +595,19 @@ a few seconds.
 
 ## 4. Raspberry Pi connections
 
-- **Power** — BUCK_PI into the Pi's USB-C. Not the header, not BUCK_AUX.
+- **Power** — BUCK_PI into the Pi's USB-C. Not the header, not BUCK_AUX, and
+  not through a USB-C hub or dock with power pass-through (SEG-99).
+  - With a UGREEN Revodok 1071 between BUCK_PI and the Pi, one USB stick on
+    the Pi set off the Pi's under-voltage alarm (`rpi_volt`
+    `in0_lcrit_alarm`). The NVMe reset, and its writes timed out during an
+    update. The dock passes through no 5 V / 5 A contract, while
+    `PSU_MAX_CURRENT=5000` lets the Pi draw as if it had one.
+  - Unplugging the dock also cuts the Pi's power, with no shutdown.
+  - The dock's own ports never reach the Pi. The Pi's USB-C has no USB-PD
+    controller to take the host role from a dock that powers it, so the dock
+    keeps its hub off the data lines, even with `dtoverlay=dwc2,dr_mode=host`
+    set at boot.
+  - More USB goes on the hub on controller B (below).
 - **USB** (#1816) — the Pi 5 has two USB controllers, each with one blue
   (USB 3) and one black (USB 2) port. The audio interface gets one controller
   to itself: the console's xruns followed a touch controller sharing it
