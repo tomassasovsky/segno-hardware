@@ -119,9 +119,11 @@ In the sliced preview, check that:
 
 ## LED-feed windows
 
-The two outboard windows at u 36 and u 810 carry the LED strip feed, not a
-footswitch cable. Which cable that is has not been settled yet, so the hole is
-a parameter:
+The two outboard windows at u 36 and u 810 carry the LED strip feed. That feed
+is the same 4 mm cable as the footswitches (owner, 2026-11-25), so all ten
+windows take the same part: print ten `beam_grommet_od4.0`.
+
+The hole is still a parameter, in case a cable changes:
 
 ```bash
 ../enclosure/.venv/bin/python beam_grommet.py --cable-od 5.0
@@ -129,9 +131,6 @@ a parameter:
 
 That writes `out/beam_grommet_od5.0.*` and runs the same checks. A round cable
 up to 8.1 mm OD fits this body (the hole must stay inside the 8.3 mm bore).
-A flat or loose bundle, such as a separate power pair with a data lead, needs
-a slot-shaped hole, which this script does not draw yet. Until the cable is
-known, the 4 mm grommet also fits those windows.
 
 ## Still open on SEG-111
 
