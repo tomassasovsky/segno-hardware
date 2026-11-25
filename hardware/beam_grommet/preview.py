@@ -13,7 +13,7 @@ import beam_grommet as g
 
 enclosure = g.enclosure
 BG = "#f4f3ef"
-TPU = "#2b2f36"
+TPU = "#1c1e22"
 STEEL = "#9aa4ae"
 CABLE = "#141414"
 
@@ -85,7 +85,7 @@ def render(path):
              "barbed lips snap over its front face. Eight slit flaps grip the cable and fold back for the plug.",
              fontsize=12, color="#525b65")
     ax = fig.add_axes((0.01, 0.08, 0.30, 0.74), facecolor=BG)
-    draw(ax, [(part, "#5d646f")], -50, -60, "From the bed side: the membrane, printed first")
+    draw(ax, [(part, TPU)], -50, -60, "From the bed side: the membrane, printed first")
     ax = fig.add_axes((0.33, 0.08, 0.33, 0.74), facecolor=BG)
     draw(ax, [(coupon.cut(half), STEEL), (placed.cut(half), TPU), (wire.cut(half), CABLE)],
          12, 0, "Cut through the centre: rear (right) to front")
