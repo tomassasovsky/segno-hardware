@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Builds every generated output under hardware/ from the Python sources:
 # the enclosure's STEP/DXF/PDF/STL files and vendor archives, the strip ring,
-# the pill housings, the decals and the ring diffuser. CI runs this on every
+# the pill housings, the decals, the ring diffuser and the beam grommet. CI runs this on every
 # PR and on fab-* tags (.github/workflows/outputs.yaml).
 #
 # Usage: hardware/build.sh [python]
@@ -36,3 +36,5 @@ run pill_light_mask top_mount_preview.py
 run decals decals.py
 run ring_diffuser ring16_diffuser.py
 run ring_diffuser ring16_diffuser.py --skirt-only
+run beam_grommet beam_grommet.py
+run beam_grommet preview.py

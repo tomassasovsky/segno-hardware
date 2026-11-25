@@ -40,11 +40,12 @@ jobs:
           python -m unittest hardware/strip_ring/test_console_ring.py
           python -m unittest hardware/decals/test_decals.py
           (cd hardware/pill_light_mask && python check_geometry.py && python check_top_mount.py)
+          (cd hardware/beam_grommet && python check_grommet.py)
 
       - name: Collect the outputs
         run: |
           mkdir -p dist
-          for d in enclosure/out strip_ring/out_console pill_light_mask/out decals/out ring_diffuser/out; do
+          for d in enclosure/out strip_ring/out_console pill_light_mask/out decals/out ring_diffuser/out beam_grommet/out; do
             name=$(echo "$d" | tr '/' '-')
             (cd "hardware/$d" && zip -qr "$GITHUB_WORKSPACE/dist/$name.zip" .)
           done

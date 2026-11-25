@@ -18,7 +18,7 @@ numbers belong to that repository; issues for this work stay there.
 | --- | --- |
 | `hardware/enclosure/` | The parametric enclosure generator (`segno_enclosure.py`, cadquery), its tests, the Fusion 360 documents (`fusion/`) and the parts exported from them (`formed/`). |
 | `hardware/kicad/` | Board sources (SKiDL netlists, `pcbnew` layout scripts), the routed boards and Gerbers (`out_console/`, `out_ring/`), the screen power board (`screen_power/`) and the archives sent to the board house (`fab/`). |
-| `hardware/strip_ring/`, `pill_light_mask/`, `ring_diffuser/`, `decals/` | Generators for the LED strip ring, the indicator pill housings, the ring diffuser and the vinyl decals. |
+| `hardware/strip_ring/`, `pill_light_mask/`, `ring_diffuser/`, `beam_grommet/`, `decals/` | Generators for the LED strip ring, the indicator pill housings, the ring diffuser, the beam's cable grommet and the vinyl decals. |
 | `hardware/v3_soldering/`, `bench/`, `console/`, `led_strip/`, `switch_mount/` | Solder-order guides, bench tests, console notes and older parts. |
 | `hardware/build.sh` | Builds every generated output. |
 
