@@ -81,14 +81,14 @@ def render(path):
     fig = plt.figure(figsize=(16, 7.4), facecolor=BG)
     fig.text(0.035, 0.93, "Beam cable grommet, TPU 95A", fontsize=22, weight="bold", color="#20252c")
     fig.text(0.035, 0.885,
-             f"One per window, one {g.CABLE_OD:.0f} mm cable each. Flange on the web's rear face, "
-             "barbed fingers hold its front face. Slit to the top edge to fit over a wired cable.",
+             f"One per window, one cable each, {g.CABLE_MIN:.0f} to {g.CABLE_MAX:.0f} mm. Flange on the web's rear face, "
+             "barbed lips snap over its front face. Eight slit flaps grip the cable and fold back for the plug.",
              fontsize=12, color="#525b65")
     ax = fig.add_axes((0.01, 0.08, 0.30, 0.74), facecolor=BG)
-    draw(ax, [(part, TPU)], 38, -60, "As printed: flange down, no supports")
+    draw(ax, [(part, "#5d646f")], -50, -60, "From the bed side: the membrane, printed first")
     ax = fig.add_axes((0.33, 0.08, 0.33, 0.74), facecolor=BG)
     draw(ax, [(coupon.cut(half), STEEL), (placed.cut(half), TPU), (wire.cut(half), CABLE)],
-         12, 0, "Cut through the hole: rear (right) to front")
+         12, 0, "Cut through the centre: rear (right) to front")
     ax = fig.add_axes((0.67, 0.08, 0.32, 0.74), facecolor=BG)
     draw(ax, [(coupon, STEEL), (placed, TPU), (wire, CABLE)], 22, 55,
          f"In the beam at u {u:.0f}, seen from the rear")
@@ -96,7 +96,7 @@ def render(path):
     fig.text(0.035, 0.035,
              f"Window {g.WIN_W:.0f} x {g.WIN_H:.0f} R{g.WIN_R:.0f} in {g.WEB_T} steel  ·  body "
              f"{d['body_w']} x {d['body_h']} ({g.FIT_CLR} a side)  ·  flange {d['flange_w']:.0f} x "
-             f"{d['flange_h']:.0f} x {g.FLANGE_T}  ·  hole {d['hole']:.1f}  ·  barb {g.BARB} at "
+             f"{d['flange_h']:.0f} x {g.FLANGE_T}  ·  {g.MEMBRANE_T} membrane, {g.SLIT_RAYS} slits  ·  barb {g.BARB} at "
              f"{g.RETAIN_DEG:.0f} deg  ·  {part.Volume() / 1000:.2f} cm3",
              fontsize=10.5, color="#525b65")
     fig.savefig(path, dpi=110, facecolor=BG)

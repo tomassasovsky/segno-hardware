@@ -1,23 +1,24 @@
 """Snap-in TPU grommet for the cable windows in the faceplate support beam (mm).
 
-One grommet per window, one cable per grommet. The flange sits on the web's
-REAR face, the hollow body fills the window, and two barbed fingers pass
-through and hold the web's front face. A slit from the cable hole to the top
-edge lets it go on over a cable that is already wired.
+One grommet per window, one cable per grommet. Its edge is a groove that hugs
+the web: a thin flange on the web's REAR face, a neck as long as the web is
+thick, and a barbed lip on each long side that snaps over the front face. The cable passes a thin membrane in the
+flange, cut by eight radial slits that meet at the window centre: the flaps
+part for any cable from CABLE_MIN to CABLE_MAX and close on it, and fold flat
+against the bore to let the board-end plug through.
 
 Part frame, which is also the print orientation (flange down, no supports):
   x = u, along the beam, across the window's 24 mm width;
   y = z, up the web, across the window's 12 mm height;
   z = through the web, 0 at the flange's outer face. The web's rear face is at
       z = FLANGE_T and its front face at z = GRIP_Z.
-The hole axis is the part's z axis, so the cable passes the web at the
+The slits meet on the part's z axis, so the cable passes the web at the
 window centre.
 
 Run with the enclosure venv:
-    ../enclosure/.venv/bin/python beam_grommet.py [--cable-od 4.0]
+    ../enclosure/.venv/bin/python beam_grommet.py
 """
 
-import argparse
 import math
 from pathlib import Path
 import sys
@@ -37,37 +38,43 @@ WIN_R = enclosure.BEAM_CABLE_R        # 3.0
 WEB_T = enclosure.BEAM_T              # 1.6 cold-rolled steel
 COAT_MAX = enclosure.COAT_MAX         # 0.10 per face once painted
 
-# --- the cable --------------------------------------------------------------
-CABLE_OD = 4.0          # black 2-core footswitch cable, jacketed
-HOLE_CLR = 0.2          # on the diameter; FDM TPU holes print ~0.1-0.2 under,
-                        # so this ends up a light slide on the jacket
-# The board end carries a JST XHP-2 housing, about 5.8 x 7.4 mm, which will
-# not pass the hole: that is why the grommet is slit.
+# --- the cables -------------------------------------------------------------
+CABLE_OD = 4.0          # the console's footswitch and LED-feed cable, all ten windows
+CABLE_MIN = 2.0         # the range one grommet takes: below it the slit gaps
+CABLE_MAX = 7.0         # are a large share of the wire; above it the flaps run
+                        # out of bore to fold into
+PLUG = (7.4, 5.8)       # JST XHP-2 housing on the board end, passed flat: 7.4
+                        # along u, 5.8 along z, through the folded flaps
+PLUG_CLR = 0.3          # per side, plug to folded flaps
 
 # --- the part ---------------------------------------------------------------
 FIT_CLR = 0.25          # per side, body to bare window. Paint takes COAT_MAX of it.
-WALL = 1.6              # body wall: four 0.4 mm perimeters of TPU
-FLANGE_T = 2.0          # ten 0.2 mm layers; stiff enough not to pull through
-FLANGE_OV = 2.5         # flange overlap past the window edge, every side
+WALL = 1.2              # neck wall: three 0.4 mm perimeters of TPU
+FLANGE_T = 1.2          # six 0.2 mm layers, the membrane's three among them
+FLANGE_OV = 2.0         # flange overlap past the window edge, every side
 BARB = 1.0              # barb height past the body wall
-BARB_LAND = 0.4         # flat on the barb's crest
+BARB_LAND = 0.3         # flat on the barb's crest
 RETAIN_DEG = 45.0       # retaining face, from the print bed: the steepest
                         # overhang TPU prints without support
-LEAD_DEG = 30.0         # lead-in face, from the insertion axis
+LEAD_DEG = 45.0         # lead-in face, from the insertion axis
 RELIEF_W = 1.0          # corner slots that free the two long walls as fingers
 BARB_MARGIN = 0.5       # barb stops short of each relief slot
-SLIT_W = 0.5            # printed kerf from the hole to the top edge
-BELL = 0.8              # 45 deg chamfer on the hole's flange-side mouth
+MEMBRANE_T = 0.6        # three 0.2 mm layers, printed first, on the bed
+SLIT_W = 0.4            # printed gap of each radial slit (one line width)
+SLIT_RAYS = 8           # +-u, +-z and one to each corner of the bore
+HINGE = 0.8             # unslit membrane left between a slit's end and the bore
+                        # wall; the flaps fold about it
 
 MIN_WALL = 1.2          # three perimeters: the thinnest TPU section allowed
 MAX_STRAIN = 0.30       # finger root strain while the barb squeezes through
 MIN_RETAIN = 0.6        # barb overlap on the window edge, bare and painted
+MIN_MEMBRANE = 0.6      # three layers: a thinner membrane tears at the slit ends
+MAX_MEMBRANE = 1.0      # a thicker one is too stiff to fold for the plug
 
 
-def derived(cable_od=CABLE_OD):
+def derived():
     """Every dimension the build and the checks share."""
     d = {}
-    d["hole"] = cable_od + HOLE_CLR
     d["body_w"] = WIN_W - 2 * FIT_CLR
     d["body_h"] = WIN_H - 2 * FIT_CLR
     d["body_r"] = WIN_R - FIT_CLR
@@ -85,7 +92,30 @@ def derived(cable_od=CABLE_OD):
     d["relief_x"] = d["body_w"] / 2 - d["body_r"]        # where each long wall's arc starts
     d["finger_w"] = 2 * (d["relief_x"] - RELIEF_W)
     d["barb_w"] = d["finger_w"] - 2 * BARB_MARGIN
+    # The opening the folded flaps leave, inside the bore.
+    d["open_w"] = d["bore_w"] - 2 * MEMBRANE_T
+    d["open_h"] = d["bore_h"] - 2 * MEMBRANE_T
     return d
+
+
+def slit_rays(d):
+    """(angle, length) of each radial slit, from the centre toward the bore wall.
+
+    Four rays run along +-u and +-z; the other four aim at the bore's corners,
+    so the eight flaps are all hinged on straight bore wall. Each slit stops
+    where both corners of its end are still HINGE from every bore wall.
+    """
+    hw, hh = d["bore_w"] / 2, d["bore_h"] / 2
+    corner = math.degrees(math.atan2(hh, hw))
+    rays = []
+    for a in (0, corner, 90, 180 - corner, 180, 180 + corner, 270, 360 - corner):
+        c, s = abs(math.cos(math.radians(a))), abs(math.sin(math.radians(a)))
+        length = math.inf
+        for half, along, across in ((hw, c, s), (hh, s, c)):
+            if along > 1e-9:
+                length = min(length, (half - HINGE - SLIT_W / 2 * across) / along)
+        rays.append((a, length))
+    return rays
 
 
 def rrect(w, h, r, z0, height):
@@ -109,8 +139,8 @@ def barb(d, side):
     return prof
 
 
-def build(cable_od=CABLE_OD):
-    d = derived(cable_od)
+def build():
+    d = derived()
     part = rrect(d["flange_w"], d["flange_h"], d["flange_r"], 0, FLANGE_T)
     body = rrect(d["body_w"], d["body_h"], d["body_r"], FLANGE_T, d["tip_z"] - FLANGE_T)
     body = body.cut(rrect(d["bore_w"], d["bore_h"], d["bore_r"], FLANGE_T, d["tip_z"]))
@@ -129,20 +159,22 @@ def build(cable_od=CABLE_OD):
                                 FLANGE_T)))
             part = part.cut(slot)
 
-    # The cable hole, with a 45 deg bell mouth on the flange's outer face where
-    # the cable turns down to the floor.
-    hole_r = d["hole"] / 2
-    part = part.cut(cq.Workplane("XY").circle(hole_r).extrude(FLANGE_T + 1).translate((0, 0, -0.5)))
-    bell = cq.Solid.makeCone(hole_r + BELL + 0.5, hole_r, BELL + 0.5,
-                             pnt=cq.Vector(0, 0, -0.5))
-    part = part.cut(cq.Workplane().add(bell))
-
-    # The slit: hole to the top edge, through the flange, the top finger and its barb.
-    slit = (cq.Workplane("XY")
-            .box(SLIT_W, d["flange_h"], d["tip_z"] + 2, centered=(True, False, False))
-            .translate((0, 0, -1)))
-    part = part.cut(slit)
+    # The membrane: the bore runs on down through the flange and stops
+    # MEMBRANE_T above the bed, so the membrane is the first layers printed and
+    # every wall above it is vertical.
+    part = part.cut(rrect(d["bore_w"], d["bore_h"], d["bore_r"], MEMBRANE_T, FLANGE_T))
+    for slit in slit_cutters(d):
+        part = part.cut(slit)
     return part.val()
+
+
+def slit_cutters(d):
+    """One box per radial slit, through the membrane, starting at the centre."""
+    return [cq.Workplane("XY")
+            .box(length, SLIT_W, MEMBRANE_T + 1, centered=(False, True, False))
+            .translate((0, 0, -0.5))
+            .rotate((0, 0, 0), (0, 0, 1), angle).val()
+            for angle, length in slit_rays(d)]
 
 
 def placements():
@@ -184,10 +216,10 @@ def installed(solid):
         [to_beam(solid, offset).translate(BEAM_ORIGIN) for _, offset in placements()])
 
 
-def export(cable_od=CABLE_OD):
+def export():
     OUT.mkdir(exist_ok=True)
-    stem = OUT / f"beam_grommet_od{cable_od:.1f}"
-    solid = build(cable_od)
+    stem = OUT / "beam_grommet"
+    solid = build()
     cq.exporters.export(solid, f"{stem}.step")
     cq.exporters.export(solid, f"{stem}.stl", tolerance=0.02, angularTolerance=0.1)
     cq.exporters.export(installed(solid), f"{stem}_installed.step")
@@ -198,14 +230,10 @@ def export(cable_od=CABLE_OD):
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--cable-od", type=float, default=CABLE_OD,
-                    help="cable outer diameter, mm (default %(default)s)")
-    args = ap.parse_args()
     import check_grommet
-    solid = export(args.cable_od)
-    check_grommet.check(solid, args.cable_od)
-    print(f"beam_grommet_od{args.cable_od:.1f}: {solid.Volume() / 1000:.2f} cm3, checks passed -> {OUT}")
+    solid = export()
+    check_grommet.check(solid)
+    print(f"beam_grommet: {solid.Volume() / 1000:.2f} cm3, checks passed -> {OUT}")
     for u, y_front, y_rear, z in hole_world():
         print(f"  cable crosses the web at u {u:7.2f}, y {y_front:.2f}..{y_rear:.2f}, z {z:.2f}")
 
