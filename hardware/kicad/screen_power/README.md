@@ -200,9 +200,12 @@ removable. No separate inline holder is included in this design or shopping
 list. The four downstream Bel fuses are soldered components.
 
 Wire the AUX positive split directly to J1 pin 1 and ground to J1 pin 2.
-Keep this incoming pair short (15 cm one-way design target), **18 AWG** (or
-0.75 mm²) in 22–18 AWG VH contacts (J1's 4.46 A input stays under their 7 A),
-insulated, secured and protected from abrasion. F1 does **not** protect a
+Keep this incoming pair short (15 cm one-way design target), **20 AWG**
+(0.5 mm²) or larger in 22–18 AWG VH contacts. J1 carries up to the 4.46 A
+input allowance and JST publishes no VH rating for 20 AWG, so after assembly
+run both screens at full brightness for an hour and check that J1 stays no
+warmer than about 30 °C above room temperature; otherwise recrimp it at 18 AWG.
+Keep the pair insulated, secured and protected from abrasion. F1 does **not** protect a
 short in this incoming cable or the short J1-to-F1 trace. The retained buck's
 advertised protection has no public threshold/response curve, and the
 upstream 20 V T5A fuse does not establish 5 V fault-clearing behavior. This
