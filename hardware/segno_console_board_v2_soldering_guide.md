@@ -96,7 +96,7 @@ v3 is the same board with the ring-board link (#987) and the CTRL ring sense
 
 | | v2 | v3 |
 |---|---|---|
-| J6 `RING` | JST-XH 8-pin; the ring board's 4-way lands on pins 1, 3, 6, 7 | **JST-XH 4-pin**; selected 40-pixel assembly uses pins 3/4 for UART only. Leave pins 1/2 empty and supply ring J1.1/.2 from the local AUX split; see [ring assembly](kicad/RING_ASSEMBLY.md) |
+| J6 `RING` | JST-XH 8-pin; the ring board's 4-way lands on pins 1, 3, 6, 7 | **JST-XH 4-pin**; selected 35-pixel assembly uses pins 3/4 for UART only. Leave pins 1/2 empty and supply ring J1.1/.2 from the 16 AWG ring trunk; see [ring assembly](kicad/RING_ASSEMBLY.md) |
 | R1 (330 Ω), R13 (10 kΩ), R15 (100 kΩ) | fitted | **not fitted, no pads** — the ring-data path is gone; U1's gate B is parked |
 | R18 link RX | 10 kΩ | **6.8 kΩ, 1%** from Pi TX to Pico RX. This satisfies the RP2350 A2 E9 input-leakage workaround for hardware UART. R17 remains 10 kΩ. |
 | R19, R20 | — (bench wires from J20/J21 pin 2 to J22's GP20/GP21 pads instead) | **4.7 kΩ**, in the row under the Pico where R13 and R15 used to be (R20 in the slim band by R16, R19 in the row below): the ring-sense series parts. Far from the jacks on purpose — DC sense lines, and the column under `CTRL 1` stays J22's |

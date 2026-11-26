@@ -75,15 +75,13 @@ simultaneous guarantees. The selected 35-pixel ring uses a separate direct
 AUX branch and does not pass through console power copper or the screen-power relay. See the
 [screen-board assessment](screen_power/README.md#circuit-and-limits).
 
-The ring's power is budgeted for **40 LEDs at unrestricted full white**, five
-more than the 35 fitted. Follow the
-[ring assembly guide](RING_ASSEMBLY.md): console J6 pins 3/4 carry UART only,
-with cavities 1/2 empty. Supply strip power and ring J1 pins 1/2 from separate
-short pairs at the near-ring AUX split; ring J2 pin 3 carries DIN only, with
-pins 1/2/4 unconnected. The budget is 2.4 A for LED channels, 40 mA idle and
-200 mA for the ring controller. The retained console/carrier power routes do
-not replace this harness's voltage-margin requirement. Genuine XH contacts
-use 22 AWG pigtails; do not crimp the 16 AWG trunk into them.
+The ring's power is budgeted for its **35 LEDs at unrestricted full white**.
+Follow the [ring assembly guide](RING_ASSEMBLY.md): console J6 pins 3/4 carry
+UART only, with cavities 1/2 empty. A 16 AWG trunk from the AUX splices feeds
+ring J1 pins 1/2 through a soldered joint onto short 22 AWG XH pigtails; the
+strip's +5 V, GND and DIN are on ring J2 pins 1/2/3 and draw through the
+carrier's 1.5 mm feed. The budget is 2.1 A for LED channels, 35 mA idle and
+200 mA for the ring controller. Do not crimp the 16 AWG trunk into XH.
 Use one external strip, or one direct-mount 24/16-LED module. A second ring is
 outside this budget. See the [JST rating](https://www.jst-mfg.com/product/pdf/eng/eXH.pdf).
 

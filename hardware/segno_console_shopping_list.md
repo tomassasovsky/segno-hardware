@@ -53,8 +53,8 @@ Terminated by the **console board v3** (`hardware/kicad/console_board.py`, #747)
       envelope and nut relief in `MANUFACTURING.md`
 - [ ] **Vishay K103K10X7RF53H5**, 10 nF / 50 V THT ×3 for ring C2/C3/C4;
       the separate C5 buffer decoupler remains 100 nF
-- [ ] **Panasonic EEUFR1A102**, 1000 µF / 10 V radial ×1 for the external
-      strip power-entry harness; separate from carrier C1
+- [ ] **Panasonic EEUFR1A102**, 1000 µF / 10 V radial ×1 for the ring
+      trunk's joint under ring J1; separate from carrier C1
 - [ ] JST-XH pre-crimped 2-pin leads for the footswitch looms ×10
 - [ ] **Neutrik NJ6FD-V switched CTRL jacks ×2** — 6-pole switching 1/4" jack,
       vertical PCB pins. Four wires per jack: T, R, S and RN to console
@@ -71,11 +71,11 @@ drives the ring and reads its encoder; their level shifters and bulk capacitors
 are on the respective board BOMs.
 
 - [x] **35-LED WS2812B strip**, already fitted (owner, 2026-10-19, #1075). Reuse it
-      with the new carrier's J2 pin 3 for DIN and its separate strip housing.
-      Feed power directly from the near-ring AUX split: at most 600 mm of
-      16 AWG copper pair, then separate ≤50 mm 22 AWG pairs to the strip and
-      carrier J1. Buy suitable insulated splice materials and genuine XH
-      contacts for the 22 AWG pigtail. Do not also populate the optional
+      with the new carrier's J2 pins 1/2/3 for +5 V, GND and DIN, inside the
+      ring's cup. Feed the carrier J1 from a 16 AWG trunk pair from the AUX
+      splices (at most 600 mm), soldered to about 40 mm of 22 AWG in genuine
+      XH contacts. Buy heat-shrink for the two joints and XH contacts for the
+      22 AWG pigtail. Do not also populate the optional
       24/16-module pads. See the current wiring diagram.
 - [ ] WS2812B **indicator pills** — **144 LEDs/m, bare/non-waterproof
       (labelled IP20 or IP30 — the same uncoated strip either way), 12 mm

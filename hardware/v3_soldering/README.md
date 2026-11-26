@@ -226,17 +226,21 @@ J1 pin 1 to pin 2 (+5V_LED to GND) open.
    take more heat; use a larger tip and work quickly rather than holding the
    iron there. With parts now on both faces, the board will not lie flat, so
    use the holder.
-8. **LED strip DIN to J2 pin 3 only** (front-face SMD pad). Leave J2 pins 1, 2
-   and 4 empty. Strip power does not go through this board.
+8. **LED strip +5 V, GND and DIN to J2 pins 1, 2 and 3** (front-face SMD
+   pads). Leave J2 pin 4 (DOUT) empty. The strip's power comes through this
+   board, from J1 along the 1.5 mm feed.
 
 ### Harness (not on the PCB)
 
-From `RING_ASSEMBLY.md`: the strip's +5 V/GND and ring J1 pins 1/2 each get
-their own short 22 AWG pair from a near-ring AUX split (16 AWG trunk, at most
-600 mm; pairs at most 50 mm). Console J6 cavities 1/2 stay empty: this is not a
-straight-through cable. Fit the Panasonic EEUFR1A102 1000 µF / 10 V directly
-across the strip's power entry (stripe to GND), sleeved and strain-relieved.
-Keep DIN at most 100 mm.
+From `RING_ASSEMBLY.md`: ring J1 pins 1/2 take +5 V/GND from a 16 AWG trunk
+pair that runs from the 4-way AUX splices (at most 600 mm one-way) to just
+under J1. There each trunk wire is soldered to about 40 mm of 22 AWG crimped
+into a genuine XH contact, and each joint is heat-shrunk; 16 AWG does not go
+into XH. Console J6 carries only TX/RX on pins 3/4; its cavities 1/2 stay
+empty, so this is not a straight-through cable. Fit the Panasonic EEUFR1A102
+1000 µF / 10 V across the trunk joint (stripe to GND), sleeved and
+strain-relieved. Build the trunk before the full-brightness firmware
+(segno SEG-115) reaches the console.
 
 ---
 
