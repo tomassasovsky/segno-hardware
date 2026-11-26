@@ -180,8 +180,9 @@ to each screen; preserve any USB-C attachment/current-signaling parts in that
 connection. Do not attach an arbitrary bare USB-C receptacle to the two pins.
 Each main-power lead must be at most **30 cm**, with **20 AWG or larger
 conductors for both +5 V and ground** and terminations rated for **3 A**. At
-the PCB, use VHR-2N housings with SVH-41T-P1.1 contacts within their 20–16 AWG
-crimp range. The existing screen-end termination must meet these conditions;
+the PCB, use VHR-2N housings with contacts for the lead's gauge: SVH-21T-P1.1
+or an equivalent 22–18 AWG contact for 20 or 18 AWG, SVH-41T-P1.1 (20–16 AWG)
+only for 16 AWG. The existing screen-end termination must meet these conditions;
 its wire gauge is not yet recorded. APROTII power pads may be used only
 after checking polarity, cable rating, strain relief and the screen's pad layout.
 
@@ -199,8 +200,12 @@ removable. No separate inline holder is included in this design or shopping
 list. The four downstream Bel fuses are soldered components.
 
 Wire the AUX positive split directly to J1 pin 1 and ground to J1 pin 2.
-Keep this incoming pair short (15 cm one-way design target), **16 AWG**,
-insulated, secured and protected from abrasion. F1 does **not** protect a
+Keep this incoming pair short (15 cm one-way design target), **20 or 18 AWG**
+(0.5–0.75 mm²) in 22–18 AWG VH contacts. J1 carries up to the 4.46 A
+input allowance and JST publishes no VH rating for 20 AWG, so after assembly
+run both screens at full brightness for an hour and check that J1 stays no
+warmer than about 30 °C above room temperature; otherwise recrimp it at 18 AWG.
+Keep the pair insulated, secured and protected from abrasion. F1 does **not** protect a
 short in this incoming cable or the short J1-to-F1 trace. The retained buck's
 advertised protection has no public threshold/response curve, and the
 upstream 20 V T5A fuse does not establish 5 V fault-clearing behavior. This
