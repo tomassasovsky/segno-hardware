@@ -251,13 +251,15 @@ must not be flashed onto the old board.
   colour. Use **18 AWG (or metric 0.75 mm²) for the pill bus and for J3's input
   feed**, crimped into
   22–18 AWG VH contacts (JST SVH-21T-P1.1, or an equivalent such as the
-  PHU396A-TL, rated 7 A; its [datasheet](https://www.elumiled.com/datasheets/PHU396A-TL.pdf)),
-  with a crimp tool rated for 18 AWG. In the selected star harness J3 carries
+  PHU396A-TL, which its [datasheet](https://www.elumiled.com/datasheets/PHU396A-TL.pdf)
+  rates at 7 A with insulation up to 2.8 mm O.D.), with a crimp tool rated for
+  18 AWG. Measure metric wire's insulation before crimping. In the selected star harness J3 carries
   the pills and the console logic, about 5.0 A with the pills uncapped and
   2.2 A at the firmware's pill limit; the pill bus carries 4.88 A uncapped and
-  2.066 A at the limit. Both stay under the contact's 7 A. 18 AWG keeps the
-  drop to about 0.1 V over these lengths, 0.75 mm² to about 0.13 V; 1.0 mm² is
-  past the contact's 18 AWG limit. The header's 10 A rating with 16 AWG
+  2.066 A at the limit. Both stay under the PHU396A-TL's 7 A. In 18 AWG, J3's
+  feed drops about 0.1 V and the pill bus at most about 0.16 V to its far taps
+  uncapped (about 0.07 V at the firmware limit); 0.75 mm² adds about a quarter
+  to each. 1.0 mm² is past the contact's 18 AWG limit. The header's 10 A rating with 16 AWG
   is headroom this harness does not use. The data line and its GND ride the
   same J24 plug (pins 2 and 1). See `kicad/console_board_pcb.py`
   (`_pill_power_bar`, the `PILL_POWER` gate).
@@ -284,7 +286,7 @@ remain connected in parallel.
 
 | Connection | Pin map and harness |
 | --- | --- |
-| AUX buck → screen J1 → onboard F1 | Positive split directly to J1 pin 1; ground to J1 pin 2. Dedicated 18 AWG (or 0.75 mm²) pair, 15 cm one-way target, with VHR-2N housing and 22–18 AWG VH contacts (SVH-21T-P1.1 or equivalent). The 4.31 A contact load stays under the contact's 7 A. The incoming pair is upstream of F1: insulate, secure and protect it from abrasion. Console/ring stay on their separate branch. |
+| AUX buck → screen J1 → onboard F1 | Positive split directly to J1 pin 1; ground to J1 pin 2. Dedicated 18 AWG (or 0.75 mm²) pair, 15 cm one-way target, with VHR-2N housing and 22–18 AWG VH contacts (SVH-21T-P1.1 or equivalent). J1 carries the 4.46 A screen-board input allowance, under the contact's 7 A. The incoming pair is upstream of F1: insulate, secure and protect it from abrasion. Console/ring stay on their separate branch. |
 | Console J25 → screen J2 | Pin 1 GPIO17, pin 2 GND, straight pin-for-pin; one short 22 AWG XH2 lead. |
 | Pi USB 2.0 ports → J101/J201 | Two USB-A male-to-XH5 leads: 1 VBUS, 2 D−, 3 D+, 4 GND, 5 shield. Host VBUS feeds only its low-current presence detector. |
 | J102 → UPERFECT touch | XH5-to-USB-C male: 1 fused switched VBUS, 2 D−, 3 D+, 4 GND, 5 shield. Preserve the source-role CC resistor in the plug. |

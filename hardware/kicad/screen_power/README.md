@@ -201,8 +201,7 @@ list. The four downstream Bel fuses are soldered components.
 
 Wire the AUX positive split directly to J1 pin 1 and ground to J1 pin 2.
 Keep this incoming pair short (15 cm one-way design target), **18 AWG** (or
-0.75 mm²), in
-22–18 AWG VH contacts (the 4.31 A contact load stays under their 7 A),
+0.75 mm²) in 22–18 AWG VH contacts (J1's 4.46 A input stays under their 7 A),
 insulated, secured and protected from abrasion. F1 does **not** protect a
 short in this incoming cable or the short J1-to-F1 trace. The retained buck's
 advertised protection has no public threshold/response curve, and the
