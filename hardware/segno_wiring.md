@@ -26,7 +26,7 @@ longer applies to anything.
               |                         +--> 2 A fuse --> USB 3 hub power input (#1816)
               +--> BUCK_AUX (20->5 V) --+--> console J3 --> pills
                                        +--> near-ring split --> strip power + ring J1 power
-                                       +--> short 16 AWG pair --> screen-power J1
+                                       +--> short 18 AWG pair --> screen-power J1
                                                                   | F1 (8 A) -> K1 -> switched rail
                                                                   +--> J103/J203 --> screen power
                                                                   +--> J102/J202 --> touch VBUS
@@ -124,7 +124,7 @@ state the remaining engineering assumptions.
 - **Screen branch fuse:** onboard F1 is a Schurter **0001.2513**, 8 A
   time-delay cartridge, in an **OGN 0031.8201** holder. All screen-board
   loads are downstream of F1. Connect the AUX positive split directly to
-  screen J1 pin 1 and ground to pin 2 using a very short 16 AWG pair, with a
+  screen J1 pin 1 and ground to pin 2 using a very short 18 AWG pair, with a
   15 cm one-way design target. **F1 does not protect this incoming pair or
   the J1-to-F1 copper**; insulate, secure and protect that section from
   abrasion. No separate inline holder is included. Keep the console/ring
@@ -248,9 +248,17 @@ must not be flashed onto the old board.
   pills' 5 V leaves on **J24**, the JST VH beside it, and their harness is a **5 V
   bus with a tap to each pill**, not a daisy chain through the strips: 4.8 A in
   series through the strip copper would drop enough to shift the far pills'
-  colour. Use 16 AWG for the pill bus and **16 AWG for J3's input feed**, with
-  SVH-41T-P1.1 contacts for the latter. The selected standard VH connector's
-  10 A rating is specified with 16 AWG. The data line and its GND ride the
+  colour. Use **18 AWG (or metric 0.75 mm²) for the pill bus and for J3's input
+  feed**, crimped into
+  22–18 AWG VH contacts (JST SVH-21T-P1.1, or an equivalent such as the
+  PHU396A-TL, rated 7 A; its [datasheet](https://www.elumiled.com/datasheets/PHU396A-TL.pdf)),
+  with a crimp tool rated for 18 AWG. In the selected star harness J3 carries
+  the pills and the console logic, about 5.0 A with the pills uncapped and
+  2.2 A at the firmware's pill limit; the pill bus carries 4.88 A uncapped and
+  2.066 A at the limit. Both stay under the contact's 7 A. 18 AWG keeps the
+  drop to about 0.1 V over these lengths, 0.75 mm² to about 0.13 V; 1.0 mm² is
+  past the contact's 18 AWG limit. The header's 10 A rating with 16 AWG
+  is headroom this harness does not use. The data line and its GND ride the
   same J24 plug (pins 2 and 1). See `kicad/console_board_pcb.py`
   (`_pill_power_bar`, the `PILL_POWER` gate).
 - **Screen evidence (owner report, 25 September 2026):** the UPERFECT ran at
@@ -276,7 +284,7 @@ remain connected in parallel.
 
 | Connection | Pin map and harness |
 | --- | --- |
-| AUX buck → screen J1 → onboard F1 | Positive split directly to J1 pin 1; ground to J1 pin 2. Dedicated 16 AWG pair, 15 cm one-way target, with VHR-2N housing and SVH-41T-P1.1 contacts. The incoming pair is upstream of F1: insulate, secure and protect it from abrasion. Console/ring stay on their separate branch. |
+| AUX buck → screen J1 → onboard F1 | Positive split directly to J1 pin 1; ground to J1 pin 2. Dedicated 18 AWG (or 0.75 mm²) pair, 15 cm one-way target, with VHR-2N housing and 22–18 AWG VH contacts (SVH-21T-P1.1 or equivalent). The 4.31 A contact load stays under the contact's 7 A. The incoming pair is upstream of F1: insulate, secure and protect it from abrasion. Console/ring stay on their separate branch. |
 | Console J25 → screen J2 | Pin 1 GPIO17, pin 2 GND, straight pin-for-pin; one short 22 AWG XH2 lead. |
 | Pi USB 2.0 ports → J101/J201 | Two USB-A male-to-XH5 leads: 1 VBUS, 2 D−, 3 D+, 4 GND, 5 shield. Host VBUS feeds only its low-current presence detector. |
 | J102 → UPERFECT touch | XH5-to-USB-C male: 1 fused switched VBUS, 2 D−, 3 D+, 4 GND, 5 shield. Preserve the source-role CC resistor in the plug. |
@@ -286,8 +294,10 @@ remain connected in parallel.
 
 The two main-power leads must each be **no more than 30 cm**, with **20 AWG or
 larger copper conductors for both positive and return** and **3 A-rated
-terminations**. At the PCB use VHR-2N housings and SVH-41T-P1.1 contacts, which
-accept 20–16 AWG; match the specified insulation diameter. Reterminate the
+terminations**. At the PCB use VHR-2N housings with contacts for the lead's
+gauge: SVH-21T-P1.1 or an equivalent 22–18 AWG contact for 20 or 18 AWG,
+SVH-41T-P1.1 (20–16 AWG) only for 16 AWG; match the contact's insulation
+diameter. Reterminate the
 source end of the known-working screen power connection, preserving the
 screen-side USB-C/Micro-B plug and any CC/attachment electronics. The exact
 existing lead gauge has not been recorded: reuse is conditional on these
