@@ -33,15 +33,27 @@ class DecalTest(unittest.TestCase):
         self.assertFalse(shape.contains(box(x0, y0, x0 + 0.5, y0 + 0.5)))
 
     def test_every_connector_is_labelled_once(self):
-        refs = set(decals.rear_decal())
-        self.assertEqual(refs, set(decals.se.rear_io_layout()) | {"EARTH_STUD"})
+        named = [st for _txt, stations in decals.LABELS.values() for st in stations]
+        self.assertEqual(sorted(named), sorted(decals.se.rear_io_layout()))
+        self.assertEqual(set(decals.rear_decal()), set(decals.LABELS) | {"EARTH_STUD"})
+
+    def test_a_shared_label_is_centred_over_its_pair(self):
+        lay = decals.se.rear_io_layout()
+        cu, _g = decals.rear_decal()["USB3"]
+        self.assertAlmostEqual(cu, (lay["USB3_1"][0] + lay["USB3_2"][0]) / 2.0)
+
+    def test_labels_clear_the_tallest_flange_by_a_row_gap(self):
+        flange_top = max(decals.se.REAR_IO_Z + h / 2.0 for _w, h in decals.FLANGE.values())
+        pieces = decals.rear_decal()
+        for ref in decals.LABELS:
+            self.assertGreaterEqual(pieces[ref][1].bounds[1] - flange_top, 7.0, ref)
 
     def test_rear_labels_read_from_outside(self):
         """Seen from behind, u runs right to left: the USB pair (high u) is on
         the left of the strip and the PD inlet on the right."""
         pieces = decals.rear_decal()
         x = {ref: decals._wall(cu) for ref, (cu, _g) in pieces.items()}
-        self.assertLess(x["USB3_2"], x["PD_IN"])
+        self.assertLess(x["USB3"], x["PD_IN"])
 
     def test_outputs_exist_at_one_to_one(self):
         for stem in ("segno_decal_logo", "segno_decal_rear", "segno_decals_cut_sheet"):

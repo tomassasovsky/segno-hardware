@@ -31,6 +31,7 @@ import ezdxf
 import ezdxf.path as dxpath
 import pathops
 from fontTools.pens.basePen import BasePen
+from fontTools.pens.boundsPen import BoundsPen
 from fontTools.pens.transformPen import TransformPen
 from fontTools.svgLib.path import parse_path
 from fontTools.ttLib import TTCollection, TTFont
@@ -61,13 +62,13 @@ LOGO_PARTS = {"glyph": ("segno_glyph", "segno_glyph (1)", "segno_glyph (2)"),
               "n": ("segno_word",), "o": ("segno_word (4)",)}
 
 # --- rear labels -----------------------------------------------------------
-LABEL_FONT = ("/System/Library/Fonts/HelveticaNeue.ttc", "Helvetica Neue Bold")
-CAP_H = 4.5            # cap height. Bold, not the tiles' Light (Light strokes would be
-                       # ~0.3 mm); at 3.5 Bold's horizontals and at 4.0 the opening
-                       # of the 5 fall under MIN_FEATURE
-TRACKING = 0.06        # extra letter spacing, em, so letter gaps stay weedable
-LABEL_BASE_Z = 63.0    # baseline above the floor TOP, one row for every label:
-                       # the D-flange plates reach z 60.5 (31 tall about z 45)
+LABEL_FONT = ("/System/Library/Fonts/HelveticaNeue.ttc", "Helvetica Neue Condensed Bold")
+CAP_H = 4.5            # cap height. Condensed Bold keeps the names short enough to leave
+                       # room between them; at 4.0 its horizontals and the opening of
+                       # the 5 fall under MIN_FEATURE (the tiles' Light would be ~0.3 mm)
+TRACKING = 0.08        # extra letter spacing, em, so letter gaps stay weedable
+LABEL_BASE_Z = 68.0    # baseline above the floor TOP, one row for every label: 7.5 mm
+                       # over the tallest flange (the D-flange plates reach z 60.5)
 LABEL_CLEAR = 2.0      # labels to flanges, holes, vents and each other
 FLANGE = {             # visible flange envelope (w, h) about each station centre
     "PD_IN": (26.0, 31.0), "CTRL_1": (26.0, 31.0), "CTRL_2": (26.0, 31.0),
@@ -75,10 +76,12 @@ FLANGE = {             # visible flange envelope (w, h) about each station centr
     "POWER": (25.2, 25.2), "FUSE": (18.0, 18.0),
     "USB3_1": (28.5, 28.5), "USB3_2": (28.5, 28.5),
 }
-LABELS = {             # one line each; FUSE carries the fuse to fit (T5A slow-blow)
-    "PD_IN": "USB-C PD IN", "POWER": "POWER", "FUSE": "FUSE T5A",
-    "MIDI_IN": "MIDI IN", "MIDI_OUT": "MIDI OUT",
-    "CTRL_1": "CTRL 1", "CTRL_2": "CTRL 2", "USB3_1": "USB", "USB3_2": "USB",
+LABELS = {             # label: (text, the stations it names, centred over their mean u)
+    "PD_IN": ("PD IN", ("PD_IN",)), "POWER": ("POWER", ("POWER",)),
+    "FUSE": ("FUSE T5A", ("FUSE",)),          # carries the fuse to fit (T5A slow-blow)
+    "MIDI_IN": ("MIDI IN", ("MIDI_IN",)), "MIDI_OUT": ("MIDI OUT", ("MIDI_OUT",)),
+    "CTRL_1": ("CTRL 1", ("CTRL_1",)), "CTRL_2": ("CTRL 2", ("CTRL_2",)),
+    "USB3": ("USB", ("USB3_1", "USB3_2")),    # the two ports are alike: one name for the pair
 }
 EARTH_R = 5.0          # protective-earth symbol (IEC 60417-5019) ring, outer radius
 EARTH_W = 0.7          # ring and stem stroke
@@ -180,10 +183,21 @@ def _label_font():
     raise SystemExit(f"{name} not found in {path}: the labels must not fall back to another face")
 
 
+def cap_height(font):
+    """Cap height in font units: OS/2 when it has one, else the H's top
+    (Helvetica Neue Condensed Bold carries a version-1 OS/2 table)."""
+    cap = getattr(font["OS/2"], "sCapHeight", 0)
+    if cap:
+        return cap
+    bp = BoundsPen(font.getGlyphSet())
+    font.getGlyphSet()[font.getBestCmap()[ord("H")]].draw(bp)
+    return bp.bounds[3]
+
+
 def text_path(txt, font, cap_h=CAP_H):
     """Outlined text as curves, left end of the baseline at the origin; returns (path, width)."""
     gs, cmap, hmtx = font.getGlyphSet(), font.getBestCmap(), font["hmtx"]
-    k = cap_h / font["OS/2"].sCapHeight
+    k = cap_h / cap_height(font)
     track = TRACKING * font["head"].unitsPerEm
     parts, x = [], 0.0
     for ch in txt:
@@ -316,9 +330,10 @@ def rear_pieces():
     lay = se.rear_io_layout()
     stud = next(c for c in se.rear_holes() if c["ref"] == "EARTH_STUD")
     pieces = {}
-    for ref, txt in LABELS.items():
+    for ref, (txt, stations) in LABELS.items():
         p, w = text_path(txt, font)
-        pieces[ref] = (lay[ref][0], move(p, -w / 2.0, LABEL_BASE_Z))
+        cu = sum(lay[st][0] for st in stations) / len(stations)
+        pieces[ref] = (cu, move(p, -w / 2.0, LABEL_BASE_Z))
     pieces["EARTH_STUD"] = (stud["u"], move(earth_path(), 0, LABEL_BASE_Z + CAP_H / 2.0))
     return pieces
 
@@ -337,7 +352,8 @@ def rear_path():
 def _set_uref():
     global U_REF
     lay = se.rear_io_layout()
-    U_REF = (min(lay[r][0] for r in LABELS) + max(lay[r][0] for r in LABELS)) / 2.0
+    us = [lay[st][0] for _txt, stations in LABELS.values() for st in stations]
+    U_REF = (min(us) + max(us)) / 2.0
 
 
 # --- checks ------------------------------------------------------------------------
