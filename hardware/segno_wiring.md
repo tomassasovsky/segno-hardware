@@ -65,7 +65,9 @@ outputs: 25 W for the Pi rail and 48.87 W for AUX. At an illustrative 85–90%
 buck efficiency, that needs approximately **82.1–86.9 W**, or **4.10–4.35 A at
 20 V**. These efficiencies are planning assumptions, not measurements of the
 retained bucks. The 20 V / 5 A / 100 W contract accommodates this model; it
-does not establish enclosed thermal capacity or startup response.
+does not establish enclosed thermal capacity or startup response. Use a
+100 W (20 V / 5 A) USB-C supply: on a 65 W one the console already browns out
+(owner, 2026-11-26).
 
 Normal screen-board operation is assessed at **4.75–5.25 V at J1**, before
 onboard F1 and its holder, including warm relay pickup. Revision N uses a
@@ -157,8 +159,10 @@ total over it, so each press flickered the rest. Ten pills white on the curve
 are 35,160 channel units, **2.758 A** on this model (2.066 A at the old peak
 191): the most the pills can draw, whatever colours the app sends. The ring
 firmware has no total limit either since ring firmware 1.3 (SEG-115): the
-v2-era cap of 35 × 3 × 96 channel units is gone, and the ring's patterns
-reach 255. The app's LED level (segno#1564, light sensor or manual) and the
+v2-era cap of 35 × 3 × 96 channel units is gone, and one ceiling sets the
+patterns' peak (the owner picks 128, 192 or 255 after an outdoor test). This
+budget counts the ring at full white either way: it is the trunk's design
+load. The app's LED level (segno#1564, light sensor or manual) and the
 idle dim (segno#1349) scale both below these ceilings.
 
 | AUX load allowance | Current |
@@ -273,7 +277,10 @@ must not be flashed onto the old board.
   the pill bus at most about 2.84 A (2.758 A of LED channels at peak 255 plus
   the pixels' idle draw), whatever colours the app sends. In 0.5 mm²
   (about 39 mΩ/m) J3's feed drops about 0.12 V and the pill bus at most about
-  0.17 V to its far taps. Firmware that drove the pills past that curve
+  0.17 V to its far taps. Add **J3** to the one-hour heat check beside screen
+  J1 (below): with all ten pills white and the ring at full white for an
+  hour, J3 must stay no warmer than about 30 °C above room temperature, or
+  recrimp its feed at 18 AWG. Firmware that drove the pills past that curve
   (4.88 A uncapped, about 5.0 A on J3) needs 18 AWG on both runs, or 16 AWG in
   SVH-41T-P1.1 contacts.
   The header's 10 A rating with 16 AWG is headroom this harness does not use.
@@ -442,6 +449,12 @@ through ring J1 pins 1/2 and the carrier's 1.5 mm feed. XH is rated 3 A with
 22 AWG, and the carrier copper was sized for the ring at unrestricted white
 (segno#1062).
 
+**Heat in the cup.** Those 35 LEDs at full white turn about 10 W into heat
+inside the ring's cup, which is PLA. After building, run the brightest
+pattern (a full-white comet, or the gain arc at full level) for a few
+minutes and check the cup near the strip: warm is fine, soft or too hot to
+hold is not.
+
 On 2026-11-26 the owner measured the old path with all 35 LEDs at full white,
 the ring fed through a 30 cm 22 AWG J6 cable: **5.07 V at console J3 and
 4.80 V at ring J1**, 0.27 V lost across the console's J3-to-J6 copper, two XH
@@ -489,8 +502,9 @@ Notes that are load-bearing:
   everyday brightness (the app's LED level and the idle dim), but that
   setting is not the hardware's current limit.
 - **Build the trunk before the full-brightness firmware reaches the
-  console.** Ring firmware 1.3 and console firmware 2.9 (segno SEG-115) raise
-  the ring and pill ceilings to 255. On the old J6 feed a full-white ring
+  console.** Ring firmware 1.3 and console firmware 2.9 (segno SEG-115) lift
+  the ring's v2 cap and raise the pills' peak to 255. The appliance flashes
+  both boards at boot, so merging that PR puts them on the console. On the old J6 feed a full-white ring
   leaves the buffer 0.3 V above its floor; the trunk is what restores the
   margin.
 - **Only one ring or strip is supported.** Use J2 for the 35-pixel strip, J3

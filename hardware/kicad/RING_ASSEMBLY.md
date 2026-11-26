@@ -84,11 +84,15 @@ At full white the 35-LED strip draws 2.1 A for LED channels plus a 35 mA
 idle allowance, and the ring controller and buffer a further 200 mA: about
 2.34 A, all through J1 pins 1/2 (XH: 3 A with 22 AWG) and the 1.5 mm feed.
 The console's J6 power route carries none of it. Ring firmware 1.3
-(segno SEG-115) has no total limit and lets its patterns reach 255; the app's
+(segno SEG-115) has no total limit and one ceiling for its patterns (128, 192
+or 255, the owner's choice after an outdoor test); the app's
 LED level and the idle dim set the everyday brightness below that. Build the
 trunk before that firmware reaches the console: on the old J6 feed a
 full-white ring measured 4.80 V at J1 (2026-11-26), 0.3 V above the
-74AHCT125's 4.5 V floor. The shared 10 A AUX supply is not sized for all
+74AHCT125's 4.5 V floor. At full white the strip turns about 10 W into heat
+inside the PLA cup: after building, run the brightest pattern for a few
+minutes and check that the cup near the strip is warm at most. The shared
+10 A AUX supply is not sized for all
 115 LEDs flat white and both screens at their simultaneous maximum. See the
 [system power budget](../segno_wiring.md).
 
