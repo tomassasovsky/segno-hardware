@@ -20,10 +20,12 @@ See [Taiyo's discussion of white masks for LEDs](https://www.taiyo-america.com/i
 The September 25 export supersedes the September 24 ZIP. It adds
 a retained 1.5 mm power feed to J2 and three parallel ground-return vias,
 retaining the two-layer, 1 oz construction and all component positions.
-The console feed was upgraded with it. This carrier copper supports the
-module alternatives; the selected 40-pixel strip now uses the direct AUX
-harness below, so passing carrier power checks does not verify that harness. See the
-[40-pixel verification](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/ring40-full-white-1072/verification.md).
+The console feed was upgraded with it. The selected 35-LED strip draws its
+current through this feed: the ring trunk below brings AUX to J1, and the
+1.5 mm track and its fills carry it to J2. Passing the carrier power checks
+does not verify the trunk. See the earlier
+[40-pixel verification](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/ring40-full-white-1072/verification.md)
+for the copper.
 
 The September 26 copper-finish export supersedes those earlier ZIPs.
 It rounds the main feed and signal bends while retaining the two straight
@@ -37,10 +39,10 @@ support pins. Keep these allowances when updating footprints.
 
 ## Assembly
 
-- Connect the selected 35-LED strip **DIN to J2 pin 3 only**. Leave J2
-  pins 1/2/4 unconnected. Feed strip +5 V/GND directly from the near-ring AUX
-  split described below; this preserves full-white voltage margin.
-  Alternatively fit one 24-LED module at J3 or one 16-LED module at J4, with
+- Solder the selected 35-LED strip's **+5 V, GND and DIN to J2 pins 1, 2
+  and 3**. The strip sits inside the ring's cup and this board is the cup's
+  floor, so its power cannot come from beside the board. Leave J2 pin 4
+  (DOUT) unconnected. Alternatively fit one 24-LED module at J3 or one 16-LED module at J4, with
   firmware matching that LED count. Populate only one LED option.
 - Match the loose support pins to the purchased ring's own holes. Its holes
   still constrain the pin stock even though the carrier now has more allowance.
@@ -52,24 +54,24 @@ support pins. Keep these allowances when updating footprints.
   [encoder drawing and fit contract](RING_ENCODER.md). Clamp the 2 mm disc
   with the separately sourced SJ5-43502PM-nut and no washer. The level shifter is a
   74AHCT125 in DIP-14. Observe diode and electrolytic polarity.
-- Ring J1 pins 1/2 take +5 V/GND from the same near-ring AUX split through
-  their own short 22 AWG pair. J1 pins 3/4 connect to console J6 pins 3/4.
-  Leave console J6 cavities 1/2 empty. This is **not a straight-through power
-  cable** in the selected 40-pixel assembly.
-- Run at most 600 mm of 16 AWG copper supply/return from AUX to the insulated
-  split, then separate pairs at most 50 mm long to the strip and J1. Use
-  22 AWG XH pigtails; do not crimp the thicker trunk into XH. Keep DIN at most
-  100 mm and beside the local ground leads. Add strain relief. See the exact
-  [wiring and voltage bounds](../segno_wiring.md#console-board--ring-board-and-the-full-white-power-harness).
+- Ring J1 pins 1/2 take +5 V/GND from the **ring trunk**: a 16 AWG pair from
+  the 4-way AUX splices, at most 600 mm one-way, ending just under J1. Solder
+  each trunk wire to about 40 mm of 22 AWG crimped into a genuine XH contact,
+  and heat-shrink each joint; do not crimp the thicker trunk into XH. J1
+  pins 3/4 connect to console J6 pins 3/4. Leave console J6 cavities 1/2
+  empty: this is **not a straight-through power cable**. Add strain relief so
+  the joint does not pull on J1. See the exact
+  [wiring and voltage bounds](../segno_wiring.md#console-board--ring-board-and-the-ring-power-trunk).
 - Fit a separate **Panasonic EEUFR1A102, 1000 µF / 10 V** radial capacitor
-  directly across the strip's power entry: positive lead to +5 V and striped
-  negative lead to GND. Keep leads short, sleeve each soldered joint separately
+  across the trunk joint under J1, the nearest point outside the cup to where
+  the strip's current enters: positive lead to +5 V and striped negative lead
+  to GND. Keep leads short, sleeve each soldered joint separately
   and secure the body with strain relief outside the optical area, leaving its
   pressure vent unobstructed. The part is 10 mm diameter × 16 mm long; allow
   this space in the harness, not on the carrier. Its
   [manufacturer specification](https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1A102)
-  gives at most 28 mΩ impedance at 100 kHz. Carrier C1 remains fitted but
-  is not the local strip-entry capacitor. This follows the
+  gives at most 28 mΩ impedance at 100 kHz. Carrier C1 remains fitted as
+  well. This follows the
   [NeoPixel supply-entry recommendation](https://learn.adafruit.com/adafruit-neopixel-uberguide/best-practices).
   Assemble with power disconnected; the capacitor buffers load changes and
   is not an inrush limiter or permission to hot-plug the strip.
@@ -78,19 +80,23 @@ support pins. Keep these allowances when updating footprints.
   observe the encoder's 350 °C / 3 s terminal limit.
 - The carrier snap-mounts; it has no screw mounting holes.
 
-The 40-pixel full-white design budget is 2.4 A for LED channels plus a 40 mA
-idle allowance. The ring controller has a further 200 mA allowance, supplied separately
-from the same local split. The long console power route carries none of the
-selected strip current. Existing firmware brightness and animations are unchanged; the PCB
-does not depend on their limit. The shared 10 A AUX supply is not sized for
-all 120 LEDs and both screens at their simultaneous maximum. See the
+At full white the 35-LED strip draws 2.1 A for LED channels plus a 35 mA
+idle allowance, and the ring controller and buffer a further 200 mA: about
+2.34 A, all through J1 pins 1/2 (XH: 3 A with 22 AWG) and the 1.5 mm feed.
+The console's J6 power route carries none of it. Ring firmware 1.3
+(segno SEG-115) has no total limit and lets its patterns reach 255; the app's
+LED level and the idle dim set the everyday brightness below that. Build the
+trunk before that firmware reaches the console: on the old J6 feed a
+full-white ring measured 4.80 V at J1 (2026-11-26), 0.3 V above the
+74AHCT125's 4.5 V floor. The shared 10 A AUX supply is not sized for all
+115 LEDs flat white and both screens at their simultaneous maximum. See the
 [system power budget](../segno_wiring.md).
 
 ## Programming
 
 **Turn AUX power off**, then unplug **J1 before connecting the XIAO USB cable**.
-Keep the separately powered strip off while programming, so its DIN input is
-not left floating on a powered strip. Remove USB and reconnect J1 before
+With J1 unplugged the strip has no power either, so its DIN input is not
+left floating on a powered strip. Remove USB and reconnect J1 before
 restoring AUX power. D1 prevents USB from powering the AUX harness, but it does not prevent live
 AUX power from reaching a connected USB host. See the
 [Seeed schematic](https://files.seeedstudio.com/wiki/XIAO-RP2350/res/Seeed-Studio-XIAO-RP2350-v1.0.pdf).

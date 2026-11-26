@@ -406,11 +406,16 @@ is additional. Initial contact resistance is not a guaranteed aged/hot
 maximum. These figures do not establish the exact temperature of the
 assembled relay or screens' minimum voltage.
 
-All ten pills white, unrestricted full-white 40-LED ring and console total
-about 4.926 A from AUX. Together with the screen-board allowance of 4.46 A this
-is **9.386 A** against the retained nominal 10 A buck. The ring remains on its
-separate direct AUX branch. This does not authorize all 120 LEDs at full
-white simultaneously or turn the nominal buck rating into a surge limit.
+All ten pills white on the firmware's curve (peak 255, 2.758 A), the
+unrestricted full-white 35-LED ring (2.100 A), the 115 pixels' idle draw
+(0.115 A), the console (0.140 A) and the ring controller (0.200 A) total about
+5.313 A from AUX. Together with the screen-board allowance of 4.46 A this is
+**9.77 A** against the retained nominal 10 A buck. With the screens as the
+owner measured them (about 2.2–3.0 A for both, 25 September 2026) in place of
+the 4.25 A allowance, the same load is about **7.7–8.5 A**. The ring remains
+on its own trunk from the AUX splices. This does not authorize all 115 LEDs
+at flat full white simultaneously or turn the nominal buck rating into a
+surge limit.
 
 ## First assembly
 

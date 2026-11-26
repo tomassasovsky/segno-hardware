@@ -25,7 +25,7 @@ longer applies to anything.
               +--> BUCK_PI  (20->5 V) --+--> Pi 5 via its USB-C --> Pi USB + NVMe
               |                         +--> 2 A fuse --> USB 3 hub power input (#1816)
               +--> BUCK_AUX (20->5 V) --+--> console J3 --> pills
-                                       +--> near-ring split --> strip power + ring J1 power
+                                       +--> 16 AWG trunk --> ring J1 power --> strip (ring J2)
                                        +--> short 20 AWG pair --> screen-power J1
                                                                   | F1 (8 A) -> K1 -> switched rail
                                                                   +--> J103/J203 --> screen power
@@ -60,9 +60,9 @@ longer applies to anything.
 ## 2. Power distribution (#754)
 
 **20 V in, 5 V made next to the loads.** Local bucks keep the high-current
-5 V wiring short. The current design allowances total **71.93 W** at their
-outputs: 25 W for the Pi rail and 46.93 W for AUX. At an illustrative 85–90%
-buck efficiency, that needs approximately **79.9–84.6 W**, or **4.00–4.23 A at
+5 V wiring short. The current design allowances total **73.87 W** at their
+outputs: 25 W for the Pi rail and 48.87 W for AUX. At an illustrative 85–90%
+buck efficiency, that needs approximately **82.1–86.9 W**, or **4.10–4.35 A at
 20 V**. These efficiencies are planning assumptions, not measurements of the
 retained bucks. The 20 V / 5 A / 100 W contract accommodates this model; it
 does not establish enclosed thermal capacity or startup response.
@@ -134,9 +134,9 @@ state the remaining engineering assumptions.
 | Buck | Loads | Design figure |
 | --- | --- | --- |
 | **BUCK_PI** | Pi 5, its USB devices and NVMe, and the USB 3 hub's power input (#1816) | 5.0 A / 25 W device budget |
-| **BUCK_AUX** | Both screens, console, 80 pill LEDs and 40 ring LEDs | 9.386 A / 46.93 W for a full-white ring, all ten pills white and the allowances below |
+| **BUCK_AUX** | Both screens, console, 80 pill LEDs and 35 ring LEDs | 9.77 A / 48.87 W for a full-white ring, all ten pills white and the allowances below; about 8.5 A with the screens as measured |
 
-The selected ring is a **40-pixel strip**, giving 120 LEDs with the ten
+The selected ring is a **35-pixel strip**, giving 115 LEDs with the ten
 8-pixel pills. The updated v3 console/carrier copper supports the ring at
 unrestricted RGB white. Its electrical design no longer depends on the ring
 firmware's brightness limit. The old v2 console on the current pedal is not
@@ -147,28 +147,37 @@ Use 60 mA per RGB-white LED as the conservative planning model from
 Add 1 mA per pixel as a separate idle allowance. These are design assumptions,
 not measurements or a guaranteed rating of a particular LED batch.
 
-The console firmware draws each pill on a centre curve with peak 191 and
-weights `38, 92, 201, 255, 255, 201, 92, 38`, and it has no pill current limit
+The console firmware draws each pill on a centre curve with peak 255 (since
+console firmware 2.9, SEG-115; it was 191) and weights
+`38, 92, 201, 255, 255, 201, 92, 38`, and it has no pill current limit
 (segno#1957). White is a normal pill colour (a pressed switch, an idle
 REC/PLAY, a selected or tuned track, any Custom colour), and an earlier
 firmware limit of about 0.47 A dimmed every pill whenever a press pushed the
 total over it, so each press flickered the rest. Ten pills white on the curve
-are 26,340 channel units, **2.066 A** on this model: the most the pills can
-draw, whatever colours the app sends.
+are 35,160 channel units, **2.758 A** on this model (2.066 A at the old peak
+191): the most the pills can draw, whatever colours the app sends. The ring
+firmware has no total limit either since ring firmware 1.3 (SEG-115): the
+v2-era cap of 35 × 3 × 96 channel units is gone, and the ring's patterns
+reach 255. The app's LED level (segno#1564, light sensor or manual) and the
+idle dim (segno#1349) scale both below these ceilings.
 
 | AUX load allowance | Current |
 | --- | ---: |
 | Both screen main feeds and both touch feeds | 4.250 A |
 | Screen-board bleeder, separately counted | 0.060 A |
 | Screen-board relay coils and control circuitry | 0.150 A |
-| 40 ring pixels, all RGB channels at 255 | 2.40 A |
-| All ten pills white on the firmware's curve | 2.066 A |
-| Idle allowance for 120 pixels | 0.120 A |
+| 35 ring pixels, all RGB channels at 255 | 2.100 A |
+| All ten pills white on the firmware's curve | 2.758 A |
+| Idle allowance for 115 pixels | 0.115 A |
 | Console logic | 0.140 A |
 | Additional XIAO ring controller and buffer | 0.200 A |
-| **Planning total** | **9.386 A** |
+| **Planning total** | **9.773 A** |
 
-The nominal 10 A buck has approximately 0.61 A headroom against this model.
+The nominal 10 A buck has approximately 0.23 A headroom against this model.
+With the screens as the owner measured them (25 September 2026, below: about
+2.2–3.0 A for both) in place of the 4.25 A allowance, the same full-white
+load is about **7.7–8.5 A**, leaving about 1.5 A or more. The touch controllers'
+draw was not measured separately; the allowance gives them up to 1 A.
 That is not a guarantee of transient response, capacity at high temperature
 or screen current; physical validation remains part of the first assembled build.
 The 60 mA bleeder allowance is separate from the 4.25 A screen allowance.
@@ -179,14 +188,16 @@ ceilings cannot all be used simultaneously: their sum exceeds the shared 4.25 A
 planning allowance before the bleeder is counted.
 
 Allowing **all 80 pill LEDs as well as the ring** to display flat unrestricted
-white is a different requirement: 7.2 A of LED channels plus the screens and
-allowances above totals **12.12 A**. That exceeds the retained 10 A AUX
-supply. The ring PCB upgrade does not authorize that simultaneous system load.
-The firmware never drives the pills flat at 255: its peak-191 curve keeps all
-ten white pills within the modeled budget with a full-white ring.
+white is a different requirement: 6.9 A of LED channels plus the screens and
+allowances above totals **11.82 A**. That exceeds the retained 10 A AUX
+supply, and 4.8 A of pills exceeds the 20 AWG pill feed below. The firmware
+never drives the pills flat at 255: its curve keeps all ten white pills within
+the modeled budget with a full-white ring.
 
-See the [40-pixel power-path verification](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/ring40-full-white-1072/verification.md)
-for conductor widths, connector limits and the source-pinned runtime arithmetic.
+The earlier [40-pixel power-path verification](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/ring40-full-white-1072/verification.md)
+covers conductor widths, connector limits and the runtime arithmetic for the
+split harness this file specified before SEG-115; the ring trunk that replaced
+it is in [Console board ↔ ring board](#console-board--ring-board-and-the-ring-power-trunk).
 
 **The old v2 board and new v3 board have different power paths (#1062).** On
 v2, the LEDs share the console's 0.6 mm +5 V track, estimated at 1.65 A by the
@@ -202,13 +213,15 @@ V3 sends pill power through a copper bar instead:
   budget (about 4.88 A including the idle allowance). The data line crosses
   the board to J24 from the buffer, ~87 mm. J7 is gone.
 - The retained console ring feed is a dedicated **1.7 mm** route to J6, with four
-  parallel 0.5 mm drilled power vias. The carrier has a **1.5 mm** direct feed
-  from J1 to J2 and three parallel ground vias at the strip wire pad. Console
-  input, pill-output and ring-output ground connections have wider thermal spokes.
-  Lower-current logic and alternative 24/16-pixel module branches retain their
-  existing tracks. The routing/export guards preserve this separation. For the
-  selected full-white strip, use the direct AUX star harness below rather than
-  sending LED current through the console and both XH connectors.
+  parallel 0.5 mm drilled power vias. It carries nothing in the selected
+  harness: J6 pins 1/2 stay empty and the ring takes its power from its own
+  trunk (below). The carrier has a **1.5 mm** direct feed from J1 to J2 and
+  three parallel ground vias at the strip wire pad, and the strip's current
+  flows through them. Console input, pill-output and ring-output ground
+  connections have wider thermal spokes. Lower-current logic and alternative
+  24/16-pixel module branches retain their existing tracks. The routing/export
+  guards preserve this separation. Do not feed a full-white ring through J6:
+  on the bench that path lost 0.27 V (below).
 
 The conductor estimates use **IPC-2221, 10 °C rise, 1 oz external copper**,
 including a 20% negative width tolerance for the new high-current feeds.
@@ -256,11 +269,11 @@ must not be flashed onto the old board.
   [VH datasheet](https://www.jst-mfg.com/product/pdf/eng/eVH.pdf) rates the
   contact at 10 A with 16 AWG and 7 A with 18 AWG, and publishes no 20 AWG
   figure. This sizing relies on the firmware's pill curve: in the selected
-  star harness J3 carries the pills and the console logic, about 2.2 A, and
-  the pill bus at most about 2.15 A (2.066 A of LED channels plus the pixels'
-  idle draw), whatever colours the app sends. In 0.5 mm²
-  (about 39 mΩ/m) J3's feed drops about 0.09 V and the pill bus at most about
-  0.13 V to its far taps. Firmware that drove the pills past that curve
+  star harness J3 carries the pills and the console logic, about 3.0 A, and
+  the pill bus at most about 2.84 A (2.758 A of LED channels at peak 255 plus
+  the pixels' idle draw), whatever colours the app sends. In 0.5 mm²
+  (about 39 mΩ/m) J3's feed drops about 0.12 V and the pill bus at most about
+  0.17 V to its far taps. Firmware that drove the pills past that curve
   (4.88 A uncapped, about 5.0 A on J3) needs 18 AWG on both runs, or 16 AWG in
   SVH-41T-P1.1 contacts.
   The header's 10 A rating with 16 AWG is headroom this harness does not use.
@@ -277,7 +290,7 @@ must not be flashed onto the old board.
   any separately counted touch current. Adding up to 1 A for both touch paths
   gives 4.2 A, rounded up to a **4.25 A shared screen allowance**. A separate
   60 mA bleeder and 150 mA controls/coil allowance bring this board to
-  **4.46 A**, or **9.386 A AUX** with a full-white ring and all ten pills white.
+  **4.46 A**, or **9.77 A AUX** with a full-white ring and all ten pills white.
   This does not qualify the buck, actual new-board voltage drop, thermal
   behavior or inrush.
 
@@ -390,46 +403,60 @@ The ring carrier has its own XIAO and level shifter; console gate B is disabled,
 and the former ring-data path is removed. **MIDI IN's H11L1 runs at 3.3 V** and
 feeds the Pi directly. GPIO4 (pin 7) is reserved for the GeeekPi N07 NVMe board.
 
-### Console board ↔ ring board and the full-white power harness
+### Console board ↔ ring board and the ring power trunk
 
 The ring board carries its own **XIAO RP2350**, which owns the encoder and
-generates the WS2812 timing locally. For the selected 40-pixel strip, supply
-its LED current directly from AUX through a near-ring split. This avoids the
-voltage loss of the long console-to-ring power path while preserving full
-white output. The PCB's high-current copper remains unchanged.
+generates the WS2812 timing locally. The 35-pixel strip sits inside the ring's
+cup with its +5 V, GND and DIN wires soldered to ring J2, and the ring board
+is the cup's floor, so the strip cannot be fed from beside the board. Its
+current comes in through ring J1 instead, from a 16 AWG trunk that runs
+straight from AUX, and crosses the ring board's +5V_LED copper (the 1.5 mm
+J1-to-J2 track and its fills) to J2. Console J6 carries only the link.
 
 | Destination | Connect to |
 | --- | --- |
-| Near-ring positive/ground split | AUX output posts through a dedicated pair, at most 600 mm one-way, 16 AWG copper or larger |
-| Strip +5 V / GND | That split through a separate pair, at most 50 mm one-way, 22 AWG copper or larger |
-| Strip-entry bulk capacitor | Panasonic EEUFR1A102, 1000 µF / 10 V, positive to strip +5 V and striped negative to strip GND; short leads with separately sleeved joints |
-| Ring J1 pins 1 / 2 | That split through its own pair, at most 50 mm one-way, **22 AWG** with genuine XH contacts |
+| Ring trunk | A 16 AWG +5 V / GND pair from the 4-way AUX splices (buck output, console J3, screen J1 and this trunk), at most 600 mm one-way, ending just under ring J1 |
+| Ring J1 pins 1 / 2 | About 40 mm of **22 AWG** crimped into genuine XH contacts, soldered to the trunk's +5 V and GND, each joint heat-shrunk |
+| Bulk capacitor | Panasonic EEUFR1A102, 1000 µF / 10 V, across the trunk joint under J1: positive to +5 V, striped negative to GND; short leads with separately sleeved joints |
 | Ring J1 pin 3 | Console J6 pin 3: console TX to ring RX |
 | Ring J1 pin 4 | Console J6 pin 4: ring TX to console RX |
-| Strip DIN | Ring J2 pin 3, at most 100 mm, routed beside the local ground leads |
+| Strip +5 V / GND / DIN | Ring J2 pins 1 / 2 / 3, inside the cup |
 
-Leave console J6 cavities **1/2 empty**. Leave ring J2 **1/2/4 unconnected**;
-only DIN uses J2 in this selected assembly. J3/J4 remain empty. Do not add a
-second console-to-ring power pair or a parallel strip-return wire through
-J2. Both boards share ground through their AUX supply returns.
+Leave console J6 cavities **1/2 empty**. Leave ring J2 pin 4 (DOUT) and
+J3/J4 empty. Do not add a second power pair through J6. Both boards share
+ground through their AUX supply returns.
 
-Secure the strip-entry capacitor body beside the harness, outside the optical
-area, with its pressure vent clear. Allow its 10 × 16 mm envelope. Leave carrier
-C1 fitted as well. This local reservoir buffers load changes; it does not limit
-startup current. Wire only with AUX off. The carrier copper guard covers the
-retained PCB rail, not the selected external strip's harness or capacitor.
+The capacitor moves from the strip's power entry, now inside the cup, to the
+trunk joint: the nearest point outside the cup to where the strip's current
+enters. Secure its body beside the joint with its pressure vent
+clear, and allow its 10 × 16 mm envelope. Leave carrier C1 fitted as well.
+It buffers load changes; it does not limit startup current. Wire only with
+AUX off.
 
-Use insulated, strain-relieved soldered or correctly crimped branch joints.
-Do not force 16 AWG into XH contacts: the short 22 AWG pigtails are intentional.
-The complete common positive/return termination resistance allocation is
-10 mΩ; each branch's complete joint allocation is another 10 mΩ.
+Do not force 16 AWG into XH contacts: the short 22 AWG pigtail is
+intentional. Strain-relieve the trunk so the joint does not pull on J1.
 
-At a defined **4.75 V minimum at the loaded AUX output posts**, the 60 °C wire,
-aged-contact and hot-copper calculation gives at least **4.632 V at the strip**
-and **4.620 V at the AHCT buffer**, above its 4.5 V minimum. The fixed buck is
-nominally 5 V; its actual regulation floor is not established by a manufacturer
-specification. These are explicit design bounds, not measured assembled
-voltages. See the [final voltage review](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/production-final-1072/ring-voltage-margin.md).
+**Current and voltage.** At full white the ring draws about **2.34 A**
+(35 × 60 mA, 35 mA idle and 200 mA for the XIAO and buffer), all of it
+through ring J1 pins 1/2 and the carrier's 1.5 mm feed. XH is rated 3 A with
+22 AWG, and the carrier copper was sized for the ring at unrestricted white
+(segno#1062).
+
+On 2026-11-26 the owner measured the old path with all 35 LEDs at full white,
+the ring fed through a 30 cm 22 AWG J6 cable: **5.07 V at console J3 and
+4.80 V at ring J1**, 0.27 V lost across the console's J3-to-J6 copper, two XH
+plugs and the cable. The ring's 74AHCT125 needs at least 4.5 V. The trunk
+skips the console: by calculation its 16 AWG (about 13 mΩ/m) and the 22 AWG
+pigtail lose about 0.05 V at 2.34 A over 600 mm, and the joint and J1's two
+contacts add up to about another 0.07 V. After building it, measure ring J1
+with all 35 LEDs white; it should read within about 0.15 V of the AUX splices.
+
+The earlier [final voltage review](https://github.com/tomassasovsky/segno/blob/master/docs/reviews/production-final-1072/ring-voltage-margin.md)
+bounded the split harness, with the strip fed beside the board. Under the
+same worst-case terms (4.75 V at the splices, hot copper, aged contacts) this
+path's loss to the strip is estimated at about 0.2 V, leaving the buffer just
+above its 4.5 V floor; at the measured 5.07 V it has about 0.4 V spare. These
+are estimates, not measured assembled voltages.
 
 The link is full duplex at 115200 baud. The console uses a PIO UART because
 its hardware UART is already assigned to the Pi link on GP16/GP17. This map
@@ -437,7 +464,8 @@ applies to the new v3 console and independent ring carrier only.
 
 The PCB pin assignments remain defined by `RING_PINMAP` in
 `console_board.py`, checked against `ring_board.net` by `RING_CONTRACT`. The
-selected harness above deliberately separates power from the two UART wires.
+selected harness above deliberately separates power (the trunk) from the two
+UART wires (J6).
 
 Notes that are load-bearing:
 
@@ -453,19 +481,19 @@ Notes that are load-bearing:
   presence-input workaround and PD status reader. The hardware branch's older
   firmware snapshot does not. This runtime is still a separate integration
   draft; board fabrication does not make it deployed or production qualified.
-- **The specified star harness supports the 40-pixel strip without a brightness restriction.**
-  The design budget is 2.4 A LED channels, 40 mA pixel idle and 200 mA ring
-  controller. Only that 200 mA controller allocation passes through J1 in the
-  selected harness; the strip current bypasses it. XH remains rated for 3 A
-  with 22 AWG. Its 85 °C
-  upper operating temperature includes the rise caused by current; it is
-  not an 85 °C ambient rating at full current.
-  The retained console 1.7 mm feed and carrier J2 1.5 mm feed with three
-  ground-return vias serve the alternative module wiring. They do not supply
-  the selected strip, whose power follows the direct AUX harness above.
-  Firmware still chooses its display brightness, but that setting is not
-  the hardware's current limit.
-- **Only one ring or strip is supported.** Use J2 for the 40-pixel strip, J3
+- **The ring trunk supports the 35-pixel strip at full white without a
+  firmware limit.** All of the ring's current crosses ring J1 pins 1/2 and the
+  carrier's 1.5 mm +5V_LED feed to J2. XH is rated 3 A with 22 AWG. Its
+  85 °C upper operating temperature includes the rise caused by current; it
+  is not an 85 °C ambient rating at full current. Firmware still chooses the
+  everyday brightness (the app's LED level and the idle dim), but that
+  setting is not the hardware's current limit.
+- **Build the trunk before the full-brightness firmware reaches the
+  console.** Ring firmware 1.3 and console firmware 2.9 (segno SEG-115) raise
+  the ring and pill ceilings to 255. On the old J6 feed a full-white ring
+  leaves the buffer 0.3 V above its floor; the trunk is what restores the
+  margin.
+- **Only one ring or strip is supported.** Use J2 for the 35-pixel strip, J3
   for one 24-pixel module, or J4 for one 16-pixel module. Do not populate the
   alternatives together or chain an additional ring from DOUT. Extra LEDs
   require a new connector, copper and whole-system power assessment.
